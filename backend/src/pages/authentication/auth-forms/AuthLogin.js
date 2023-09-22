@@ -1,175 +1,145 @@
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, {useState} from 'react';
 
-// material-ui
 import {
-  Button,
-  Checkbox,
-  // Divider,
-  FormControlLabel,
-  FormHelperText,
-  Grid,
-  Link,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Stack,
-  Typography
-} from '@mui/material';
+Button,
+TextField,
+Link,
+Grid,
+Box,
+Typography,
+OutlinedInput,
+FormControl,
+CircularProgress,
+InputLabel,
+Fade 
+} from  '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+// import axios from "axios";
+// context
+// import { useUserDispatch, loginUser } from "../../../context/UserContext";
+import { useForm } from "react-hook-form"
 
-// third party
-import * as Yup from 'yup';
-import { Formik } from 'formik';
+import { adminLogin } from "../../../ApiServices";
+import { useNavigate } from "react-router-dom";
 
-// project import
-// import FirebaseSocial from './FirebaseSocial';
-import AnimateButton from 'components/@extended/AnimateButton';
 
-// assets
-import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+function  AuthLogin ()  {
 
-// ============================|| FIREBASE - LOGIN ||============================ //
-
-const AuthLogin = () => {
-  const [checked, setChecked] = React.useState(false);
-
+  let navigate = useNavigate();
+   // global
+  //  var userDispatch = useUserDispatch();
+   
+   // local
+  var [isLoading, setIsLoading] = useState(false);
+  var [error, setError] = useState("");
+  const { register, handleSubmit } = useForm();
   const [showPassword, setShowPassword] = React.useState(false);
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
 
-  return (
-    <>
-      <Formik
-        initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
-          submit: null
-        }}
-        validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
-        })}
-        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          try {
-            setStatus({ success: false });
-            setSubmitting(false);
-          } catch (err) {
-            setStatus({ success: false });
-            setErrors({ submit: err.message });
-            setSubmitting(false);
-          }
-        }}
-      >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-          <form noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
-                  <OutlinedInput
-                    id="email-login"
-                    type="email"
-                    value={values.email}
-                    name="email"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    placeholder="Enter email address"
-                    fullWidth
-                    error={Boolean(touched.email && errors.email)}
-                  />
-                  {touched.email && errors.email && (
-                    <FormHelperText error id="standard-weight-helper-text-email-login">
-                      {errors.email}
-                    </FormHelperText>
-                  )}
-                </Stack>
-              </Grid>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
-                  <OutlinedInput
-                    fullWidth
-                    error={Boolean(touched.password && errors.password)}
-                    id="-password-login"
-                    type={showPassword ? 'text' : 'password'}
-                    value={values.password}
-                    name="password"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                          size="large"
-                        >
-                          {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    placeholder="Enter password"
-                  />
-                  {touched.password && errors.password && (
-                    <FormHelperText error id="standard-weight-helper-text-password-login">
-                      {errors.password}
-                    </FormHelperText>
-                  )}
-                </Stack>
-              </Grid>
 
-              <Grid item xs={12} sx={{ mt: -1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={(event) => setChecked(event.target.checked)}
-                        name="checked"
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
-                  />
-                  <Link variant="h6" component={RouterLink} to="" color="text.primary">
-                    Forgot Password?
-                  </Link>
-                </Stack>
-              </Grid>
-              {errors.submit && (
-                <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
-                </Grid>
-              )}
-              <Grid item xs={12}>
-                <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
-                  </Button>
-                </AnimateButton>
-              </Grid>
-              {/* <Grid item xs={12}>
-                <Divider>
-                  <Typography variant="caption"> Login with</Typography>
-                </Divider>
-              </Grid> */}
-              {/* <Grid item xs={12}>
-                <FirebaseSocial />
-              </Grid> */}
-            </Grid>
-          </form>
-        )}
-      </Formik>
-    </>
-  );
+const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+const onSubmit = async (data) => {
+  setError(false);
+  setIsLoading(true);
+  adminLogin(data)
+  .then((response) => {          
+      if (response.data.status === 401 || !response.data.isSuccess) {        
+        setError(response.data.message);
+        setIsLoading(false);
+      } else {                                
+          localStorage.setItem("token", response.data.info);          
+          setError("");
+          setIsLoading(false);
+          // dispatch({ type: "LOGIN_SUCCESS" });
+          navigate("/dashboard");
+        }      
+    })
+    .catch((err) => {      
+      if (err.response.data.status === 401 || !err.response.data.isSuccess) {        
+        setError(err.response.data.message);
+        setIsLoading(false);
+      } else {
+        setError("Something is wrong!");
+        setIsLoading(false);
+      }
+    });
 };
+
+
+return (
+
+<form onSubmit={handleSubmit(onSubmit)}>
+  <Fade in={error} mb={2}>
+    <Typography color="#FF0000"  >
+      {error ? error : ""}
+    </Typography>
+  </Fade>
+  <TextField
+    id="email"
+    {...register("email", { required: true })}
+    margin="normal"
+    placeholder="Email Id"
+    type="email"
+    label="Email Id" 
+    fullWidth
+  />
+  <FormControl  sx={{ mt: 2 }} variant="outlined" fullWidth>
+    <InputLabel htmlFor="outlined-adornment-password" >Password</InputLabel>
+    <OutlinedInput fullWidth id="password"
+      {...register("password", { required: true })}
+      placeholder="Password"
+      label="Password"
+      type={showPassword ? 'text' : 'password'}
+      endAdornment={
+        <InputAdornment position="end">
+          <IconButton
+            aria-label="toggle password visibility"
+            onClick={handleClickShowPassword}
+            edge="end"
+          >
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      }
+    />
+  </FormControl>
+  <Grid item xs={12} mt={2}>
+    <Box display="flex" justifyContent="flex-end">
+        <Typography
+          variant="body2"
+          gutterBottom
+          component={Link}
+          // align="right"
+          to="/register"
+        > Forget Password?
+        </Typography>
+    </Box>
+  </Grid>
+  <div>
+  {isLoading ? (
+                    <CircularProgress
+                      size={26}
+                     
+                    />
+                  ) : (
+                    <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth> 
+          Login
+      </Button>
+                  )}
+
+      
+  </div>           
+</form>
+);
+}
 
 export default AuthLogin;

@@ -17,7 +17,7 @@ const AuthFooter = () => {
         <Typography variant="subtitle2" color="secondary" component="span">
           &copy;2023. &nbsp;
           <Typography component={Link} variant="subtitle2" href="https://codedthemes.com" target="_blank" underline="hover">
-            Idea2code Infotech
+            Fitness
           </Typography>
         </Typography>
 
