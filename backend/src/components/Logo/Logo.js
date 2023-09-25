@@ -56,7 +56,7 @@ const Logo = () => {
           </linearGradient>
         </defs>
       </svg> */}
-      <img src={logoicon} alt="Logo" style={{width: 70, height: 70}}/>
+      <img src={logoicon} alt="Logo" style={{width: 70, height: 70, textAlign: 'center'}}/>
     </>
   );
 };

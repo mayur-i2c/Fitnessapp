@@ -40,7 +40,6 @@ function useUserState() {
 
 function useUserDispatch() {
   var context = React.useContext(UserDispatchContext);
-  console.log(context);
   if (context === undefined) {
     throw new Error("useUserDispatch must be used within a UserProvider");
   }
@@ -51,7 +50,7 @@ export { UserProvider, useUserState, useUserDispatch, loginUser, signOut };
 
 // ###########################################################
 
-function loginUser(dispatch, data, history, setIsLoading, setError) {
+function loginUser(dispatch, data, navigate, setIsLoading, setError) {
   setError(false);
   setIsLoading(true);
   adminLogin(data)
@@ -59,12 +58,13 @@ function loginUser(dispatch, data, history, setIsLoading, setError) {
       if (response.data.status === 401 || !response.data.isSuccess) {        
         setError(response.data.message);
         setIsLoading(false);
-      } else {                                
-          localStorage.setItem("token", response.data.info);          
+      } else {                             
+          localStorage.setItem("token", response.data.info.token);          
+          localStorage.setItem("refresh_token", response.data.info.refresh_token);          
           setError("");
           setIsLoading(false);
           dispatch({ type: "LOGIN_SUCCESS" });
-          history.push("/app/dashboard");
+          navigate("/dashboard");
         }      
     })
     .catch((err) => {      
@@ -78,8 +78,8 @@ function loginUser(dispatch, data, history, setIsLoading, setError) {
     });
 }
 
-function signOut(dispatch, history) {
+function signOut(dispatch, navigate) {
   localStorage.removeItem("token");
   dispatch({ type: "SIGN_OUT_SUCCESS" });
-  history.push("/login");
+  navigate("/");
 }

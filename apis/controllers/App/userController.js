@@ -1,9 +1,12 @@
 const express = require('express');
 const User = require('../../models/User');
-const {createResponse, queryErrorRelatedResponse, successResponse} = require('../../helper/sendResponse');
+const {createResponse, queryErrorRelatedResponse, successResponse, successResponseOfFiles} = require('../../helper/sendResponse');
 const jwt =require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
+const deleteFiles = require('../../helper/deleteFiles');
+// Here is your server running URL
+const serverUrl =
+  process.env.NODE_ENV == "development" ? "http://localhost:5000/" : "";
 
 //User Signup
 const signupUser = async(req,res,next) => {
@@ -127,12 +130,26 @@ const updateUserProfile = async (req,res,next) => {
 //User Profile Photo Update
 const updateProfilePic = async (req,res,next) => {
     try{
-        const user = await User.findById(req.body.userid);
+        //Check user exist or not
+        const user = await User.findById(req.user._id);
         if(!user) return queryErrorRelatedResponse(req,res,401,"Invalid User!!")
+        
+        // Checking for file selected or not...
+        if (!req.file)
+        return queryErrorRelatedResponse(res,res, 404, "File not found.");
+        
+        //If file already exist then it delete first
+        const filed = deleteFiles(user.image);
+       
 
+        user.image = req.file.filename;
+        const result = await user.save();
 
+        const baseUrl = serverUrl + result.image;
 
-
+        successResponseOfFiles(res, "Profile Updated!", baseUrl);
+       
+        
     }catch(err){
         next(err)
     }

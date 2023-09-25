@@ -51,7 +51,21 @@ AdminSchema.methods.generateAuthToken = function(data){
     // Here add all the user info data send on login time (Data may be full data of user or it may be
     // store as given info)
     data = { ...data, ...id ,password:admin.password};
-    const token = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET);
+    const token = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET,{
+        expiresIn: '1m'
+    });
+    return token;
+
+}
+
+AdminSchema.methods.generateRefreshToken = function(data){
+    const admin = this;
+    const id = {_id : admin.id}
+
+    // Here add all the user info data send on login time (Data may be full data of user or it may be
+    // store as given info)
+    data = { ...data, ...id ,password:admin.password};
+    const token = jwt.sign(data, process.env.REFRESH_TOKEN_SECRET);
     return token;
 
 }

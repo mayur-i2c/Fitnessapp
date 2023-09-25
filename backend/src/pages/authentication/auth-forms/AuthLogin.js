@@ -19,10 +19,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 // import axios from "axios";
 // context
-// import { useUserDispatch, loginUser } from "../../../context/UserContext";
+import { useUserDispatch, loginUser } from "../../../context/UserContext";
 import { useForm } from "react-hook-form"
 
-import { adminLogin } from "../../../ApiServices";
+// import { adminLogin } from "../../../ApiServices";
 import { useNavigate } from "react-router-dom";
 
 
@@ -30,7 +30,7 @@ function  AuthLogin ()  {
 
   let navigate = useNavigate();
    // global
-  //  var userDispatch = useUserDispatch();
+   var userDispatch = useUserDispatch();
    
    // local
   var [isLoading, setIsLoading] = useState(false);
@@ -43,30 +43,33 @@ function  AuthLogin ()  {
 const handleClickShowPassword = () => setShowPassword((show) => !show);
 
 const onSubmit = async (data) => {
-  setError(false);
-  setIsLoading(true);
-  adminLogin(data)
-  .then((response) => {          
-      if (response.data.status === 401 || !response.data.isSuccess) {        
-        setError(response.data.message);
-        setIsLoading(false);
-      } else {                                
-          localStorage.setItem("token", response.data.info);          
-          setError("");
-          setIsLoading(false);
-          // dispatch({ type: "LOGIN_SUCCESS" });
-          navigate("/dashboard");
-        }      
-    })
-    .catch((err) => {      
-      if (err.response.data.status === 401 || !err.response.data.isSuccess) {        
-        setError(err.response.data.message);
-        setIsLoading(false);
-      } else {
-        setError("Something is wrong!");
-        setIsLoading(false);
-      }
-    });
+  loginUser(userDispatch, data, navigate, setIsLoading, setError);
+  // setError(false);
+  // setIsLoading(true);
+  // adminLogin(data)
+  // .then((response) => {          
+  //     if (response.data.status === 401 || !response.data.isSuccess) {        
+  //       setError(response.data.message);
+  //       setIsLoading(false);
+  //     } else {       
+                      
+  //         localStorage.setItem("token", response.data.info.token);          
+  //         localStorage.setItem("refresh_token", response.data.info.refresh_token);          
+  //         setError("");
+  //         setIsLoading(false);
+  //         // dispatch({ type: "LOGIN_SUCCESS" });
+  //         navigate("/dashboard");
+  //       }      
+  //   })
+  //   .catch((err) => {      
+  //     if (err.response.data.status === 401 || !err.response.data.isSuccess) {        
+  //       setError(err.response.data.message);
+  //       setIsLoading(false);
+  //     } else {
+  //       setError("Something is wrong!");
+  //       setIsLoading(false);
+  //     }
+  //   });
 };
 
 

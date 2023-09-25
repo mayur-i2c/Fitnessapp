@@ -18,4 +18,11 @@ const successResponse = (res, data) => {
     res.json({ isSuccess: true, status: 200, info: data });
 }
 
-module.exports = {createResponse, queryErrorRelatedResponse,successResponse}
+
+// Send success response of avatar(Image) (request , response , message and baseURL)
+const successResponseOfFiles = (res, message, baseurl) => {
+    res.status(200);
+    res.json({ isSuccess: true, status: 200, message, baseurl });
+}
+
+module.exports = {createResponse, queryErrorRelatedResponse,successResponse, successResponseOfFiles}

@@ -1,11 +1,69 @@
-import { useRoutes } from 'react-router-dom';
+// import { useRoutes } from 'react-router-dom';
 
 // project import
-import LoginRoutes from './LoginRoutes';
-import MainRoutes from './MainRoutes';
+// import LoginRoutes from './LoginRoutes';
+// import MainRoutes from './MainRoutes';
 
+import React, {lazy} from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+// project import
+import Loadable from 'components/Loadable';
+import MinimalLayout from 'layout/MinimalLayout';
+
+// render - login
+const AuthLogin = Loadable(lazy(() => import('pages/authentication/Login')));
+const AuthRegister = Loadable(lazy(() => import('pages/authentication/Register')));
+
+import MainLayout from 'layout/MainLayout';
+
+// render - dashboard
+const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
+
+// render - sample page
+const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
+
+// render - utilities
+const Typography = Loadable(lazy(() => import('pages/components-overview/Typography')));
+const Color = Loadable(lazy(() => import('pages/components-overview/Color')));
+const Shadow = Loadable(lazy(() => import('pages/components-overview/Shadow')));
+const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons')));
 // ==============================|| ROUTING RENDER ||============================== //
+import { useUserState } from "../context/UserContext";
+
 
 export default function ThemeRoutes() {
-  return useRoutes([MainRoutes, LoginRoutes]);
+
+   // global
+  const { isAuthenticated } = useUserState();
+
+  const PublicRoute = () => {
+    return isAuthenticated || Boolean(localStorage.getItem("token")) ?  <Navigate to="/dashboard" /> : <MinimalLayout />;
 }
+
+  const PrivateRoute = () => {
+      return isAuthenticated || Boolean(localStorage.getItem("token")) ? <MainLayout /> : <Navigate to="/" />;
+  }
+
+  return (
+    <Routes>
+    <Route path="/" element={<PublicRoute />}>
+      <Route index element={<AuthLogin />} />
+      <Route path="register" element={<AuthRegister />} />
+    </Route>
+    
+    <Route path="/" element={<PrivateRoute />}>
+      <Route  path="dashboard" element={<DashboardDefault />} />
+      <Route path="color" element={<Color />} />
+      <Route path="sample-page" element={<SamplePage />} />
+      <Route path="shadow" element={<Shadow />} />
+      <Route path="typography" element={<Typography />} />
+      <Route path="icons/ant" element={<AntIcons />} />
+    </Route>
+  </Routes>
+
+  );
+}
+
+
+

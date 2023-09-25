@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -29,6 +30,9 @@ import SettingTab from './SettingTab';
 import avatar1 from 'assets/images/users/avatar-1.png';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
+
+import { useUserDispatch, signOut } from "../../../../../context/UserContext";
+
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -54,6 +58,9 @@ function a11yProps(index) {
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 const Profile = () => {
+  var userDispatch = useUserDispatch();
+  let navigate = useNavigate();
+
   const theme = useTheme();
 
   const handleLogout = async () => {
@@ -149,7 +156,7 @@ const Profile = () => {
                           </Stack>
                         </Grid>
                         <Grid item>
-                          <IconButton size="large" color="secondary" onClick={handleLogout}>
+                          <IconButton size="large" color="secondary" onClick={() => signOut(userDispatch,navigate)}>
                             <LogoutOutlined />
                           </IconButton>
                         </Grid>

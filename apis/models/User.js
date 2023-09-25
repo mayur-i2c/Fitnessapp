@@ -75,6 +75,9 @@ const UserSchema = mongoose.Schema({
     remember_token:{
         type: String
     },
+    image:{
+        type:String
+    },
     created:{
         type:Date,
         default:Date.now()
