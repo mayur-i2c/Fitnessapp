@@ -14,11 +14,15 @@ import MinimalLayout from 'layout/MinimalLayout';
 // render - login
 const AuthLogin = Loadable(lazy(() => import('pages/authentication/Login')));
 const AuthRegister = Loadable(lazy(() => import('pages/authentication/Register')));
+const ForgotPassowrd = Loadable(lazy(() => import('pages/authentication/ForgotPassowrd')));
+const ResetPassword = Loadable(lazy(() => import('pages/authentication/ResetPassword')));
 
 import MainLayout from 'layout/MainLayout';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
+
+const Users = Loadable(lazy(() => import('pages/users')));
 
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
@@ -50,10 +54,13 @@ export default function ThemeRoutes() {
     <Route path="/" element={<PublicRoute />}>
       <Route index element={<AuthLogin />} />
       <Route path="register" element={<AuthRegister />} />
+      <Route path="forgot-password" element={<ForgotPassowrd />} />
+      <Route path="reset-password/:token/:userid" element={<ResetPassword />} />
     </Route>
     
     <Route path="/" element={<PrivateRoute />}>
-      <Route  path="dashboard" element={<DashboardDefault />} />
+      <Route path="users" element={<Users />}/>
+      <Route path="dashboard" element={<DashboardDefault />} />
       <Route path="color" element={<Color />} />
       <Route path="sample-page" element={<SamplePage />} />
       <Route path="shadow" element={<Shadow />} />

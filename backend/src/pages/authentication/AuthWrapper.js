@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 // material-ui
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 
 // project import
 import AuthCard from './AuthCard';
@@ -49,7 +49,6 @@ const AuthWrapper = ({ children }) => (
         <Grid item xs={12} sx={{mt: 3 }} container
           justifyContent="center"
           alignItems="center">
-        <Typography variant="h4">Welcome to Fitness Admin</Typography>
         </Grid>
             <AuthCard>{children}</AuthCard>
           </Grid>

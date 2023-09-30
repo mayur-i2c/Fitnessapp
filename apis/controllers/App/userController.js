@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const deleteFiles = require('../../helper/deleteFiles');
 // Here is your server running URL
 const serverUrl =
-  process.env.NODE_ENV == "development" ? "http://localhost:5000/" : "";
+  process.env.NODE_ENV == "development" ? "http://localhost:5055/" : "";
 
 //User Signup
 const signupUser = async(req,res,next) => {

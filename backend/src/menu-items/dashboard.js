@@ -1,16 +1,16 @@
 // assets
-import { DashboardOutlined } from '@ant-design/icons';
+import { DashboardOutlined, UserOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
-  DashboardOutlined
+  DashboardOutlined, UserOutlined
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
 const dashboard = {
   id: 'group-dashboard',
-  title: 'Navigation',
+  title: '',
   type: 'group',
   children: [
     {
@@ -19,6 +19,14 @@ const dashboard = {
       type: 'item',
       url: '/dashboard',
       icon: icons.DashboardOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'users',
+      title: 'Users',
+      type: 'item',
+      url: '/users',
+      icon: icons.UserOutlined,
       breadcrumbs: false
     }
   ]

@@ -44,38 +44,13 @@ const handleClickShowPassword = () => setShowPassword((show) => !show);
 
 const onSubmit = async (data) => {
   loginUser(userDispatch, data, navigate, setIsLoading, setError);
-  // setError(false);
-  // setIsLoading(true);
-  // adminLogin(data)
-  // .then((response) => {          
-  //     if (response.data.status === 401 || !response.data.isSuccess) {        
-  //       setError(response.data.message);
-  //       setIsLoading(false);
-  //     } else {       
-                      
-  //         localStorage.setItem("token", response.data.info.token);          
-  //         localStorage.setItem("refresh_token", response.data.info.refresh_token);          
-  //         setError("");
-  //         setIsLoading(false);
-  //         // dispatch({ type: "LOGIN_SUCCESS" });
-  //         navigate("/dashboard");
-  //       }      
-  //   })
-  //   .catch((err) => {      
-  //     if (err.response.data.status === 401 || !err.response.data.isSuccess) {        
-  //       setError(err.response.data.message);
-  //       setIsLoading(false);
-  //     } else {
-  //       setError("Something is wrong!");
-  //       setIsLoading(false);
-  //     }
-  //   });
 };
 
 
 return (
 
 <form onSubmit={handleSubmit(onSubmit)}>
+<Typography variant="h4" align="center">Welcome to Fitness Admin</Typography>
   <Fade in={error} mb={2}>
     <Typography color="#FF0000"  >
       {error ? error : ""}
@@ -117,17 +92,20 @@ return (
           gutterBottom
           component={Link}
           // align="right"
-          to="/register"
+          href="/forgot-password"
         > Forget Password?
         </Typography>
     </Box>
   </Grid>
+ 
+  
   <div>
   {isLoading ? (
+                    <Grid item xs={12} mt={2} style={{'text-align':'center'}}>
                     <CircularProgress
                       size={26}
-                     
-                    />
+                      fullWidth
+                    /></Grid>
                   ) : (
                     <Button
           type="submit"

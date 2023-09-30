@@ -60,7 +60,7 @@ function loginUser(dispatch, data, navigate, setIsLoading, setError) {
         setIsLoading(false);
       } else {                             
           localStorage.setItem("token", response.data.info.token);          
-          localStorage.setItem("refresh_token", response.data.info.refresh_token);          
+          localStorage.setItem("refreshToken", response.data.info.refresh_token);          
           setError("");
           setIsLoading(false);
           dispatch({ type: "LOGIN_SUCCESS" });

@@ -92,16 +92,5 @@ UserSchema.pre("save", async function (next) {
     }
     next();
   });
-
-
-//   UserSchema.methods.generateAuthToken =async function(data){
-//     try {
-//         const token =jwt.sign(data,process.env.ACCESS_TOKEN_SECRET);
-//         return token;
-
-//     } catch (error) {
-//         console.log("this is error part"+error);
-//     }
-// }
   
   module.exports = mongoose.model("user", UserSchema);

@@ -3,7 +3,12 @@ const Admin = require('../../models/Admin');
 const bcrypt = require('bcrypt');
 const {createResponse, queryErrorRelatedResponse, successResponse} = require('../../helper/sendResponse');
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 
+var nodemailer = require('nodemailer');
+var fs = require('fs');
+var handlebars = require('handlebars');
+const { sendMail } = require("../../helper/emailSender");
 
 //Admin Register
 const RegisterAdmin = async(req,res,next) => {
@@ -71,9 +76,127 @@ const RefreshToken = async(req,res,next) => {
     }
 }
 
+const CheckEmailId = async(req,res,next) => {
+    try{
+
+        const admin = await Admin.findOne({ email: req.body.email });
+        if(!admin) return queryErrorRelatedResponse(req,res, 401, "Invalid Email Id!");
+        let resetCode = crypto.randomBytes(32).toString("hex");
+      
+
+        const otp = Math.floor(1000 + Math.random() * 9000);
+        const expireOtpTime = Date.now() + 900000; //Valid upto 15 min
+        admin.otp = otp;
+        admin.resetCode = resetCode;
+        admin.expireOtpTime = expireOtpTime;
+        await admin.save();
+
+        sendMail({
+            from: 'mitalkachhadiya019@gmail.com',
+            to: 'mk.idea2code@gmail.com',
+            cc: 'mk.idea2code@gmail.com',
+            sub:  "Fitness - Forgot Password",
+            htmlFile: './emailTemplate/forgotPass.html',
+            extraData:  {
+                OTP:otp,
+                reset_link: process.env.BACKEND_URL+`/reset-password/${resetCode}/${admin._id}`
+            }
+        });
+        
+          successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
+        
+
+        // var transporter = nodemailer.createTransport({
+        //     service: 'gmail',
+        //     auth: {
+        //         user: 'mitalkachhadiya951@gmail.com',
+        //         pass: 'czxv bqed lzrj spsb'
+        //     }
+        // });
+
+        // fs.readFile('./emailTemplate/forgotPass.html', {encoding: 'utf-8'}, function (err, html) {
+        //     if (err) {
+        //       console.log(err);
+        //     } else {
+        //         var template = handlebars.compile(html);
+        //         var replacements = {
+        //             OTP:otp,
+        //             reset_link: process.env.BACKEND_URL+`/reset-password/${resetCode}/${admin._id}`
+        //         };
+        //         var htmlToSend = template(replacements);
+                
+    
+        //         var mailOptions = {
+        //             from: 'mitalkachhadiya019@gmail.com',
+        //             to: 'mk.idea2code@gmail.com',
+        //             subject: "Fitness - Forgot Password",
+        //             html: htmlToSend
+        //         };
+                
+        //         transporter.sendMail(mailOptions, function(err,info) {
+        //             if(err){
+        //                 next(err)
+        //             }else{
+        //                 successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
+                      
+        //             }
+        //         });
+    
+    
+        //     }
+        // });
+
+    }catch(err){
+        next(err)
+    }
+}
+
+const ResetPassword = async(req, res,next) => {
+    try{
+        const admin = await Admin.findOne({ _id: req.body.id,  resetCode: req.body.resetCode });
+        if(!admin) return queryErrorRelatedResponse(req,res, 401, "Invalid Request!"); 
+
+        if(new Date(admin.expireOtpTime).toTimeString() <= new Date(Date.now()).toTimeString()){
+            return queryErrorRelatedResponse(req,res, 401, "Reset Password link is expired!"); 
+        }
+        
+        const checkotp = await Admin.findOne({ otp: req.body.otp, _id: req.body.id });
+        if(!checkotp) return queryErrorRelatedResponse(req,res, 401, "Invalid OTP!");  
+
+
+        if(req.body.new_password !== req.body.confirm_password){
+            return queryErrorRelatedResponse(req,res,401,"Confirm Password does not match!")
+        }
+
+        admin.otp = null;
+        admin.expireOtpTime = null;
+        admin.resetCode = null;
+        admin.password = req.body.new_password;
+        await admin.save()
+
+        successResponse(res,"Your password has been changed.");
+
+    }catch(err){
+        next(err)
+    }
+}
+
+const adminDetails = async(req,res,next) => {
+    try{
+        const admin = await Admin.findById(req.admin._id);
+        if (!admin) return queryErrorRelatedResponse(res, 202, "admin not found.");
+        successResponse(res, admin);
+    }catch(err){
+        next(err)
+    }
+}
+
 
 module.exports = {
     RegisterAdmin,
     LoginAdmin,
-    RefreshToken
+    RefreshToken,
+    CheckEmailId,
+    ResetPassword,
+    adminDetails
   };

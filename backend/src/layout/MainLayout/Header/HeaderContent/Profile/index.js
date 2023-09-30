@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 // material-ui
@@ -32,6 +32,7 @@ import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons
 
 
 import { useUserDispatch, signOut } from "../../../../../context/UserContext";
+import { adminDetails } from "../../../../../ApiServices";
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -62,11 +63,33 @@ const Profile = () => {
   let navigate = useNavigate();
 
   const theme = useTheme();
+  var [adminname, setadminname] = useState("");
+  var [profileImg, setProfileImg] = useState(avatar1);
 
   const handleLogout = async () => {
     // logout
   };
 
+  const admindata = async() => {
+    await adminDetails()
+      .then((response) => {
+      
+        // let data = response.data.data.filter((item) => item.isAdmin === true);
+        // const name = localStorage.getItem("name");
+        // const buff = new Buffer(name, "base64");
+        // const base64ToStringNew = buff.toString("ascii");
+        // data = data.filter((item) => item.fullName === base64ToStringNew);
+        setadminname(response.data.info.name);
+        setProfileImg(response.data.info.image);
+        
+      })
+      .catch((err) => {console.log(err)});
+  };
+
+  useEffect(() => {
+    admindata();
+  }, []);
+  
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
@@ -104,8 +127,8 @@ const Profile = () => {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-          <Typography variant="subtitle1">John Doe</Typography>
+          <Avatar alt="profile user" src={`${process.env.REACT_APP_API_KEY_IMAGE_PATH}${profileImg}`} sx={{ width: 32, height: 32 }} />
+          <Typography variant="subtitle1">{adminname}</Typography>
         </Stack>
       </ButtonBase>
       <Popper
