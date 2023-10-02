@@ -5,7 +5,7 @@ require('dotenv').config();
 var bodyParser = require("body-parser");
 const cors = require("cors");
 const http = require("http").Server(app);
-
+const path = require("path");
 
 // Get error controller
 const errorController = require("./helper/errorController");
@@ -47,11 +47,8 @@ app.use("/app/user",userRoute);
 // Error handling middleware
 app.use(errorController);
 
-
-app.use("/", (req, res) => {
-  res.send("I am call");
-  console.log("i am call");
-});
+// Define static files
+app.use("/public", express.static(path.join(__dirname, "./public/images/")));
 
 const db = mongoose.connection;
 db.on('error',console.error.bind(console, "Connection Error"));

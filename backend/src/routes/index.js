@@ -21,6 +21,7 @@ import MainLayout from 'layout/MainLayout';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
+const Profile = Loadable(lazy(() => import('pages/profile/profile')))
 
 const Users = Loadable(lazy(() => import('pages/users')));
 
@@ -60,6 +61,7 @@ export default function ThemeRoutes() {
     
     <Route path="/" element={<PrivateRoute />}>
       <Route path="users" element={<Users />}/>
+      <Route path="profile" element={<Profile />}/>
       <Route path="dashboard" element={<DashboardDefault />} />
       <Route path="color" element={<Color />} />
       <Route path="sample-page" element={<SamplePage />} />
