@@ -1,202 +1,214 @@
-const express = require('express');
-const Admin = require('../../models/Admin');
-const bcrypt = require('bcrypt');
-const {createResponse, queryErrorRelatedResponse, successResponse} = require('../../helper/sendResponse');
-const jwt = require('jsonwebtoken')
-const crypto = require('crypto')
+const express = require("express");
+const Admin = require("../../models/Admin");
+const bcrypt = require("bcrypt");
+const { createResponse, queryErrorRelatedResponse, successResponse } = require("../../helper/sendResponse");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
-var nodemailer = require('nodemailer');
-var fs = require('fs');
-var handlebars = require('handlebars');
+var nodemailer = require("nodemailer");
+var fs = require("fs");
+var handlebars = require("handlebars");
 const { sendMail } = require("../../helper/emailSender");
 
 //Admin Register
-const RegisterAdmin = async(req,res,next) => {
-    try{
+const RegisterAdmin = async (req, res, next) => {
+  try {
     const { name, email, password } = req.body;
     const newAdmin = await Admin.create({
-        name,
-        email,
-        password,
-      });
-     //save Admin and response
-      createResponse(res, newAdmin);
-    }catch(err){
-        next(err);
-    }
-}
+      name,
+      email,
+      password,
+    });
+    //save Admin and response
+    createResponse(res, newAdmin);
+  } catch (err) {
+    next(err);
+  }
+};
 
 //Admin Login
-const LoginAdmin = async(req,res,next) => {
-    try{
+const LoginAdmin = async (req, res, next) => {
+  try {
+    const admin = await Admin.findOne({ email: req.body.email });
+    if (!admin) return queryErrorRelatedResponse(req, res, 401, "Invalid Username!");
 
-        const admin = await Admin.findOne({ email: req.body.email });
-        if(!admin) return queryErrorRelatedResponse(req,res, 401, "Invalid Username!");
+    const validatePassword = await bcrypt.compare(req.body.password, admin.password);
+    if (!validatePassword) return queryErrorRelatedResponse(req, res, 401, "Invalid Password!");
 
-        const validatePassword = await bcrypt.compare(req.body.password, admin.password);
-        if(!validatePassword) return queryErrorRelatedResponse(req,res, 401, "Invalid Password!");
+    const token = admin.generateAuthToken({ email: req.body.email });
+    admin.remember_token = token;
 
-        const token = admin.generateAuthToken({ email : req.body.email});
-        admin.remember_token = token;
+    const refresh_token = admin.generateRefreshToken({ email: req.body.email });
 
-        const refresh_token = admin.generateRefreshToken({ email : req.body.email});
+    const output = await admin.save();
+    const tokens = {
+      token: token,
+      refresh_token: refresh_token,
+    };
+    successResponse(res, tokens);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        const output = await admin.save();
-        const tokens = {
-            token : token,
-            refresh_token : refresh_token
-        }
-        successResponse(res, tokens);
+//Get RefreshToken
+const RefreshToken = async (req, res, next) => {
+  const refreshToken = req.body.refreshToken;
 
-    }catch(err){
-        next(err);
+  if (!refreshToken) {
+    return res.status(402).send("Access Denied. No refresh token provided.");
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const admin = await Admin.findOne({ email: decoded.email });
+    if (!admin) return queryErrorRelatedResponse(req, res, 401, "Invalid Username!");
+
+    const token = admin.generateAuthToken({ email: decoded.email });
+    successResponse(res, token);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Check EmailID for Forgot Password
+const CheckEmailId = async (req, res, next) => {
+  try {
+    const admin = await Admin.findOne({ email: req.body.email });
+    if (!admin) return queryErrorRelatedResponse(req, res, 401, "Invalid Email Id!");
+    let resetCode = crypto.randomBytes(32).toString("hex");
+
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    const expireOtpTime = Date.now() + 900000; //Valid upto 15 min
+    admin.otp = otp;
+    admin.resetCode = resetCode;
+    admin.expireOtpTime = expireOtpTime;
+    await admin.save();
+
+    sendMail({
+      from: "mitalkachhadiya019@gmail.com",
+      to: "mk.idea2code@gmail.com",
+      cc: "mk.idea2code@gmail.com",
+      sub: "Fitness - Forgot Password",
+      htmlFile: "./emailTemplate/forgotPass.html",
+      extraData: {
+        OTP: otp,
+        reset_link: process.env.BACKEND_URL + `/reset-password/${resetCode}/${admin._id}`,
+      },
+    });
+
+    successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
+
+    // var transporter = nodemailer.createTransport({
+    //     service: 'gmail',
+    //     auth: {
+    //         user: 'mitalkachhadiya951@gmail.com',
+    //         pass: 'czxv bqed lzrj spsb'
+    //     }
+    // });
+
+    // fs.readFile('./emailTemplate/forgotPass.html', {encoding: 'utf-8'}, function (err, html) {
+    //     if (err) {
+    //       console.log(err);
+    //     } else {
+    //         var template = handlebars.compile(html);
+    //         var replacements = {
+    //             OTP:otp,
+    //             reset_link: process.env.BACKEND_URL+`/reset-password/${resetCode}/${admin._id}`
+    //         };
+    //         var htmlToSend = template(replacements);
+
+    //         var mailOptions = {
+    //             from: 'mitalkachhadiya019@gmail.com',
+    //             to: 'mk.idea2code@gmail.com',
+    //             subject: "Fitness - Forgot Password",
+    //             html: htmlToSend
+    //         };
+
+    //         transporter.sendMail(mailOptions, function(err,info) {
+    //             if(err){
+    //                 next(err)
+    //             }else{
+    //                 successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
+
+    //             }
+    //         });
+
+    //     }
+    // });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Reset Password
+const ResetPassword = async (req, res, next) => {
+  try {
+    const admin = await Admin.findOne({ _id: req.body.id, resetCode: req.body.resetCode });
+    if (!admin) return queryErrorRelatedResponse(req, res, 401, "Invalid Request!");
+
+    if (new Date(admin.expireOtpTime).toTimeString() <= new Date(Date.now()).toTimeString()) {
+      return queryErrorRelatedResponse(req, res, 401, "Reset Password link is expired!");
     }
-}
 
+    const checkotp = await Admin.findOne({ otp: req.body.otp, _id: req.body.id });
+    if (!checkotp) return queryErrorRelatedResponse(req, res, 401, "Invalid OTP!");
 
-const RefreshToken = async(req,res,next) => {
-
-    const refreshToken = req.body.refreshToken;
-    
-    if (!refreshToken) {
-      return res.status(402).send('Access Denied. No refresh token provided.');
+    if (req.body.new_password !== req.body.confirm_password) {
+      return queryErrorRelatedResponse(req, res, 401, "Confirm Password does not match!");
     }
-  
-    try {
-      const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-      const admin = await Admin.findOne({ email: decoded.email });
-      if(!admin) return queryErrorRelatedResponse(req,res, 401, "Invalid Username!");
+    admin.otp = null;
+    admin.expireOtpTime = null;
+    admin.resetCode = null;
+    admin.password = req.body.new_password;
+    await admin.save();
 
-      const token = admin.generateAuthToken({ email : decoded.email});
-      successResponse(res, token);
+    successResponse(res, "Your password has been changed.");
+  } catch (err) {
+    next(err);
+  }
+};
 
-    } catch (err) {
-        next(err);
+//Get Admin Details for admin Profile
+const adminDetails = async (req, res, next) => {
+  try {
+    const admin = await Admin.findById(req.admin._id);
+    if (!admin) return queryErrorRelatedResponse(res, 202, "admin not found.");
+    successResponse(res, admin);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update Admin Profile
+const UpdateProfile = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const admin = await Admin.findById(req.admin._id);
+    if (!admin) return queryErrorRelatedResponse(res, 202, "admin not found.");
+
+    if (req.file) {
+      deleteFiles(admin.image);
+      admin.image = req.file.filename;
     }
-}
 
-const CheckEmailId = async(req,res,next) => {
-    try{
+    admin.name = name;
+    const result = await admin.save();
 
-        const admin = await Admin.findOne({ email: req.body.email });
-        if(!admin) return queryErrorRelatedResponse(req,res, 401, "Invalid Email Id!");
-        let resetCode = crypto.randomBytes(32).toString("hex");
-      
-
-        const otp = Math.floor(1000 + Math.random() * 9000);
-        const expireOtpTime = Date.now() + 900000; //Valid upto 15 min
-        admin.otp = otp;
-        admin.resetCode = resetCode;
-        admin.expireOtpTime = expireOtpTime;
-        await admin.save();
-
-        sendMail({
-            from: 'mitalkachhadiya019@gmail.com',
-            to: 'mk.idea2code@gmail.com',
-            cc: 'mk.idea2code@gmail.com',
-            sub:  "Fitness - Forgot Password",
-            htmlFile: './emailTemplate/forgotPass.html',
-            extraData:  {
-                OTP:otp,
-                reset_link: process.env.BACKEND_URL+`/reset-password/${resetCode}/${admin._id}`
-            }
-        });
-        
-          successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
-        
-
-        // var transporter = nodemailer.createTransport({
-        //     service: 'gmail',
-        //     auth: {
-        //         user: 'mitalkachhadiya951@gmail.com',
-        //         pass: 'czxv bqed lzrj spsb'
-        //     }
-        // });
-
-        // fs.readFile('./emailTemplate/forgotPass.html', {encoding: 'utf-8'}, function (err, html) {
-        //     if (err) {
-        //       console.log(err);
-        //     } else {
-        //         var template = handlebars.compile(html);
-        //         var replacements = {
-        //             OTP:otp,
-        //             reset_link: process.env.BACKEND_URL+`/reset-password/${resetCode}/${admin._id}`
-        //         };
-        //         var htmlToSend = template(replacements);
-                
-    
-        //         var mailOptions = {
-        //             from: 'mitalkachhadiya019@gmail.com',
-        //             to: 'mk.idea2code@gmail.com',
-        //             subject: "Fitness - Forgot Password",
-        //             html: htmlToSend
-        //         };
-                
-        //         transporter.sendMail(mailOptions, function(err,info) {
-        //             if(err){
-        //                 next(err)
-        //             }else{
-        //                 successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
-                      
-        //             }
-        //         });
-    
-    
-        //     }
-        // });
-
-    }catch(err){
-        next(err)
-    }
-}
-
-const ResetPassword = async(req, res,next) => {
-    try{
-        const admin = await Admin.findOne({ _id: req.body.id,  resetCode: req.body.resetCode });
-        if(!admin) return queryErrorRelatedResponse(req,res, 401, "Invalid Request!"); 
-
-        if(new Date(admin.expireOtpTime).toTimeString() <= new Date(Date.now()).toTimeString()){
-            return queryErrorRelatedResponse(req,res, 401, "Reset Password link is expired!"); 
-        }
-        
-        const checkotp = await Admin.findOne({ otp: req.body.otp, _id: req.body.id });
-        if(!checkotp) return queryErrorRelatedResponse(req,res, 401, "Invalid OTP!");  
-
-
-        if(req.body.new_password !== req.body.confirm_password){
-            return queryErrorRelatedResponse(req,res,401,"Confirm Password does not match!")
-        }
-
-        admin.otp = null;
-        admin.expireOtpTime = null;
-        admin.resetCode = null;
-        admin.password = req.body.new_password;
-        await admin.save()
-
-        successResponse(res,"Your password has been changed.");
-
-    }catch(err){
-        next(err)
-    }
-}
-
-const adminDetails = async(req,res,next) => {
-    try{
-        const admin = await Admin.findById(req.admin._id);
-        if (!admin) return queryErrorRelatedResponse(res, 202, "admin not found.");
-        successResponse(res, admin);
-    }catch(err){
-        next(err)
-    }
-}
-
+    successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
 
 module.exports = {
-    RegisterAdmin,
-    LoginAdmin,
-    RefreshToken,
-    CheckEmailId,
-    ResetPassword,
-    adminDetails
-  };
+  RegisterAdmin,
+  LoginAdmin,
+  RefreshToken,
+  CheckEmailId,
+  ResetPassword,
+  adminDetails,
+  UpdateProfile,
+};

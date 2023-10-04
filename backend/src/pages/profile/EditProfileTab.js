@@ -1,50 +1,41 @@
 import PropTypes from 'prop-types';
 
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 
-import {
-Button,
-TextField,
-Grid,
-Typography,
-CircularProgress,
-IconButton,
-Fade
-} from  '@mui/material';
+import { Button, Input, TextField, Grid, Typography, CircularProgress, Fade } from '@mui/material';
+// import { styled } from '@mui/material/styles';
 
-import { styled } from '@mui/material/styles';
-
-import Person from '@mui/icons-material/Person';
+// import Person from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 
 // import axios from "axios";
 // context
-import { useUserDispatch, loginUser } from "../../context/UserContext";
-import { useForm } from "react-hook-form"
+// import { useUserDispatch, loginUser } from '../../context/UserContext';
+import { useForm } from 'react-hook-form';
 
 // import { adminLogin } from "../../../ApiServices";
-import { useNavigate } from "react-router-dom";
-
-
+// import { useNavigate } from 'react-router-dom';
+import { adminDetails, UpdateProfile } from '../../ApiServices';
+import avatar1 from 'assets/images/users/avatar-1.png';
+import upload from 'assets/images/upload3.jpg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const EditProfileTab = () => {
-  let navigate = useNavigate();
+  // let navigate = useNavigate();
   // global
-  var userDispatch = useUserDispatch();
-  
+  // var userDispatch = useUserDispatch();
+
   // local
- var [isLoading, setIsLoading] = useState(false);
- var [error, setError] = useState("");
- const { register, handleSubmit } = useForm();
+  var [isLoading, setIsLoading] = useState(false);
+  // var [error, setError] = useState('');
+  const { register, handleSubmit, setValue } = useForm();
 
-const onSubmit = async (data) => {
- loginUser(userDispatch, data, navigate, setIsLoading, setError);
-};
+  // const Input = styled('input')({
+  //   display: 'none'
+  // });
 
-const Input = styled('input')({
-  display: 'none',
-});
-
-const [newUrl, setNewUrl] = useState(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const [newUrl, setNewUrl] = useState('');
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -57,74 +48,149 @@ const [newUrl, setNewUrl] = useState(null);
     reader.readAsDataURL(file);
   };
 
+  const admindata = async () => {
+    await adminDetails()
+      .then((response) => {
+        setValue('name', response.data.info.name);
+        setValue('email', response.data.info.email);
+        response.data.info.image ? setNewUrl(`${process.env.REACT_APP_API_KEY_IMAGE_PATH}/${response.data.info.image}`) : avatar1;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  useEffect(() => {
+    admindata();
+  }, []);
 
-  
+  const handleMouseOver = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseOut = () => {
+    setIsHovering(false);
+  };
+
+  const onSubmitProfile = (data) => {
+    setIsLoading(true);
+    let formData = new FormData(); //formdata object
+    Object.keys(data).forEach(function (key) {
+      if (key === 'image') {
+        formData.append(key, data[key][0]);
+      } else {
+        formData.append(key, data[key]);
+      }
+    });
+
+    UpdateProfile(formData)
+      .then((response) => {
+        if (response.data.isSuccess && response.data.status === 200) {
+          setIsLoading(false);
+          // admindata();
+          toast.success('Updated successfully!');
+        } else {
+          if ((response.data.status === 202 || 400) && !response.data.isSuccess) {
+            toast.error(response.data.message);
+            setIsLoading(false);
+          }
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+        if (!err.response.data.isSuccess) {
+          if (err.response.data.status === 400) {
+            toast.error(err.response.data.message);
+            setIsLoading(false);
+          } else {
+            toast.error('Something is wrong in an input.');
+            setIsLoading(false);
+          }
+        } else {
+          toast.error('Something Went Wrong!');
+          setIsLoading(false);
+        }
+      });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmitProfile)}>
+      <Fade mb={2}>
+        <Typography color="#FF0000"></Typography>
+        {/* {error ? error : ''} */}
+      </Fade>
+      <ToastContainer />
+      <Grid container spacing={3}>
+        <Grid xs={8} mt={2} spacing={3}>
+          <Grid item xs={12} m={2} spacing={3}>
+            <TextField
+              id="name"
+              {...register('name', { required: true })}
+              margin="normal"
+              placeholder="Name"
+              type="name"
+              label=" Name"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} m={2} spacing={3}>
+            <TextField
+              id="outlined-read-only-input"
+              InputLabelProps={{ shrink: true }}
+              margin="normal"
+              {...register('email', { required: true })}
+              placeholder="Email Id"
+              type="email"
+              label="Email Id"
+              readOnly={true}
+              disabled={true}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={4} mt={2} style={{ textAlign: 'center' }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            style={{ display: 'block' }}
+            spacing={2}
+            sx={6}
+            onMouseOver={handleMouseOver}
+            onMouseOut={handleMouseOut}
+          >
+            <label htmlFor="icon-button-file" style={{ textAlign: 'center' }}>
+              <Input
+                name="image"
+                accept="image/*"
+                {...register('image')}
+                id="icon-button-file"
+                type="file"
+                onChange={handleFileUpload}
+                alignItems="center"
+                style={{ top: '-9999px', left: '-9999px' }}
+              />
+              {!isHovering ? (
+                <img src={newUrl} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
+              ) : (
+                <img src={upload} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
+              )}
+            </label>
+          </Stack>
+        </Grid>
+      </Grid>
 
-  <Fade in={error} mb={2}>
-    <Typography color="#FF0000"  >
-      {error ? error : ""}
-    </Typography>
-  </Fade>
-
-  <Stack direction="row" alignItems="center" spacing={2}>
-      
-        <label htmlFor="icon-button-file">
-          <Input accept="image/*" id="icon-button-file" type="file" onChange={handleFileUpload} />
-          <IconButton color="primary" aria-label="upload picture" component="span" >
-            <Person  width="100"/>
-          </IconButton>
-        </label>
-
-        <img src={newUrl}  alt="Profile" width="100" height={100} />
-    </Stack>
-    
-   
-  <TextField
-    id="name"
-    {...register("name", { required: true })}
-    margin="normal"
-    placeholder="Name"
-    type="name"
-    label="Name" 
-    readOnly={true}
-    fullWidth
-  />
-
-  
-  <TextField
-    id="outlined-read-only-input"
-    {...register("email", { required: true })}
-    margin="normal"
-    placeholder="Email Id"
-    type="email"
-    label="Email Id" 
-    readOnly={true}
-    value="admin@gmail.com"
-    fullWidth
-    
-  />
-  
-  <div>
-  {isLoading ? (
-      <Grid item xs={12} mt={2} style={{'text-align':'center'}}>
-      <CircularProgress 
-        size={26}
-        fullWidth
-      /></Grid>
-    ) : (
-      <Button
-      type="submit"
-      variant="contained"
-      color="primary"
-      size="large"
-      style={{'margin-top':'15px','float':'right'}} > 
-      Update
-      </Button>
-    )}
-  </div>           
-</form>
+      <div>
+        {isLoading ? (
+          <Grid item xs={12} mt={2} style={{ textAlign: 'center' }}>
+            <CircularProgress size={26} fullWidth style={{ 'margin-top': '15px', float: 'right' }} />
+          </Grid>
+        ) : (
+          <Button type="submit" variant="contained" color="primary" size="large" style={{ 'margin-top': '15px', float: 'right' }}>
+            Update
+          </Button>
+        )}
+      </div>
+    </form>
   );
 };
 
