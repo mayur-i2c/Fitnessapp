@@ -18,7 +18,7 @@ axios.interceptors.response.use(
         localStorage.setItem('token', token);
         // Retry the original request with the new token
         originalRequest.headers.Authorization = `Bearer ${token}`;
-        console.log(originalRequest);
+        // console.log(originalRequest);
         return axios(originalRequest);
       } catch (error) {
         // Handle refresh token error or redirect to login
@@ -45,6 +45,12 @@ export const adminDetails = () =>
   axios.get(`${mainUrl}/admin/adminDetails`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
 // Get admin profile
+export const changePassword = (data) =>
+  axios.post(`${mainUrl}/admin/changePassword`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Change Password
 export const UpdateProfile = (data) =>
   axios.post(`${mainUrl}/admin/UpdateProfile`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

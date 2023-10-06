@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import React, { useState, useEffect } from 'react';
 
-import { Button, Input, TextField, Grid, Typography, CircularProgress, Fade } from '@mui/material';
+import { Button, Input, Grid, Typography, CircularProgress, Fade } from '@mui/material';
 // import { styled } from '@mui/material/styles';
 
 // import Person from '@mui/icons-material/Person';
@@ -20,6 +20,9 @@ import avatar1 from 'assets/images/users/avatar-1.png';
 import upload from 'assets/images/upload3.jpg';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import CustomInput from 'components/CustomInput';
+
 const EditProfileTab = () => {
   // let navigate = useNavigate();
   // global
@@ -27,8 +30,15 @@ const EditProfileTab = () => {
 
   // local
   var [isLoading, setIsLoading] = useState(false);
+  var [defaultLoading, setdefaultLoading] = useState(true);
   // var [error, setError] = useState('');
-  const { register, handleSubmit, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors }
+  } = useForm();
 
   // const Input = styled('input')({
   //   display: 'none'
@@ -54,14 +64,16 @@ const EditProfileTab = () => {
         setValue('name', response.data.info.name);
         setValue('email', response.data.info.email);
         response.data.info.image ? setNewUrl(`${process.env.REACT_APP_API_KEY_IMAGE_PATH}/${response.data.info.image}`) : avatar1;
+        setdefaultLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setdefaultLoading(false);
       });
   };
   useEffect(() => {
     admindata();
-  }, []);
+  }, [setValue, getValues]);
 
   const handleMouseOver = () => {
     setIsHovering(true);
@@ -72,6 +84,7 @@ const EditProfileTab = () => {
   };
 
   const onSubmitProfile = (data) => {
+    // console.log(getValues());
     setIsLoading(true);
     let formData = new FormData(); //formdata object
     Object.keys(data).forEach(function (key) {
@@ -114,82 +127,93 @@ const EditProfileTab = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmitProfile)}>
-      <Fade mb={2}>
-        <Typography color="#FF0000"></Typography>
-        {/* {error ? error : ''} */}
-      </Fade>
-      <ToastContainer />
-      <Grid container spacing={3}>
-        <Grid xs={8} mt={2} spacing={3}>
-          <Grid item xs={12} m={2} spacing={3}>
-            <TextField
-              id="name"
-              {...register('name', { required: true })}
-              margin="normal"
-              placeholder="Name"
-              type="name"
-              label=" Name"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} m={2} spacing={3}>
-            <TextField
-              id="outlined-read-only-input"
-              InputLabelProps={{ shrink: true }}
-              margin="normal"
-              {...register('email', { required: true })}
-              placeholder="Email Id"
-              type="email"
-              label="Email Id"
-              readOnly={true}
-              disabled={true}
-              fullWidth
-            />
-          </Grid>
-        </Grid>
-        <Grid item xs={4} mt={2} style={{ textAlign: 'center' }}>
-          <Stack
-            direction="row"
-            alignItems="center"
-            style={{ display: 'block' }}
-            spacing={2}
-            sx={6}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-          >
-            <label htmlFor="icon-button-file" style={{ textAlign: 'center' }}>
-              <Input
-                name="image"
-                accept="image/*"
-                {...register('image')}
-                id="icon-button-file"
-                type="file"
-                onChange={handleFileUpload}
-                alignItems="center"
-                style={{ top: '-9999px', left: '-9999px' }}
+      {defaultLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <Fade mb={2}>
+            <Typography color="#FF0000"></Typography>
+            {/* {error ? error : ''} */}
+          </Fade>
+          <ToastContainer />
+          <Grid container spacing={3}>
+            <Grid xs={8} mt={2} spacing={3}>
+              <CustomInput
+                xs={12}
+                m={2}
+                spacing={3}
+                id="name"
+                name="name"
+                label="Name"
+                inputRef={register('name', { required: true })}
+                error={!!errors.name}
+                helperText={errors.name && 'Name is required'} // Display the error message here
+                placeholder="Name"
+                defaultValue={getValues('name')}
+                onChange={(e) => setValue('name', e.target.value)}
               />
-              {!isHovering ? (
-                <img src={newUrl} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
-              ) : (
-                <img src={upload} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
-              )}
-            </label>
-          </Stack>
-        </Grid>
-      </Grid>
 
-      <div>
-        {isLoading ? (
-          <Grid item xs={12} mt={2} style={{ textAlign: 'center' }}>
-            <CircularProgress size={26} fullWidth style={{ 'margin-top': '15px', float: 'right' }} />
+              <CustomInput
+                xs={12}
+                m={2}
+                spacing={3}
+                id="email"
+                name="email"
+                label="Email"
+                inputRef={register('email', { required: true })}
+                error={!!errors.email}
+                helperText={errors.email && 'Email is required'} // Display the error message here
+                placeholder="Email"
+                defaultValue={getValues('email')}
+                readOnly={true}
+                disabled={true}
+                onChange={(e) => setValue('email', e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={4} mt={2} style={{ textAlign: 'center' }}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                style={{ display: 'block' }}
+                spacing={2}
+                sx={6}
+                onMouseOver={handleMouseOver}
+                onMouseOut={handleMouseOut}
+              >
+                <label htmlFor="icon-button-file" style={{ textAlign: 'center' }}>
+                  <Input
+                    name="image"
+                    accept="image/*"
+                    {...register('image')}
+                    id="icon-button-file"
+                    type="file"
+                    onChange={handleFileUpload}
+                    alignItems="center"
+                    style={{ top: '-9999px', left: '-9999px' }}
+                  />
+                  {!isHovering ? (
+                    <img src={newUrl} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
+                  ) : (
+                    <img src={upload} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
+                  )}
+                </label>
+              </Stack>
+            </Grid>
           </Grid>
-        ) : (
-          <Button type="submit" variant="contained" color="primary" size="large" style={{ 'margin-top': '15px', float: 'right' }}>
-            Update
-          </Button>
-        )}
-      </div>
+
+          <div>
+            {isLoading ? (
+              <Grid item xs={12} mt={2} style={{ textAlign: 'center' }}>
+                <CircularProgress size={26} fullWidth style={{ 'margin-top': '15px', float: 'right' }} />
+              </Grid>
+            ) : (
+              <Button type="submit" variant="contained" color="primary" size="large" style={{ 'margin-top': '15px', float: 'right' }}>
+                Update
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </form>
   );
 };

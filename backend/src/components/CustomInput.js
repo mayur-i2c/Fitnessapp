@@ -1,47 +1,46 @@
 import React from 'react';
-import TextField from '@mui/material';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Grid from '@material-ui/core/Grid';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
 
 const CustomInput = ({
   name,
   label,
-  inputref,
-  errors,
-  sm,
+  inputRef,
+  error,
+  helperText,
   xs,
-  multiline,
-  rows,
-  type,
-  onchange,
+  sm,
+  m,
+  placeholder,
+  id,
   defaultValue,
+  readOnly,
   disabled,
-  InputProps,
-  placeholder
-}) => (
-  <Grid item xs={xs} sm={sm}>
-    <TextField
-      InputLabelProps={{
-        shrink: true
-      }}
-      variant="outlined"
-      defaultValue={defaultValue}
-      margin="normal"
-      fullWidth
-      label={label}
-      name={name}
-      inputRef={inputref}
-      error={Boolean(errors[name])}
-      multiline={multiline}
-      rows={rows}
-      type={type}
-      onChange={onchange}
-      disabled={disabled}
-      InputProps={InputProps}
-      placeholder={placeholder}
-    />
-    <FormHelperText error>{errors[name] && errors[name].message}</FormHelperText>
-  </Grid>
-);
+  onChange // Add onChange prop
+}) => {
+  return (
+    <Grid item xs={xs} sm={sm} m={m}>
+      <TextField
+        InputLabelProps={{
+          shrink: true
+        }}
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        label={label}
+        id={id}
+        name={name}
+        inputRef={inputRef}
+        error={error}
+        helperText={helperText}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+        readOnly={readOnly}
+        disabled={disabled}
+        onChange={onChange} // Handle onChange event
+      />
+    </Grid>
+  );
+};
 
 export default CustomInput;

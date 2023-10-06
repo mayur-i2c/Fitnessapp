@@ -10,6 +10,7 @@ const {
   ResetPassword,
   adminDetails,
   UpdateProfile,
+  ChangePassword,
 } = require("../../controllers/Admin/adminController");
 const authenticAdmin = require("../../helper/verifyAdminToken");
 
@@ -19,6 +20,8 @@ router.post("/refreshToken", RefreshToken);
 router.post("/checkmailid", CheckEmailId);
 router.post("/resetPassword", ResetPassword);
 router.get("/adminDetails", authenticAdmin, adminDetails);
+router.post("/changePassword", authenticAdmin, ChangePassword);
+
 router.post(
   "/UpdateProfile",
   authenticAdmin,
