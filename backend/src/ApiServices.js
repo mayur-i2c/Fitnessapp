@@ -56,6 +56,14 @@ export const UpdateProfile = (data) =>
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
 
-// export const allUsers = (data) => axios.get(`${mainUrl}/admin/user/allUsers`, data,  {
-//   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-// });
+//Get All users
+export const allUsers = (data) =>
+  axios.get(`${mainUrl}/admin/user/allUsers`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Single User
+export const deleteUser = (data) =>
+  axios.get(`${mainUrl}/admin/user/deleteUser`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });

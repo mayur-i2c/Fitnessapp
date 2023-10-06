@@ -4,7 +4,7 @@
 // import LoginRoutes from './LoginRoutes';
 // import MainRoutes from './MainRoutes';
 
-import React, {lazy} from 'react';
+import React, { lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // project import
@@ -21,9 +21,10 @@ import MainLayout from 'layout/MainLayout';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
-const Profile = Loadable(lazy(() => import('pages/profile/profile')))
+const Profile = Loadable(lazy(() => import('pages/profile/profile')));
 
 const Users = Loadable(lazy(() => import('pages/users')));
+const UserForm = Loadable(lazy(() => import('pages/users/userform')));
 
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
@@ -34,45 +35,40 @@ const Color = Loadable(lazy(() => import('pages/components-overview/Color')));
 const Shadow = Loadable(lazy(() => import('pages/components-overview/Shadow')));
 const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons')));
 // ==============================|| ROUTING RENDER ||============================== //
-import { useUserState } from "../context/UserContext";
-
+import { useUserState } from '../context/UserContext';
 
 export default function ThemeRoutes() {
-
-   // global
+  // global
   const { isAuthenticated } = useUserState();
 
   const PublicRoute = () => {
-    return isAuthenticated || Boolean(localStorage.getItem("token")) ?  <Navigate to="/dashboard" /> : <MinimalLayout />;
-}
+    return isAuthenticated || Boolean(localStorage.getItem('token')) ? <Navigate to="/dashboard" /> : <MinimalLayout />;
+  };
 
   const PrivateRoute = () => {
-      return isAuthenticated || Boolean(localStorage.getItem("token")) ? <MainLayout /> : <Navigate to="/" />;
-  }
+    return isAuthenticated || Boolean(localStorage.getItem('token')) ? <MainLayout /> : <Navigate to="/" />;
+  };
 
   return (
     <Routes>
-    <Route path="/" element={<PublicRoute />}>
-      <Route index element={<AuthLogin />} />
-      <Route path="register" element={<AuthRegister />} />
-      <Route path="forgot-password" element={<ForgotPassowrd />} />
-      <Route path="reset-password/:token/:userid" element={<ResetPassword />} />
-    </Route>
-    
-    <Route path="/" element={<PrivateRoute />}>
-      <Route path="users" element={<Users />}/>
-      <Route path="profile" element={<Profile />}/>
-      <Route path="dashboard" element={<DashboardDefault />} />
-      <Route path="color" element={<Color />} />
-      <Route path="sample-page" element={<SamplePage />} />
-      <Route path="shadow" element={<Shadow />} />
-      <Route path="typography" element={<Typography />} />
-      <Route path="icons/ant" element={<AntIcons />} />
-    </Route>
-  </Routes>
+      <Route path="/" element={<PublicRoute />}>
+        <Route index element={<AuthLogin />} />
+        <Route path="register" element={<AuthRegister />} />
+        <Route path="forgot-password" element={<ForgotPassowrd />} />
+        <Route path="reset-password/:token/:userid" element={<ResetPassword />} />
+      </Route>
 
+      <Route path="/" element={<PrivateRoute />}>
+        <Route path="users" element={<Users />} />
+        <Route path="user/manage" element={<UserForm />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="dashboard" element={<DashboardDefault />} />
+        <Route path="color" element={<Color />} />
+        <Route path="sample-page" element={<SamplePage />} />
+        <Route path="shadow" element={<Shadow />} />
+        <Route path="typography" element={<Typography />} />
+        <Route path="icons/ant" element={<AntIcons />} />
+      </Route>
+    </Routes>
   );
 }
-
-
-
