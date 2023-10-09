@@ -63,7 +63,15 @@ export const allUsers = (data) =>
   });
 
 //Delete Single User
-export const deleteUser = (data) =>
-  axios.get(`${mainUrl}/admin/user/deleteUser`, data, {
+export const deleteUser = (id) =>
+  axios.post(`${mainUrl}/admin/user/deleteUser/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+// delete multiple Users
+export const deleteMultiUser = (data) => {
+  return axios.delete(`${mainUrl}/admin/user/deleteMultiUser`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

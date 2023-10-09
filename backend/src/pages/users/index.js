@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { allUsers } from '../../ApiServices';
+import { allUsers, deleteMultiUser } from '../../ApiServices';
 import * as Icons from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { Grid, CircularProgress } from '@mui/material';
+import { Grid, CircularProgress, IconButton } from '@mui/material';
 import swal from 'sweetalert';
 
 const Users = () => {
@@ -86,39 +86,65 @@ const Users = () => {
         customBodyRender: (value) => {
           return (
             <div>
+              {/* <Icons.Visibility
+                style={{
+                  color: '#52c41a',
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderRadius: '5px',
+                  margin: '0px 6px',
+                  fontSize: '30px',
+                  padding: '4px'
+                }}
+              /> */}
               <Icons.Edit
+                style={{
+                  color: '#6495ED',
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderRadius: '5px',
+                  margin: '0px 6px',
+                  fontSize: '30px',
+                  padding: '4px'
+                }}
                 onClick={() => {
                   const editdata = datatableData.find((data) => data._id === value);
-                  navigate({
-                    pathname: '/user/manage',
-                    state: {
-                      editdata: editdata,
-                      imageurl: baseurl
-                    }
-                  });
+                  console.log(editdata);
+                  navigate('/user/manage', { state: { editdata: editdata, imageurl: baseurl } });
                 }}
               />
               <Icons.Delete
+                style={{
+                  color: '#FF5733',
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderRadius: '5px',
+                  margin: '0px 6px',
+                  fontSize: '30px',
+                  padding: '4px'
+                }}
                 onClick={async () => {
                   const confirm = await swal({
                     title: 'Are you sure?',
                     text: 'Are you sure that you want to delete this user?',
                     icon: 'warning',
+                    buttons: ['No, cancel it!', 'Yes, I am sure!'],
                     dangerMode: true
                   });
                   if (confirm) {
-                    // deleteUser(value)
-                    //   .then(() => {
-                    //     toast.success("deleted successfully!", {
-                    //       key: value,
-                    //     });
-                    //     list();
-                    //   })
-                    //   .catch((err) => {
-                    //     toast.error("something went wrong!", {
-                    //       key: value,
-                    //     });
-                    //   });
+                    console.log(value);
+                    deleteUser(value)
+                      .then(() => {
+                        toast.success('deleted successfully!', {
+                          key: value
+                        });
+                        list();
+                      })
+                      .catch(() => {
+                        toast.error('something went wrong!', {
+                          key: value
+                        });
+                      });
                   }
                 }}
               />
@@ -129,8 +155,50 @@ const Users = () => {
     }
   ];
 
+  // const options = {
+  //   filterType: 'checkbox'
+  // };
+
+  const deleteMultiple = async (index) => {
+    const ids = index.data.map((index1) => datatableData.find((data, index2) => index2 === index1.dataIndex && data._id)._id);
+    const confirm = await swal({
+      title: 'Are you sure?',
+      text: 'Are you sure that you want to delete this users?',
+      icon: 'warning',
+      buttons: ['No, cancel it!', 'Yes, I am sure!'],
+      dangerMode: true
+    });
+
+    if (confirm) {
+      deleteMultiUser(ids)
+        .then(() => {
+          list();
+          toast.success('Deleted successfully!', {
+            key: ids
+          });
+        })
+        .catch(() => {
+          toast.error('Something went wrong!', {
+            key: ids
+          });
+        });
+    }
+  };
+
+  const SelectedRowsToolbar = ({ selectedRows, data }) => {
+    return (
+      <div>
+        <IconButton onClick={() => deleteMultiple(selectedRows, data)}>
+          <Icons.Delete />
+        </IconButton>
+      </div>
+    );
+  };
+
   const options = {
-    filterType: 'checkbox'
+    customToolbarSelect: (selectedRows, data) => (
+      <SelectedRowsToolbar selectedRows={selectedRows} data={data} columns={columns} datatableTitle="test" />
+    )
   };
 
   return (

@@ -26,6 +26,8 @@ const Profile = Loadable(lazy(() => import('pages/profile/profile')));
 const Users = Loadable(lazy(() => import('pages/users')));
 const UserForm = Loadable(lazy(() => import('pages/users/userform')));
 
+const MedicalCondition = Loadable(lazy(() => import('pages/settings/MedicalCondition')));
+
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
 
@@ -63,6 +65,7 @@ export default function ThemeRoutes() {
         <Route path="user/manage" element={<UserForm />} />
         <Route path="profile" element={<Profile />} />
         <Route path="dashboard" element={<DashboardDefault />} />
+        <Route path="settings/medicalCondition" element={<MedicalCondition />} />
         <Route path="color" element={<Color />} />
         <Route path="sample-page" element={<SamplePage />} />
         <Route path="shadow" element={<Shadow />} />

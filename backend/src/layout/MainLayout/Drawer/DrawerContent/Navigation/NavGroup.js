@@ -6,6 +6,7 @@ import { Box, List, Typography } from '@mui/material';
 
 // project import
 import NavItem from './NavItem';
+import NavCollapse from './NavCollapse';
 
 // ==============================|| NAVIGATION - LIST GROUP ||============================== //
 
@@ -16,11 +17,10 @@ const NavGroup = ({ item }) => {
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {
       case 'collapse':
-        return (
-          <Typography key={menuItem.id} variant="caption" color="error" sx={{ p: 2.5 }}>
-            collapse - only available in paid version
-          </Typography>
-        );
+        return <NavCollapse key={menuItem.id} item={menuItem} />;
+      // <Typography key={menuItem.id} variant="caption" color="error" sx={{ p: 2.5 }}>
+      //   collapse - only available in paid version
+      // </Typography>
       case 'item':
         return <NavItem key={menuItem.id} item={menuItem} level={1} />;
       default:

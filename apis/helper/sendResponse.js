@@ -23,4 +23,10 @@ const successResponseOfFiles = (res, message, baseurl) => {
   res.json({ isSuccess: true, status: 200, message, baseurl });
 };
 
-module.exports = { createResponse, queryErrorRelatedResponse, successResponse, successResponseOfFiles };
+// Delete response (request , response and message that want to display)
+const deleteResponse = (res, data) => {
+  res.status(202);
+  res.json({ isSuccess: true, status: 202, message: data });
+};
+
+module.exports = { createResponse, queryErrorRelatedResponse, successResponse, successResponseOfFiles, deleteResponse };

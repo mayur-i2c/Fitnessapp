@@ -1,9 +1,11 @@
 // assets
-import { DashboardOutlined, UserOutlined } from '@ant-design/icons';
+import { DashboardOutlined, UserOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
-  DashboardOutlined, UserOutlined
+  DashboardOutlined,
+  UserOutlined,
+  MedicineBoxOutlined
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
