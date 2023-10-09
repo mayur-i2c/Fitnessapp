@@ -1,5 +1,5 @@
 // assets
-import { DashboardOutlined, UserOutlined, MedicineBoxOutlined, CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons';
+import { DashboardOutlined, UserOutlined, MedicineBoxOutlined, CaretRightOutlined, CaretDownOutlined, SettingOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
@@ -9,7 +9,8 @@ const icons = {
   CollapseIcon: {
     collapsed: CaretRightOutlined, // Icon when collapsed
     expanded: CaretDownOutlined // Icon when expanded
-  }
+  },
+  SettingOutlined
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -23,7 +24,7 @@ const settings = {
     fontSize: '1.2rem', // Add your custom styles here
     color: '#007bff' // Add your custom styles here
   },
-  icon: icons.CollapseIcon,
+  icon: icons.SettingOutlined,
   children: [
     {
       id: 'medical_condition',
