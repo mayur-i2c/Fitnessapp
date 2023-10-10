@@ -75,3 +75,42 @@ export const deleteMultiUser = (data) => {
     data: { Ids: data }
   });
 };
+
+// Get Medical Conditions
+export const getAllMedicalCon = () => {
+  return axios.get(`${mainUrl}/admin/setting/getAllMedicalCon`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+};
+
+//Delete Single User
+export const deleteMedicalCon = (id) =>
+  axios.delete(`${mainUrl}/admin/setting/deleteMedicalCon/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Single User
+export const deleteMultMedicalCon = (data) => {
+  return axios.delete(`${mainUrl}/admin/setting/deleteMultMedicalCon`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};
+
+//Update Medical COndition Status
+export const updateMedicalConStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateMedicalConStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Medical Status
+export const addMedicalCon = (data) =>
+  axios.post(`${mainUrl}/admin/setting/addMedicalCon`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Medical Status
+export const updateMedicalCon = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateMedicalCon/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });

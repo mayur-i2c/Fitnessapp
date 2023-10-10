@@ -45,4 +45,19 @@ const deleteMultiUser = async (req, res, next) => {
   }
 };
 
-module.exports = { AllUsers, DeleteUser, deleteMultiUser };
+//Update User Status
+const updateUserStatus = async (req, res, next) => {
+  try {
+    // Convert string is into Object id
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const user = await User.findById(id);
+    if (!user) return queryErrorRelatedResponse(req, res, 404, "User not found.");
+    user.status = !user.status;
+    const result = await user.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { AllUsers, DeleteUser, deleteMultiUser, updateUserStatus };
