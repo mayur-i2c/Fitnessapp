@@ -5,10 +5,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as Icons from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { Grid, CircularProgress, IconButton, Button } from '@mui/material';
+import { Grid, CircularProgress, IconButton, Button, Typography } from '@mui/material';
 import swal from 'sweetalert';
 import Switch from '@mui/material/Switch';
-// ==============================|| SAMPLE PAGE ||============================== //
+
+// ==============================|| MEDICAL CONDITION PAGE ||============================== //
 
 const MedicalCondition = () => {
   const [datatableData, setdatatableData] = useState([]);
@@ -35,6 +36,22 @@ const MedicalCondition = () => {
   };
 
   useEffect(() => {
+    const redirectSuccess = localStorage.getItem('redirectSuccess');
+
+    if (redirectSuccess === 'true') {
+      // The value was found in local storage, perform actions as needed
+      toast.success(localStorage.getItem('redirectMessage'), {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      });
+      // Remove the value from local storage
+      localStorage.removeItem('redirectSuccess');
+    }
     list();
   }, []);
   const columns = [
@@ -189,22 +206,33 @@ const MedicalCondition = () => {
       <Grid container spacing={4}>
         <Grid item xs={12}>
           <ToastContainer />
-          <Button
-            variant="contained"
-            size="medium"
-            color="secondary"
-            onClick={() => {
-              navigate('/settings/medicalCondition/manage');
-            }}
-          >
-            Add Medical Condition
-          </Button>
+
+          <div className="text-container">
+            <div className="left-text">
+              <Typography variant="h4" size="sm">
+                Medical Conditions
+              </Typography>
+            </div>
+            <div className="right-text">
+              <Button
+                variant="contained"
+                size="medium"
+                color="primary"
+                onClick={() => {
+                  navigate('/settings/medicalCondition/manage');
+                }}
+              >
+                Add Medical Condition
+              </Button>
+            </div>
+          </div>
+
           {isLoading ? (
             <Grid item xs={12} style={{ textAlign: 'center' }}>
               <CircularProgress size={26} fullWidth />
             </Grid>
           ) : (
-            <MUIDataTable title={'Medical Conditions'} data={datatableData} columns={columns} options={options} />
+            <MUIDataTable data={datatableData} columns={columns} options={options} />
           )}
         </Grid>
       </Grid>

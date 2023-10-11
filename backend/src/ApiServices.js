@@ -83,6 +83,19 @@ export const getAllMedicalCon = () => {
   });
 };
 
+// Get Active Medical Conditions
+export const getActiveMedicalCon = () => {
+  return axios.get(`${mainUrl}/admin/setting/getActiveMedicalCon`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+};
+
+//Update User Status
+export const updateUserStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/user/updateUserStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
 //Delete Single User
 export const deleteMedicalCon = (id) =>
   axios.delete(`${mainUrl}/admin/setting/deleteMedicalCon/${id}`, {

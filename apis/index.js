@@ -32,8 +32,8 @@ const adminRoutes = require("./routes/admin");
 app.use(adminRoutes);
 
 //App route
-const userRoute = require("./routes/app/user");
-app.use("/app/user", userRoute);
+const userRoute = require("./routes/app");
+app.use(userRoute);
 
 // Error handling middleware
 app.use(errorController);

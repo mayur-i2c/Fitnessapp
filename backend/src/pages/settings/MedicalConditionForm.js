@@ -9,12 +9,12 @@ import { addMedicalCon, updateMedicalCon } from '../../ApiServices';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const MedicalConditionForm = () => {
   const { state } = useLocation();
 
-  console.log(state);
   var [defaultLoading, setdefaultLoading] = useState(true);
   var [isLoading, setIsLoading] = useState(false);
   const [isupdate, setisupdate] = useState('');
@@ -40,15 +40,8 @@ const MedicalConditionForm = () => {
     isupdate === ''
       ? addMedicalCon(data)
           .then(() => {
-            toast.success('Added successfully!', {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined
-            });
+            localStorage.setItem('redirectSuccess', 'true');
+            localStorage.setItem('redirectMessage', 'Added successfully!');
             navigate('/settings/medicalCondition');
           })
           .catch((err) => {
@@ -69,7 +62,8 @@ const MedicalConditionForm = () => {
           })
       : updateMedicalCon(data, isupdate)
           .then(() => {
-            toast.success('Updated successfully!');
+            localStorage.setItem('redirectSuccess', 'true');
+            localStorage.setItem('redirectMessage', 'Updated successfully!');
             navigate('/settings/medicalCondition');
           })
           .catch((err) => {

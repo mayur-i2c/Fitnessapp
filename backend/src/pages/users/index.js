@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { allUsers, deleteMultiUser } from '../../ApiServices';
+import { allUsers, deleteMultiUser, updateUserStatus, deleteUser } from '../../ApiServices';
 import * as Icons from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { Grid, CircularProgress, IconButton } from '@mui/material';
+import { Grid, CircularProgress, IconButton, Button, Typography } from '@mui/material';
 import swal from 'sweetalert';
+import Switch from '@mui/material/Switch';
 
 const Users = () => {
   const [datatableData, setdatatableData] = useState([]);
@@ -77,6 +78,37 @@ const Users = () => {
       options: {
         filter: true,
         sort: true
+      }
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      options: {
+        filter: true,
+        sort: false,
+        customBodyRender: (_, { rowIndex }) => {
+          const { status, _id } = datatableData[rowIndex];
+          return (
+            <Switch
+              checked={status}
+              onChange={() => {
+                const data = { id: _id, status: !status };
+                updateUserStatus(data, _id)
+                  .then(() => {
+                    toast.success('status changed successfully!', {
+                      key: data._id
+                    });
+                    list();
+                  })
+                  .catch(() => {
+                    toast.error('something went wrong!', {
+                      key: data._id
+                    });
+                  });
+              }}
+            />
+          );
+        }
       }
     },
     {
@@ -206,12 +238,31 @@ const Users = () => {
       <Grid container spacing={4}>
         <Grid item xs={12}>
           <ToastContainer />
+          <div className="text-container">
+            <div className="left-text">
+              <Typography variant="h4" size="sm">
+                Users
+              </Typography>
+            </div>
+            <div className="right-text">
+              <Button
+                variant="contained"
+                size="medium"
+                color="primary"
+                onClick={() => {
+                  navigate('/user/manage');
+                }}
+              >
+                Add User
+              </Button>
+            </div>
+          </div>
           {isLoading ? (
             <Grid item xs={12} style={{ textAlign: 'center' }}>
               <CircularProgress size={26} fullWidth />
             </Grid>
           ) : (
-            <MUIDataTable title={'Users'} data={datatableData} columns={columns} options={options} />
+            <MUIDataTable data={datatableData} columns={columns} options={options} />
           )}
         </Grid>
       </Grid>

@@ -92,6 +92,17 @@ const deleteMultMedicalCon = async (req, res, next) => {
   }
 };
 
+//Get Active Medical Conditions
+const getActiveMedicalCon = async (req, res, next) => {
+  try {
+    const medicalCon = await MedicalConditions.find({ status: true });
+    if (!medicalCon) return queryErrorRelatedResponse(req, res, 404, "Medical Conditions not found.");
+    successResponse(res, medicalCon);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addMedicalCon,
   getAllMedicalCon,
@@ -99,4 +110,5 @@ module.exports = {
   deleteMedicalCon,
   deleteMultMedicalCon,
   updateMedicalConStatus,
+  getActiveMedicalCon,
 };

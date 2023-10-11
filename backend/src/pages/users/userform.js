@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { Button, Input, Grid, Typography, CircularProgress, Fade } from '@mui/material';
+import { Button, Input, Grid, Typography, CircularProgress, Fade, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import CustomInput from 'components/CustomInput';
 import { ToastContainer } from 'react-toastify';
@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import upload from 'assets/images/upload3.jpg';
 import React, { useState, useEffect } from 'react';
 import MainCard from 'components/MainCard';
-
+import { getActiveMedicalCon } from '../../ApiServices';
 const UserForm = () => {
   // Access the location object, which contains the state data
   const { state } = useLocation();
@@ -25,7 +25,17 @@ const UserForm = () => {
   // local
   var [isLoading, setIsLoading] = useState(false);
 
+  const [selectedValue, setSelectedValue] = useState('');
+  const [MedicalCon, setMedicalCon] = useState([]);
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+
   useEffect(() => {
+    getActiveMedicalCon().then((response) => {
+      setMedicalCon(response.data.info);
+    });
     setIsLoading(false);
     if (editdata) {
       setValue('name', editdata.name);
@@ -33,7 +43,7 @@ const UserForm = () => {
       setValue('mo_no', editdata.mo_no);
       setValue('dob', editdata.dob);
       setValue('age', editdata.age);
-      setValue('sex', editdata.sex);
+      setSelectedValue(editdata.sex);
       setValue('height', editdata.height);
       setValue('height_measure', editdata.height_measure);
       setValue('c_weight', editdata.c_weight);
@@ -66,6 +76,11 @@ const UserForm = () => {
     setIsHovering(false);
   };
   const onSubmit = () => {};
+  const [selectedValues, setSelectedValues] = useState([]);
+
+  const handleChangeMultiple = (event) => {
+    setSelectedValues(event.target.value);
+  };
   return (
     <Grid item xs={12} md={6} lg={6}>
       <Grid container alignItems="center" justifyContent="space-between">
@@ -168,19 +183,23 @@ const UserForm = () => {
                         />
                       </Grid>
 
-                      <Grid xs={4} mt={2} spacing={3}>
-                        <CustomInput
-                          xs={12}
-                          m={2}
-                          spacing={3}
-                          id="sex"
-                          name="Sex"
-                          label="Sex"
-                          inputRef={register('sex', { required: true })}
-                          placeholder="Sex"
-                          defaultValue={getValues('sex')}
-                          onChange={(e) => setValue('sex', e.target.value)}
-                        />
+                      <Grid xs={4} mt={2} spacing={3} style={{ display: 'flex' }}>
+                        <FormControl fullWidth required style={{ margin: '16px' }}>
+                          <InputLabel id="select-label" shrink={true} style={{ marginTop: '16px', marginBottom: '16px' }}>
+                            Sex
+                          </InputLabel>
+                          <Select
+                            labelId="sex"
+                            id="sex"
+                            value={selectedValue}
+                            onChange={handleChange}
+                            style={{ marginTop: '16px', marginBottom: '16px' }}
+                          >
+                            <MenuItem value="1">Male</MenuItem>
+                            <MenuItem value="2">Female</MenuItem>
+                            <MenuItem value="3">Others</MenuItem>
+                          </Select>
+                        </FormControl>
                       </Grid>
 
                       <Grid xs={4} mt={2} spacing={3}>
@@ -226,6 +245,30 @@ const UserForm = () => {
                           defaultValue={getValues('t_weight')}
                           onChange={(e) => setValue('t_weight', e.target.value)}
                         />
+                      </Grid>
+
+                      <Grid xs={4} mt={2} spacing={3} style={{ display: 'flex' }}>
+                        <FormControl fullWidth required style={{ margin: '16px' }}>
+                          <InputLabel id="select-label" shrink={true} style={{ marginTop: '16px', marginBottom: '16px' }}>
+                            Medical Conditions
+                          </InputLabel>
+                          <Select
+                            labelId="sex"
+                            id="sex"
+                            value={selectedValues}
+                            onChange={handleChangeMultiple}
+                            style={{ marginTop: '16px', marginBottom: '16px' }}
+                            multiple
+                          >
+                            {MedicalCon.map((cat) => {
+                              return (
+                                <MenuItem key={cat._id} value={cat._id}>
+                                  {cat.title}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </FormControl>
                       </Grid>
                     </Grid>
                     <Grid xs={3} mt={2} spacing={3}>
