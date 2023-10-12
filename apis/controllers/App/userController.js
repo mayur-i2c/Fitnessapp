@@ -17,12 +17,18 @@ const signupUser = async (req, res, next) => {
   try {
     const accessToken = jwt.sign({ email: req.body.email }, process.env.ACCESS_TOKEN_SECRET);
 
+    // Convert the requested date to a JavaScript Date object
+    const dateOfBirth = new Date(req.body.dob);
+
+    // Get the timestamp from the date object
+    const dateOfBirthTimestamp = dateOfBirth.getTime();
+
     const newUser = await new User({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       mo_no: req.body.mo_no,
-      dob: req.body.dob,
+      dob: dateOfBirthTimestamp,
       remember_token: accessToken,
     });
     const addedUser = await newUser.save();

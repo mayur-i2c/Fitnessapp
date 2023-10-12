@@ -6,6 +6,7 @@ const CustomInput = ({
   name,
   label,
   inputRef,
+  InputProps,
   error,
   helperText,
   xs,
@@ -31,6 +32,7 @@ const CustomInput = ({
         id={id}
         name={name}
         inputRef={inputRef}
+        InputProps={InputProps}
         error={error}
         helperText={helperText}
         placeholder={placeholder}

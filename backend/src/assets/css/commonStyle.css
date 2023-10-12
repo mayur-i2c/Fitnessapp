@@ -3,3 +3,10 @@
   justify-content: space-between;
   margin-bottom: 10px;
 }
+.react-datepicker-wrapper {
+  display: flex !important;
+  margin: 16px;
+}
+.react-datepicker-popper {
+  z-index: 2 !important;
+}

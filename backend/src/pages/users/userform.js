@@ -1,22 +1,39 @@
 import { useLocation } from 'react-router-dom';
-import { Button, Input, Grid, Typography, CircularProgress, Fade, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+  Button,
+  TextField,
+  Input,
+  Grid,
+  Typography,
+  CircularProgress,
+  Fade,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@mui/material';
 import Stack from '@mui/material/Stack';
 import CustomInput from 'components/CustomInput';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import upload from 'assets/images/upload3.jpg';
 import React, { useState, useEffect } from 'react';
 import MainCard from 'components/MainCard';
 import { getActiveMedicalCon } from '../../ApiServices';
+import DatePicker from 'react-datepicker';
+import '../../../node_modules/react-datepicker/dist/react-datepicker.css';
+
 const UserForm = () => {
   // Access the location object, which contains the state data
   const { state } = useLocation();
+  const [selectedDate, setSelectedDate] = useState(null);
   const {
     register,
     getValues,
     setValue,
     handleSubmit,
+    control,
     formState: { errors }
   } = useForm();
   // Access the state data (editdata and imageurl)
@@ -24,13 +41,7 @@ const UserForm = () => {
   var [defaultLoading, setdefaultLoading] = useState(true);
   // local
   var [isLoading, setIsLoading] = useState(false);
-
-  const [selectedValue, setSelectedValue] = useState('');
   const [MedicalCon, setMedicalCon] = useState([]);
-
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
 
   useEffect(() => {
     getActiveMedicalCon().then((response) => {
@@ -41,15 +52,17 @@ const UserForm = () => {
       setValue('name', editdata.name);
       setValue('email', editdata.email);
       setValue('mo_no', editdata.mo_no);
+      // const dob = new Date(editdata.dob);
+      setSelectedDate(editdata.dob);
       setValue('dob', editdata.dob);
       setValue('age', editdata.age);
-      setSelectedValue(editdata.sex);
+      setValue('sex', editdata.sex);
+      setValue('active_status', editdata.active_status);
       setValue('height', editdata.height);
       setValue('height_measure', editdata.height_measure);
       setValue('c_weight', editdata.c_weight);
       setValue('t_weight', editdata.t_weight);
       setValue('medical_condition', editdata.medical_condition);
-      setValue('active_status', editdata.active_status);
       editdata.image ? setNewUrl(imageurl + editdata.image) : '';
       setdefaultLoading(false);
     }
@@ -57,6 +70,14 @@ const UserForm = () => {
 
   const [isHovering, setIsHovering] = useState(false);
   const [newUrl, setNewUrl] = useState('');
+
+  const handleDateChange = (date) => {
+    const dateOfBirth = new Date(date);
+    const dob = dateOfBirth.getTime();
+
+    setValue('dob', dob);
+    setSelectedDate(date);
+  };
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -75,12 +96,10 @@ const UserForm = () => {
   const handleMouseOut = () => {
     setIsHovering(false);
   };
-  const onSubmit = () => {};
-  const [selectedValues, setSelectedValues] = useState([]);
-
-  const handleChangeMultiple = (event) => {
-    setSelectedValues(event.target.value);
+  const onSubmit = (data) => {
+    console.log(data);
   };
+
   return (
     <Grid item xs={12} md={6} lg={6}>
       <Grid container alignItems="center" justifyContent="space-between">
@@ -153,18 +172,49 @@ const UserForm = () => {
                         />
                       </Grid>
 
-                      <Grid xs={4} mt={2} spacing={3}>
-                        <CustomInput
-                          xs={12}
-                          m={2}
-                          spacing={3}
-                          id="dob"
-                          name="Date of Birth"
-                          label="Date of Birth"
-                          inputRef={register('dob', { required: true })}
-                          placeholder="Date of Birth"
-                          defaultValue={getValues('dob')}
-                          onChange={(e) => setValue('dob', e.target.value)}
+                      <Grid spacing={3} mt={2} xs={4}>
+                        {/* <DatePicker
+                          fullWidth
+                          selected={selectedDate}
+                          onChange={handleDateChange}
+                          yearDropdownItemNumber={10}
+                          showYearDropdown
+                          dateFormat="dd/MM/yyyy" // Set the date format here
+                          customInput={
+                            <TextField
+                              variant="outlined"
+                              fullWidth
+                              id="dob"
+                              label="Date of Birth"
+                              InputLabelProps={{ shrink: true }}
+                              style={{ marginTop: '16px', marginBottom: '16px' }}
+                            />
+                          }
+                        /> */}
+                        <Controller
+                          name="dob" // Specify the field name
+                          control={control}
+                          defaultValue={getValues('dob')} // Provide the default value as null
+                          render={({ field }) => (
+                            <DatePicker
+                              {...field}
+                              yearDropdownItemNumber={10}
+                              showYearDropdown
+                              dateFormat="dd/MM/yyyy" // Set the date format here
+                              customInput={
+                                <TextField
+                                  variant="outlined"
+                                  fullWidth
+                                  id="dob"
+                                  label="Date of Birth"
+                                  InputLabelProps={{ shrink: true }}
+                                  style={{ marginTop: '16px', marginBottom: '16px' }}
+                                />
+                              }
+                              selected={selectedDate}
+                              onChange={handleDateChange}
+                            />
+                          )}
                         />
                       </Grid>
 
@@ -188,21 +238,22 @@ const UserForm = () => {
                           <InputLabel id="select-label" shrink={true} style={{ marginTop: '16px', marginBottom: '16px' }}>
                             Sex
                           </InputLabel>
-                          <Select
-                            labelId="sex"
-                            id="sex"
-                            value={selectedValue}
-                            onChange={handleChange}
-                            style={{ marginTop: '16px', marginBottom: '16px' }}
-                          >
-                            <MenuItem value="1">Male</MenuItem>
-                            <MenuItem value="2">Female</MenuItem>
-                            <MenuItem value="3">Others</MenuItem>
-                          </Select>
+                          <Controller
+                            name="sex" // Specify the field name
+                            control={control}
+                            defaultValue={getValues('sex')} // Provide the default value
+                            render={({ field }) => (
+                              <Select {...field} labelId="sex" id="sex" style={{ marginTop: '16px', marginBottom: '16px' }}>
+                                <MenuItem value="1">Male</MenuItem>
+                                <MenuItem value="2">Female</MenuItem>
+                                <MenuItem value="3">Others</MenuItem>
+                              </Select>
+                            )}
+                          />
                         </FormControl>
                       </Grid>
 
-                      <Grid xs={4} mt={2} spacing={3}>
+                      <Grid xs={4} mt={2} spacing={3} style={{ display: 'Flex' }}>
                         <CustomInput
                           xs={12}
                           m={2}
@@ -215,6 +266,27 @@ const UserForm = () => {
                           defaultValue={getValues('height')}
                           onChange={(e) => setValue('height', e.target.value)}
                         />
+                        <FormControl fullWidth required style={{ margin: '16px' }}>
+                          <InputLabel id="height_measure" shrink={true} style={{ marginTop: '16px', marginBottom: '16px' }}>
+                            Height Measure
+                          </InputLabel>
+                          <Controller
+                            name="height_measure" // Specify the field name
+                            control={control}
+                            defaultValue={getValues('height_measure')} // Provide the default value
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                labelId="height_measure"
+                                id="height_measure"
+                                style={{ marginTop: '16px', marginBottom: '16px' }}
+                              >
+                                <MenuItem value={1}>Ft/In</MenuItem>
+                                <MenuItem value={2}>Cm</MenuItem>
+                              </Select>
+                            )}
+                          />
+                        </FormControl>
                       </Grid>
 
                       <Grid xs={4} mt={2} spacing={3}>
@@ -250,24 +322,56 @@ const UserForm = () => {
                       <Grid xs={4} mt={2} spacing={3} style={{ display: 'flex' }}>
                         <FormControl fullWidth required style={{ margin: '16px' }}>
                           <InputLabel id="select-label" shrink={true} style={{ marginTop: '16px', marginBottom: '16px' }}>
+                            How Active Are You?
+                          </InputLabel>
+                          <Controller
+                            name="active_status" // Specify the field name
+                            control={control}
+                            defaultValue={getValues('active_status')} // Provide the default value
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                labelId="active_status"
+                                id="active_status"
+                                style={{ marginTop: '16px', marginBottom: '16px' }}
+                              >
+                                <MenuItem value="1">Little or no activity</MenuItem>
+                                <MenuItem value="2">Little Activity</MenuItem>
+                                <MenuItem value="3">Moderately Active</MenuItem>
+                                <MenuItem value="4">Very Active</MenuItem>
+                              </Select>
+                            )}
+                          />
+                        </FormControl>
+                      </Grid>
+
+                      <Grid xs={4} mt={2} spacing={3} style={{ display: 'flex' }}>
+                        <FormControl fullWidth required style={{ margin: '16px' }}>
+                          <InputLabel id="select-label" shrink={true} style={{ marginTop: '16px', marginBottom: '16px' }}>
                             Medical Conditions
                           </InputLabel>
-                          <Select
-                            labelId="sex"
-                            id="sex"
-                            value={selectedValues}
-                            onChange={handleChangeMultiple}
-                            style={{ marginTop: '16px', marginBottom: '16px' }}
-                            multiple
-                          >
-                            {MedicalCon.map((cat) => {
-                              return (
-                                <MenuItem key={cat._id} value={cat._id}>
-                                  {cat.title}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
+                          <Controller
+                            name="medical_condition" // Specify the field name
+                            control={control}
+                            defaultValue={getValues('medical_condition')}
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                labelId="medical_condition"
+                                id="medical_condition"
+                                style={{ marginTop: '16px', marginBottom: '16px' }}
+                                multiple
+                              >
+                                {MedicalCon.map((cat) => {
+                                  return (
+                                    <MenuItem key={cat._id} value={cat._id}>
+                                      {cat.title}
+                                    </MenuItem>
+                                  );
+                                })}
+                              </Select>
+                            )}
+                          />
                         </FormControl>
                       </Grid>
                     </Grid>

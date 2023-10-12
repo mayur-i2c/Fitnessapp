@@ -60,4 +60,13 @@ const updateUserStatus = async (req, res, next) => {
   }
 };
 
-module.exports = { AllUsers, DeleteUser, deleteMultiUser, updateUserStatus };
+//Update User Profile
+const updateUserProfile = async (req, res, next) => {
+  try {
+    console.log("Update Profile");
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { AllUsers, DeleteUser, deleteMultiUser, updateUserStatus, updateUserProfile };
