@@ -36,6 +36,22 @@ const Users = () => {
   };
 
   useEffect(() => {
+    const redirectSuccess = localStorage.getItem('redirectSuccess');
+
+    if (redirectSuccess === 'true') {
+      // The value was found in local storage, perform actions as needed
+      toast.success(localStorage.getItem('redirectMessage'), {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      });
+      // Remove the value from local storage
+      localStorage.removeItem('redirectSuccess');
+    }
     list();
   }, []);
 

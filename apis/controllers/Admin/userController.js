@@ -1,6 +1,11 @@
 const express = require("express");
 const User = require("../../models/User");
-const { successResponse, deleteResponse, queryErrorRelatedResponse } = require("../../helper/sendResponse");
+const {
+  successResponse,
+  deleteResponse,
+  queryErrorRelatedResponse,
+  createResponse,
+} = require("../../helper/sendResponse");
 const mongoose = require("mongoose");
 const deleteFiles = require("../../helper/deleteFiles");
 
@@ -63,10 +68,51 @@ const updateUserStatus = async (req, res, next) => {
 //Update User Profile
 const updateUserProfile = async (req, res, next) => {
   try {
-    console.log("Update Profile");
+    //Find Banner by params id
+    const user = await User.findById(req.params.id);
+    // Checking for banner exist with authenticate(JWT) token and params id
+    if (!user) return queryErrorRelatedResponse(req, res, 404, "User not found.");
+
+    const updatedData = req.body;
+
+    const dateOfBirth = new Date(req.body.dob);
+    updatedData.dob = dateOfBirth.getTime();
+    updatedData.image = user.image;
+    if (req.file) {
+      deleteFiles(user.image);
+      updatedData.image = req.file.filename;
+    }
+
+    const isUpdate = await User.findByIdAndUpdate(req.params.id, { $set: updatedData });
+    if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
+
+    const updatedUser = await User.findById(req.params.id);
+    successResponse(res, updatedUser);
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = { AllUsers, DeleteUser, deleteMultiUser, updateUserStatus, updateUserProfile };
+const addUser = async (req, res, next) => {
+  try {
+    const addedUser = req.body;
+
+    const dateOfBirth = new Date(req.body.dob);
+    addedUser.dob = dateOfBirth.getTime();
+    console.log(addedUser);
+
+    if (req.file) {
+      addedUser.image = req.file.filename;
+    }
+
+    const newUser = await new User(addedUser);
+
+    const newu = await newUser.save();
+
+    //save User and response
+    createResponse(res, newu);
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = { AllUsers, DeleteUser, deleteMultiUser, updateUserStatus, updateUserProfile, addUser };

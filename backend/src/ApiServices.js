@@ -50,7 +50,7 @@ export const changePassword = (data) =>
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
 
-//Change Password
+//Update Admin Profile
 export const UpdateProfile = (data) =>
   axios.post(`${mainUrl}/admin/UpdateProfile`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -125,5 +125,17 @@ export const addMedicalCon = (data) =>
 //Update Medical Status
 export const updateMedicalCon = (data, id) =>
   axios.put(`${mainUrl}/admin/setting/updateMedicalCon/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update User Profile
+export const updateUserProfile = (data, id) =>
+  axios.put(`${mainUrl}/admin/user/updateUserProfile/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add User Profile
+export const addUser = (data) =>
+  axios.post(`${mainUrl}/admin/user/addUser`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
