@@ -96,13 +96,13 @@ export const updateUserStatus = (data, id) =>
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
 
-//Delete Single User
+//Delete Single Medical Condition
 export const deleteMedicalCon = (id) =>
   axios.delete(`${mainUrl}/admin/setting/deleteMedicalCon/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
 
-//Delete Single User
+//Delete Multiple Medical Condition
 export const deleteMultMedicalCon = (data) => {
   return axios.delete(`${mainUrl}/admin/setting/deleteMultMedicalCon`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -110,13 +110,13 @@ export const deleteMultMedicalCon = (data) => {
   });
 };
 
-//Update Medical COndition Status
+//Update Medical Condition Status
 export const updateMedicalConStatus = (data, id) =>
   axios.put(`${mainUrl}/admin/setting/updateMedicalConStatus/${id}`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
 
-//Add Medical Status
+//Add Medical Condition
 export const addMedicalCon = (data) =>
   axios.post(`${mainUrl}/admin/setting/addMedicalCon`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -139,3 +139,41 @@ export const addUser = (data) =>
   axios.post(`${mainUrl}/admin/user/addUser`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+//Get All Essential
+export const getAllEssentials = () =>
+  axios.get(`${mainUrl}/admin/essential/getAllEssentials`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Essential
+export const addEssentials = (data) =>
+  axios.post(`${mainUrl}/admin/essential/addEssentials`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Essential
+export const updateEssentials = (data, id) =>
+  axios.put(`${mainUrl}/admin/essential/updateEssentials/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Essential Status
+export const updateEssStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/essential/updateEssStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Essential
+export const deleteEssentials = (id) =>
+  axios.delete(`${mainUrl}/admin/essential/deleteEssentials/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Essential
+export const deleteMultEssentials = (data) => {
+  return axios.delete(`${mainUrl}/admin/essential/deleteMultEssentials`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

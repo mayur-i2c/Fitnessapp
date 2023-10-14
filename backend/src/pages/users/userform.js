@@ -53,6 +53,7 @@ const UserForm = () => {
     });
     setIsLoading(false);
     if (state) {
+      setValue('pass1', '123456');
       // Access the state data (editdata and imageurl)
       const { editdata, imageurl } = state;
 
@@ -74,6 +75,7 @@ const UserForm = () => {
       editdata.image ? setNewUrl(imageurl + editdata.image) : setNewUrl(no_profile);
       setdefaultLoading(false);
     } else {
+      setNewUrl(no_profile);
       setdefaultLoading(false);
     }
   }, [state]);
@@ -225,23 +227,7 @@ const UserForm = () => {
                           onChange={(e) => setValue('name', e.target.value)}
                         />
                       </Grid>
-                      {isupdate ? (
-                        ''
-                      ) : (
-                        <Grid xs={4} mt={2} spacing={3}>
-                          <CustomInput
-                            xs={12}
-                            m={2}
-                            spacing={3}
-                            id="password"
-                            name="password"
-                            label="Password"
-                            inputRef={register('password', { required: true })}
-                            placeholder="Password"
-                            defaultValue="123456"
-                          />
-                        </Grid>
-                      )}
+
                       <Grid xs={4} mt={2} spacing={3}>
                         <CustomInput
                           xs={12}

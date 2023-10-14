@@ -99,7 +99,7 @@ const addUser = async (req, res, next) => {
 
     const dateOfBirth = new Date(req.body.dob);
     addedUser.dob = dateOfBirth.getTime();
-    console.log(addedUser);
+    addedUser.password = "123456";
 
     if (req.file) {
       addedUser.image = req.file.filename;

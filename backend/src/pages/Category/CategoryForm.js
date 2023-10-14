@@ -5,14 +5,12 @@ import CustomInput from 'components/CustomInput';
 import MainCard from 'components/MainCard';
 import { useForm } from 'react-hook-form';
 import React, { useState, useEffect } from 'react';
-import { addMedicalCon, updateMedicalCon } from '../../ApiServices';
+import { addCategory, updateCategory } from '../../ApiServices';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// ==============================|| SAMPLE PAGE ||============================== //
-
-const MedicalConditionForm = () => {
+const CategoryForm = () => {
   const { state } = useLocation();
 
   var [defaultLoading, setdefaultLoading] = useState(true);
@@ -38,11 +36,11 @@ const MedicalConditionForm = () => {
   const onSubmit = (data) => {
     setIsLoading(false);
     isupdate === ''
-      ? addMedicalCon(data)
+      ? addCategory(data)
           .then(() => {
             localStorage.setItem('redirectSuccess', 'true');
             localStorage.setItem('redirectMessage', 'Added successfully!');
-            navigate('/settings/medicalCondition');
+            navigate('/category');
           })
           .catch((err) => {
             if (!err.response.data.isSuccess) {
@@ -60,11 +58,11 @@ const MedicalConditionForm = () => {
             }
             setIsLoading(false);
           })
-      : updateMedicalCon(data, isupdate)
+      : updateCategory(data, isupdate)
           .then(() => {
             localStorage.setItem('redirectSuccess', 'true');
             localStorage.setItem('redirectMessage', 'Updated successfully!');
-            navigate('/settings/medicalCondition');
+            navigate('/category');
           })
           .catch((err) => {
             if (!err.response.data.isSuccess) {
@@ -90,7 +88,7 @@ const MedicalConditionForm = () => {
       <Grid item xs={12} md={6} lg={6}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">{isupdate === '' ? 'Add' : 'Update'} Medical Conditions</Typography>
+            <Typography variant="h5">{isupdate === '' ? 'Add' : 'Update'} Category</Typography>
           </Grid>
           <Grid item />
         </Grid>
@@ -145,5 +143,4 @@ const MedicalConditionForm = () => {
     </Grid>
   );
 };
-
-export default MedicalConditionForm;
+export default CategoryForm;

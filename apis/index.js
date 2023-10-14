@@ -40,6 +40,7 @@ app.use(errorController);
 
 // Define static files
 app.use("/public", express.static(path.join(__dirname, "./public/images/")));
+app.use("/public/essentials", express.static(path.join(__dirname, "./public/images/essentials")));
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection Error"));
