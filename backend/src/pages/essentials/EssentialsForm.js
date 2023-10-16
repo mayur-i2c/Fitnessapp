@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { Button, Grid, Typography, CircularProgress, Input } from '@mui/material';
+import { Button, Grid, Typography, CircularProgress, Input, FormHelperText } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import CustomInput from 'components/CustomInput';
 import MainCard from 'components/MainCard';
@@ -18,7 +18,7 @@ const EssentialsForm = () => {
   const [isupdate, setisupdate] = useState('');
   const navigate = useNavigate();
   const [isHovering, setIsHovering] = useState(false);
-  const [newUrl, setNewUrl] = useState('');
+  const [newUrl, setNewUrl] = useState(upload);
   const {
     register,
     getValues,
@@ -62,6 +62,7 @@ const EssentialsForm = () => {
         formData.append(key, data[key]);
       }
     });
+
     isupdate === ''
       ? addEssentials(formData)
           .then(() => {
@@ -158,7 +159,7 @@ const EssentialsForm = () => {
                             <Input
                               name="image"
                               accept="image/*"
-                              {...register('image')}
+                              {...register('image', { required: isupdate ? false : true })}
                               id="icon-button-file"
                               type="file"
                               onChange={handleFileUpload}
@@ -166,11 +167,12 @@ const EssentialsForm = () => {
                               style={{ top: '-9999px', left: '-9999px' }}
                             />
                             {!isHovering ? (
-                              <img src={newUrl} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
+                              <img src={newUrl} alt="Essentials" width="100" height={100} style={{ borderRadius: '50%' }} />
                             ) : (
-                              <img src={upload} alt="Profile" width="100" height={100} style={{ borderRadius: '50%' }} />
+                              <img src={upload} alt="Essentials" width="100" height={100} style={{ borderRadius: '50%' }} />
                             )}
                           </label>
+                          <FormHelperText error>{errors.image && 'Image is required'}</FormHelperText>
                         </Stack>
                       </Grid>
                     </Grid>

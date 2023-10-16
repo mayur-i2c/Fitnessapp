@@ -14,6 +14,12 @@ const EssentialsSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    subcategories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "EssSubcategoryLevel1",
+      },
+    ],
   },
   {
     timestamps: true,

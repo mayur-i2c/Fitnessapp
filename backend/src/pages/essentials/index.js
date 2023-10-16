@@ -152,7 +152,6 @@ const Essentials = () => {
                     dangerMode: true
                   });
                   if (confirm) {
-                    console.log(value);
                     deleteEssentials(value)
                       .then(() => {
                         toast.success('deleted successfully!', {
@@ -168,6 +167,23 @@ const Essentials = () => {
                   }
                 }}
               />
+              <Button
+                style={{
+                  color: '#237804',
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  borderRadius: '5px',
+                  margin: '0px 6px',
+                  lineHeight: '1.2',
+                  marginTop: '-21px'
+                }}
+                onClick={() => {
+                  const catdata = datatableData.find((data) => data._id === value);
+                  navigate('/essentials/esssubcatlevel1', { state: { catdata: catdata, imageurl: baseurl } });
+                }}
+              >
+                Sub-Category Level 1
+              </Button>
             </div>
           );
         }

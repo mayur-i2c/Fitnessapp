@@ -177,3 +177,41 @@ export const deleteMultEssentials = (data) => {
     data: { Ids: data }
   });
 };
+
+//Get All Essential Level 1 Sub-Category
+export const getAllEssSubCat1 = (id) =>
+  axios.get(`${mainUrl}/admin/essential/getAllEssSubCat1/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Essential Level 1 Sub-Category
+export const addEssSubCatLevel1 = (data, id) =>
+  axios.post(`${mainUrl}/admin/essential/addEssSubCatLevel1/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Essential Level 1 Sub-Category
+export const updateEssSubCat1 = (data, id) =>
+  axios.put(`${mainUrl}/admin/essential/updateEssSubCat1/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Essential Level 1 Sub-Category Status
+export const updateEssSubCat1Status = (data, id) =>
+  axios.put(`${mainUrl}/admin/essential/updateEssSubCat1Status/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Essential
+export const deleteEssSubCat1 = (id) =>
+  axios.delete(`${mainUrl}/admin/essential/deleteEssSubCat1/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Essential
+export const deleteMultSubCat1 = (data) => {
+  return axios.delete(`${mainUrl}/admin/essential/deleteMultSubCat1`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

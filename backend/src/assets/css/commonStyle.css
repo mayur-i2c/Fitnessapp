@@ -10,3 +10,13 @@
 .react-datepicker-popper {
   z-index: 2 !important;
 }
+.subHead a {
+  font-size: 15px;
+  text-decoration: none;
+  color: #1890ff;
+}
+
+.subHead {
+  font-size: 15px;
+  color: grey;
+}
