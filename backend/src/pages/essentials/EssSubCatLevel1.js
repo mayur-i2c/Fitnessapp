@@ -17,6 +17,8 @@ const EssSubCatLevel1 = () => {
   const [baseurl, setbaseurl] = useState([]);
   const { state } = useLocation();
   const { catdata } = state;
+
+  console.log(state);
   const list = async () => {
     setIsLoading(true);
     await getAllEssSubCat1(catdata._id)
@@ -179,8 +181,8 @@ const EssSubCatLevel1 = () => {
                   marginTop: '-21px'
                 }}
                 onClick={() => {
-                  const catdata = datatableData.find((data) => data._id === value);
-                  navigate('/essentials/esssubcatlevel2', { state: { catdata: catdata, imageurl: baseurl } });
+                  const subcatdata = datatableData.find((data) => data._id === value);
+                  navigate('/essentials/esssubcatlevel2', { state: { catdata: catdata, subcatdata: subcatdata, imageurl: baseurl } });
                 }}
               >
                 Sub-Category

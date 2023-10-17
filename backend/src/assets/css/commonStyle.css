@@ -20,3 +20,11 @@
   font-size: 15px;
   color: grey;
 }
+
+.outlined-react-quill {
+  border: 1px solid #c4c4c4; /* Add an outline border */
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+  background-color: white;
+}

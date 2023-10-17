@@ -202,7 +202,7 @@ export const updateEssSubCat1Status = (data, id) =>
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
 
-//Delete Essential
+//Delete Essential Level 1 Sub-Category
 export const deleteEssSubCat1 = (id) =>
   axios.delete(`${mainUrl}/admin/essential/deleteEssSubCat1/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -211,6 +211,44 @@ export const deleteEssSubCat1 = (id) =>
 //Delete Multiple Essential
 export const deleteMultSubCat1 = (data) => {
   return axios.delete(`${mainUrl}/admin/essential/deleteMultSubCat1`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};
+
+//Get All Essential Level 2 Sub-Category
+export const getAllEssSubCat2 = (id) =>
+  axios.get(`${mainUrl}/admin/essential/getAllEssSubCat2/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Essential Level 2 Sub-Category
+export const addEssSubCatLevel2 = (data, id) =>
+  axios.post(`${mainUrl}/admin/essential/addEssSubCatLevel2/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Essential Level 2 Sub-Category
+export const updateEssSubCat2 = (data, id) =>
+  axios.put(`${mainUrl}/admin/essential/updateEssSubCat2/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Essential Level 2 Sub-Category Status
+export const updateEssSubCat2Status = (data, id) =>
+  axios.put(`${mainUrl}/admin/essential/updateEssSubCat2Status/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Essential Level 2 Sub-Category
+export const deleteEssSubCat2 = (id) =>
+  axios.delete(`${mainUrl}/admin/essential/deleteEssSubCat2/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Essential Level 2 Sub-Category
+export const deleteMultSubCat2 = (data) => {
+  return axios.delete(`${mainUrl}/admin/essential/deleteMultSubCat2`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     data: { Ids: data }
   });

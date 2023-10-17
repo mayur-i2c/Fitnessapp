@@ -129,7 +129,6 @@ const Essentials = () => {
                 }}
                 onClick={() => {
                   const editdata = datatableData.find((data) => data._id === value);
-                  console.log(editdata);
                   navigate('/essentials/manage', { state: { editdata: editdata, imageurl: baseurl } });
                 }}
               />

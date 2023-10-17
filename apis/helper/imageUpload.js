@@ -45,24 +45,24 @@ function multiFileUpload(path, allowedMimes, fileSize, name) {
     },
   });
 
-  // const fileFilter = (req, file, cb) => {
-  //   if (allowedMimes.includes(file.mimetype)) {
-  //     cb(null, true);
-  //   } else {
-  //     const error = new Error("Invalid file type.");
-  //     error.httpStatuscode = 422;
-  //     error.errorMessage = "Invalid file type.";
-  //     return cb(error);
-  //   }
-  // };
+  const fileFilter = (req, file, cb) => {
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      const error = new Error("Invalid file type.");
+      error.httpStatuscode = 422;
+      error.errorMessage = "Invalid file type.";
+      return cb(error);
+    }
+  };
 
   return multer({
     storage: storage,
-    // limits: {
-    //   fileSize: fileSize,
-    // },
-    // fileFilter: fileFilter,
-  }).fields(name);
+    limits: {
+      fileSize: fileSize,
+    },
+    fileFilter: fileFilter,
+  }).array(name);
 }
 
 function multiDiffFileUpload(path, fieldConfigurations) {

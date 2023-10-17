@@ -33,6 +33,8 @@ const Essentials = Loadable(lazy(() => import('pages/essentials')));
 const EssentialsForm = Loadable(lazy(() => import('pages/essentials/EssentialsForm')));
 const EssSubCatLevel1 = Loadable(lazy(() => import('pages/essentials/EssSubCatLevel1')));
 const EssSubCatLevel1Form = Loadable(lazy(() => import('pages/essentials/EssSubCatLevel1Form')));
+const EssSubCatLevel2 = Loadable(lazy(() => import('pages/essentials/EssSubCatLevel2')));
+const EssSubCatLevel2Form = Loadable(lazy(() => import('pages/essentials/EssSubCatLevel2Form')));
 
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
@@ -75,6 +77,10 @@ export default function ThemeRoutes() {
         <Route path="essentials/manage" element={<EssentialsForm />} />
         <Route path="essentials/esssubcatlevel1" element={<EssSubCatLevel1 />} />
         <Route path="essentials/esssubcatlevel1/manage" element={<EssSubCatLevel1Form />} />
+
+        <Route path="essentials/esssubcatlevel2" element={<EssSubCatLevel2 />} />
+        <Route path="essentials/esssubcatlevel2/manage" element={<EssSubCatLevel2Form />} />
+
         <Route path="settings/medicalCondition" element={<MedicalCondition />} />
         <Route path="settings/medicalCondition/manage" element={<MedicalConditionForm />} />
         <Route path="color" element={<Color />} />

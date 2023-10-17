@@ -14,6 +14,11 @@ const {
   deleteEssSubCat1,
   updateEssSubCat1,
   addEssSubCatLevel2,
+  getAllEssSubCat2,
+  updateEssSubCat2Status,
+  deleteMultSubCat2,
+  deleteEssSubCat2,
+  updateEssSubCat2,
 } = require("../../controllers/Admin/EssentialsController");
 const authenticAdmin = require("../../helper/verifyAdminToken");
 const { singleFileUpload, multiDiffFileUpload } = require("../../helper/imageUpload");
@@ -54,18 +59,23 @@ router.put(
 router.post(
   "/addEssSubCatLevel2/:id",
   authenticAdmin,
-  // singleFileUpload(
-  //   "public/images/essentials",
-  //   ["image/png", "image/jpeg", "image/jpg", "video/mp4", "video/quicktime", "video/x-ms-wmv"],
-  //   10 * 1024 * 1024,
-  //   "video"
-  // ),
-  // singleFileUpload("public/images/essentials", ["image/png", "image/jpeg", "image/jpg"], 1024 * 1024, "icon"),
   multiDiffFileUpload("public/images/essentials", [
     { name: "video", maxCount: 1, allowedMimes: ["video/mp4", "video/quicktime", "video/x-ms-wmv"] },
     { name: "icon", maxCount: 1, allowedMimes: ["image/png", "image/jpeg", "image/jpg"] },
   ]),
   addEssSubCatLevel2
 );
-
+router.get("/getAllEssSubCat2/:id", authenticAdmin, getAllEssSubCat2);
+router.put("/updateEssSubCat2Status/:id", authenticAdmin, updateEssSubCat2Status);
+router.delete("/deleteEssSubCat2/:id", authenticAdmin, deleteEssSubCat2);
+router.delete("/deleteMultSubCat2", authenticAdmin, deleteMultSubCat2);
+router.put(
+  "/updateEssSubCat2/:id",
+  authenticAdmin,
+  multiDiffFileUpload("public/images/essentials", [
+    { name: "video", maxCount: 1, allowedMimes: ["video/mp4", "video/quicktime", "video/x-ms-wmv"] },
+    { name: "icon", maxCount: 1, allowedMimes: ["image/png", "image/jpeg", "image/jpg"] },
+  ]),
+  updateEssSubCat2
+);
 module.exports = router;

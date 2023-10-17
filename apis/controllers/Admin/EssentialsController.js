@@ -224,23 +224,120 @@ const addEssSubCatLevel2 = async (req, res, next) => {
     const subcat1 = await EssSubcategoryLevel1.findById(id);
     if (!subcat1) return queryErrorRelatedResponse(req, res, 404, "Essentials Level 1 Category not found.");
 
-    console.log(req.files["video"]);
-    console.log(req.files["icon"]);
-    // // Create a new subcategory at level 1
-    // const addedEssSub2 = req.body;
-    // if (req.file) {
-    //   addedEssSub2.icon = req.file.filename;
-    // }
-    // const newSubCat2 = await new EssSubcategoryLevel2(addedEssSub2);
-    // // Save the new subcategory
-    // const result = await newSubCat2.save();
+    // Create a new subcategory at level 2
+    const addedEssSub2 = req.body;
+    if (req.files["video"]) {
+      addedEssSub2.image_video = req.files["video"][0].filename;
+    }
 
-    // // Add the new subcategory to the category's subcategories array
-    // subcat1.subcategories.push(result);
-    // // Save the category with the new subcategory
-    // await subcat1.save();
+    if (req.files["icon"]) {
+      addedEssSub2.icon = req.files["icon"][0].filename;
+    }
 
-    // return createResponse(res, result);
+    const newSubCat2 = await new EssSubcategoryLevel2(addedEssSub2);
+    // Save the new subcategory
+    const result = await newSubCat2.save();
+
+    // Add the new subcategory to the category's subcategories array
+    subcat1.subcategories.push(result);
+    // Save the category with the new subcategory
+    await subcat1.save();
+
+    return createResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get All Sub-Category Level 1
+const getAllEssSubCat2 = async (req, res, next) => {
+  try {
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const subcat = await EssSubcategoryLevel1.findById(id);
+    if (!subcat) return queryErrorRelatedResponse(req, res, 404, "Essentials not found.");
+
+    // Get subcategories at level 2 for the specified category
+    const subcategoriesLevel2 = await EssSubcategoryLevel2.find({
+      _id: { $in: subcat.subcategories },
+    });
+
+    successResponse(res, subcategoriesLevel2);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update Level 2 Subacategory Status
+const updateEssSubCat2Status = async (req, res, next) => {
+  try {
+    // Convert string is into Object id
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const subCat = await EssSubcategoryLevel2.findById(id);
+    if (!subCat) return queryErrorRelatedResponse(req, res, 404, "Sub-category not found.");
+
+    subCat.status = !subCat.status;
+    const result = await subCat.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Delete Level 2 Subacategory
+const deleteEssSubCat2 = async (req, res, next) => {
+  try {
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const subcat = await EssSubcategoryLevel2.findById(id);
+    if (!subcat) return queryErrorRelatedResponse(req, res, 404, "Sub-category not found.");
+
+    await EssSubcategoryLevel2.deleteOne({ _id: id });
+    deleteResponse(res, "Sub-category deleted successfully.");
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Delete Multiple Level 2 Subacategory
+const deleteMultSubCat2 = async (req, res, next) => {
+  try {
+    const { Ids } = req.body;
+    Ids.map(async (item) => {
+      const id = new mongoose.Types.ObjectId(item);
+      await EssSubcategoryLevel2.deleteOne({ _id: id });
+    });
+    deleteResponse(res, "All selected records deleted successfully.");
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update Level 2 Subacategory
+const updateEssSubCat2 = async (req, res, next) => {
+  try {
+    const subcat = await EssSubcategoryLevel2.findById(req.params.id);
+    if (!subcat) return queryErrorRelatedResponse(req, res, 404, "Level 1 Subacategory not found.");
+
+    const updatedData = req.body;
+    updatedData.image_video = subcat.image_video;
+    updatedData.icon = subcat.icon;
+
+    if (req.files["video"]) {
+      console.log("video");
+      deleteFiles("essentials/" + subcat.image_video);
+      updatedData.image_video = req.files["video"][0].filename;
+    }
+
+    if (req.files["icon"]) {
+      console.log("icon");
+      deleteFiles("essentials/" + subcat.icon);
+      updatedData.icon = req.files["icon"][0].filename;
+    }
+
+    const isUpdate = await EssSubcategoryLevel2.findByIdAndUpdate(req.params.id, { $set: updatedData });
+    if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
+
+    const result = await EssSubcategoryLevel2.findById(req.params.id);
+    return successResponse(res, result);
   } catch (err) {
     next(err);
   }
@@ -260,4 +357,9 @@ module.exports = {
   deleteMultSubCat1,
   updateEssSubCat1,
   addEssSubCatLevel2,
+  getAllEssSubCat2,
+  updateEssSubCat2Status,
+  deleteEssSubCat2,
+  deleteMultSubCat2,
+  updateEssSubCat2,
 };
