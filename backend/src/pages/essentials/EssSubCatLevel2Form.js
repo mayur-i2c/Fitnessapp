@@ -43,9 +43,10 @@ const EssSubCatLevel2Form = () => {
       setValue('title', editdata.title);
       setValue('description', editdata.description);
       setNewUrl(imageurl + editdata.icon);
+      setSelectedVideo(imageurl + editdata.video);
     }
     setdefaultLoading(false);
-  });
+  }, []);
   const handleFileUploadIcon = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -77,9 +78,8 @@ const EssSubCatLevel2Form = () => {
   const handleMouseOutVideo = () => {
     setVideoIsHovering(false);
   };
-  const onSubmit = (data11) => {
+  const onSubmit = (data) => {
     setIsLoading(false);
-    console.log(data11);
     let formData = new FormData(); //formdata object
     Object.keys(data).forEach(function (key) {
       if (key === 'icon' || key === 'video') {
@@ -116,7 +116,7 @@ const EssSubCatLevel2Form = () => {
             // console.log(data);
             localStorage.setItem('redirectSuccess', 'true');
             localStorage.setItem('redirectMessage', 'Updated successfully!');
-            // navigate('/essentials/esssubcatlevel2', { state: { catdata: catdata, subcatdata: subcatdata, imageurl: baseurl } });
+            navigate('/essentials/esssubcatlevel2', { state: { catdata: catdata, subcatdata: subcatdata, imageurl: baseurl } });
           })
           .catch((err) => {
             if (!err.response.data.isSuccess) {

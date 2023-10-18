@@ -10,10 +10,12 @@ const {
   resetPassword,
   updateUserProfile,
   updateProfilePic,
+  RefreshToken,
 } = require("../../controllers/App/userController");
 
 router.post("/signup", signupUser);
 router.post("/signin", signinUser);
+router.post("/refreshToken", RefreshToken);
 router.post("/checkMoNo", checkUserMo);
 router.post("/checkOtp", checkUserOtp);
 router.post("/resetPassword", resetPassword);

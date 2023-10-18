@@ -253,3 +253,41 @@ export const deleteMultSubCat2 = (data) => {
     data: { Ids: data }
   });
 };
+
+//Get All Reel
+export const getAllReel = () =>
+  axios.get(`${mainUrl}/admin/reel/getAllReel`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Reel
+export const addReel = (data) =>
+  axios.post(`${mainUrl}/admin/reel/addReel`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Reel
+export const updateReel = (data, id) =>
+  axios.put(`${mainUrl}/admin/reel/updateReel/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Reel Status
+export const updateReelStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/reel/updateReelStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Reel
+export const deleteReel = (id) =>
+  axios.delete(`${mainUrl}/admin/reel/deleteReel/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Reel
+export const deleteMultReel = (data) => {
+  return axios.delete(`${mainUrl}/admin/reel/deleteMultReel`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

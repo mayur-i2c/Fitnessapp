@@ -10,7 +10,7 @@ import swal from 'sweetalert';
 import Switch from '@mui/material/Switch';
 import { useLocation } from 'react-router-dom';
 
-const EssSubCatLevel1 = () => {
+const EssSubCatLevel2 = () => {
   const [datatableData, setdatatableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -264,4 +264,4 @@ const EssSubCatLevel1 = () => {
   );
 };
 
-export default EssSubCatLevel1;
+export default EssSubCatLevel2;

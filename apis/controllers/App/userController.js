@@ -15,7 +15,9 @@ const serverUrl = process.env.NODE_ENV == "development" ? "http://localhost:5055
 //User Signup
 const signupUser = async (req, res, next) => {
   try {
-    const accessToken = jwt.sign({ email: req.body.email }, process.env.ACCESS_TOKEN_SECRET);
+    const accessToken = jwt.sign({ email: req.body.email }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1m",
+    });
 
     // Convert the requested date to a JavaScript Date object
     const dateOfBirth = new Date(req.body.dob);
@@ -33,8 +35,16 @@ const signupUser = async (req, res, next) => {
     });
     const addedUser = await newUser.save();
 
+    const refresh_token = jwt.sign({ email: req.body.email }, process.env.REFRESH_TOKEN_SECRET);
+    const baseUrl = req.protocol + "://" + req.get("host") + "/public/";
+    const userWithBaseUrl = {
+      ...newUser.toObject(),
+      baseUrl: baseUrl,
+      refresh_token: refresh_token,
+    };
+
     //save User and response
-    createResponse(res, addedUser);
+    createResponse(res, userWithBaseUrl);
   } catch (err) {
     next(err);
   }
@@ -52,11 +62,47 @@ const signinUser = async (req, res, next) => {
     if (user.status === false)
       return queryErrorRelatedResponse(req, res, 401, "Your account has been suspended!! Please contact to admin.");
 
-    const accessToken = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET);
+    const accessToken = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1m",
+    });
     user.remember_token = accessToken;
 
+    const refresh_token = jwt.sign({ email: user.email }, process.env.REFRESH_TOKEN_SECRET);
+
     const output = await user.save();
-    successResponse(res, user);
+
+    const baseUrl = req.protocol + "://" + req.get("host") + "/public/";
+    // Assuming you have a `baseUrl` variable
+    const userWithBaseUrl = {
+      ...user.toObject(),
+      baseUrl: baseUrl,
+      refresh_token: refresh_token,
+    };
+
+    successResponse(res, userWithBaseUrl);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get RefreshToken
+const RefreshToken = async (req, res, next) => {
+  const refreshToken = req.body.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(402).send("Access Denied. No refresh token provided.");
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await User.findOne({ email: decoded.email });
+    if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid Username!");
+
+    const token = jwt.sign({ email: decoded.email }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1m",
+    });
+    successResponse(res, token);
   } catch (err) {
     next(err);
   }
@@ -147,7 +193,7 @@ const updateProfilePic = async (req, res, next) => {
     user.image = req.file.filename;
     const result = await user.save();
 
-    const baseUrl = serverUrl + result.image;
+    const baseUrl = req.protocol + "://" + req.get("host") + "/public/" + result.image;
 
     successResponseOfFiles(res, "Profile Updated!", baseUrl);
   } catch (err) {
@@ -158,9 +204,11 @@ const updateProfilePic = async (req, res, next) => {
 module.exports = {
   signupUser,
   signinUser,
+  RefreshToken,
   checkUserMo,
   checkUserOtp,
   resetPassword,
   updateUserProfile,
   updateProfilePic,
+  RefreshToken,
 };

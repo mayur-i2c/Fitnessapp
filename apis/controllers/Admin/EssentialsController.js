@@ -249,7 +249,7 @@ const addEssSubCatLevel2 = async (req, res, next) => {
   }
 };
 
-//Get All Sub-Category Level 1
+//Get All Sub-Category Level 2
 const getAllEssSubCat2 = async (req, res, next) => {
   try {
     const id = new mongoose.Types.ObjectId(req.params.id);

@@ -1,12 +1,13 @@
 // assets
-import { DashboardOutlined, UserOutlined, MedicineBoxOutlined, AppstoreAddOutlined } from '@ant-design/icons';
+import { DashboardOutlined, UserOutlined, MedicineBoxOutlined, AppstoreAddOutlined, VideoCameraOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
   DashboardOutlined,
   UserOutlined,
   MedicineBoxOutlined,
-  AppstoreAddOutlined
+  AppstoreAddOutlined,
+  VideoCameraOutlined
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -38,6 +39,14 @@ const dashboard = {
       type: 'item',
       url: '/essentials',
       icon: icons.AppstoreAddOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'reel',
+      title: 'Reels',
+      type: 'item',
+      url: '/reels',
+      icon: icons.VideoCameraOutlined,
       breadcrumbs: false
     }
   ]
