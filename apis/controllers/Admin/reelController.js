@@ -6,6 +6,7 @@ const {
   deleteResponse,
 } = require("../../helper/sendResponse");
 const mongoose = require("mongoose");
+const deleteFiles = require("../../helper/deleteFiles");
 
 //Add Reel
 const addReel = async (req, res, next) => {

@@ -21,7 +21,7 @@ const Reel = () => {
       .then((response) => {
         setIsLoading(false);
         setdatatableData(response.data.info);
-        setbaseurl(`${process.env.REACT_APP_API_KEY}/public/essentials/`);
+        setbaseurl(`${process.env.REACT_APP_API_KEY_IMAGE_REEL_PATH}`);
       })
       .catch((err) => {
         if (!err.response.data.isSuccess) {
@@ -113,7 +113,7 @@ const Reel = () => {
                 }}
                 onClick={() => {
                   const editdata = datatableData.find((data) => data._id === value);
-                  navigate('/essentials/manage', { state: { editdata: editdata, imageurl: baseurl } });
+                  navigate('/reels/manage', { state: { editdata: editdata, imageurl: baseurl } });
                 }}
               />
               <Icons.Delete
@@ -195,7 +195,7 @@ const Reel = () => {
 
   const options = {
     customToolbarSelect: (selectedRows, data) => (
-      <SelectedRowsToolbar selectedRows={selectedRows} data={data} columns={columns} datatableTitle="test" />
+      <SelectedRowsToolbar selectedRows={selectedRows} data={data} columns={columns} datatableTitle="Reels" />
     )
   };
 
@@ -217,7 +217,7 @@ const Reel = () => {
                 size="medium"
                 color="primary"
                 onClick={() => {
-                  navigate('/essentials/manage');
+                  navigate('/reels/manage');
                 }}
               >
                 Add Reel

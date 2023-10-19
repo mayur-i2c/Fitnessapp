@@ -36,7 +36,7 @@ const signupUser = async (req, res, next) => {
     const addedUser = await newUser.save();
 
     const refresh_token = jwt.sign({ email: req.body.email }, process.env.REFRESH_TOKEN_SECRET);
-    const baseUrl = req.protocol + "://" + req.get("host") + "/public/";
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
     const userWithBaseUrl = {
       ...newUser.toObject(),
       baseUrl: baseUrl,
@@ -71,7 +71,7 @@ const signinUser = async (req, res, next) => {
 
     const output = await user.save();
 
-    const baseUrl = req.protocol + "://" + req.get("host") + "/public/";
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
     // Assuming you have a `baseUrl` variable
     const userWithBaseUrl = {
       ...user.toObject(),
@@ -171,7 +171,15 @@ const updateUserProfile = async (req, res, next) => {
     if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
 
     const updatedUser = await User.findById(req.body.userid);
-    successResponse(res, updatedUser);
+
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
+    // Assuming you have a `baseUrl` variable
+    const userWithBaseUrl = {
+      ...updatedUser.toObject(),
+      baseUrl: baseUrl,
+    };
+
+    successResponse(res, userWithBaseUrl);
   } catch (err) {
     next(err);
   }
@@ -193,7 +201,7 @@ const updateProfilePic = async (req, res, next) => {
     user.image = req.file.filename;
     const result = await user.save();
 
-    const baseUrl = req.protocol + "://" + req.get("host") + "/public/" + result.image;
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH + result.image;
 
     successResponseOfFiles(res, "Profile Updated!", baseUrl);
   } catch (err) {

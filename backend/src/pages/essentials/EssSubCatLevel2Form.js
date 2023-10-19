@@ -43,7 +43,7 @@ const EssSubCatLevel2Form = () => {
       setValue('title', editdata.title);
       setValue('description', editdata.description);
       setNewUrl(imageurl + editdata.icon);
-      setSelectedVideo(imageurl + editdata.video);
+      setSelectedVideo(imageurl + editdata.image_video);
     }
     setdefaultLoading(false);
   }, []);

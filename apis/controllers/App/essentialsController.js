@@ -18,12 +18,13 @@ const getAllEssentials = async (req, res, next) => {
     if (!cat) return queryErrorRelatedResponse(req, res, 404, "Essentials not found.");
 
     // Assuming you have a `baseUrl` variable
-    const baseUrl = req.protocol + "://" + req.get("host"); // Replace with your actual base URL
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_ESS_PATH;
+    +process.env.BASE_URL_ESS_PATH; // Replace with your actual base URL
 
     // Modify the response objects to include a `url` property
     const modifiedcategories = cat.map((subcategory) => ({
       ...subcategory.toObject(), // Convert the Mongoose document to a plain JavaScript object
-      url: `${baseUrl}/public/essentials/`,
+      baseUrl: `${baseUrl}`,
     }));
 
     successResponse(res, modifiedcategories);
@@ -45,12 +46,13 @@ const getEssSubCat1 = async (req, res, next) => {
     });
 
     // Assuming you have a `baseUrl` variable
-    const baseUrl = req.protocol + "://" + req.get("host"); // Replace with your actual base URL
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_ESS_PATH;
+    +process.env.BASE_URL_ESS_PATH; // Replace with your actual base URL
 
     // Modify the response objects to include a `url` property
     const modifiedSubcategories = subcategoriesLevel1.map((subcategory) => ({
       ...subcategory.toObject(), // Convert the Mongoose document to a plain JavaScript object
-      url: `${baseUrl}/public/essentials/`,
+      baseUrl: `${baseUrl}`,
     }));
 
     successResponse(res, modifiedSubcategories);
@@ -72,12 +74,12 @@ const getEssSubCat2 = async (req, res, next) => {
     });
 
     // Assuming you have a `baseUrl` variable
-    const baseUrl = req.protocol + "://" + req.get("host"); // Replace with your actual base URL
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_ESS_PATH; // Replace with your actual base URL
 
     // Modify the response objects to include a `url` property
     const modifiedSubcategories = subcategoriesLevel2.map((subcategory) => ({
       ...subcategory.toObject(), // Convert the Mongoose document to a plain JavaScript object
-      url: `${baseUrl}/public/essentials/`,
+      baseUrl: `${baseUrl}`,
     }));
 
     successResponse(res, modifiedSubcategories);
