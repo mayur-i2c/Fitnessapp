@@ -39,6 +39,9 @@ const EssSubCatLevel2Form = Loadable(lazy(() => import('pages/essentials/EssSubC
 const Reel = Loadable(lazy(() => import('pages/reel')));
 const ReelForm = Loadable(lazy(() => import('pages/reel/ReelForm')));
 
+const ExerciseLibrary = Loadable(lazy(() => import('pages/exerciseLibrary')));
+const ExerciseLibraryForm = Loadable(lazy(() => import('pages/exerciseLibrary/ExerciseLibraryForm')));
+
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
 
@@ -84,6 +87,8 @@ export default function ThemeRoutes() {
         <Route path="essentials/esssubcatlevel2/manage" element={<EssSubCatLevel2Form />} />
         <Route path="reels" element={<Reel />} />
         <Route path="reels/manage" element={<ReelForm />} />
+        <Route path="exeLibrary" element={<ExerciseLibrary />} />
+        <Route path="exeLibrary/manage" element={<ExerciseLibraryForm />} />
         <Route path="settings/medicalCondition" element={<MedicalCondition />} />
         <Route path="settings/medicalCondition/manage" element={<MedicalConditionForm />} />
         <Route path="color" element={<Color />} />

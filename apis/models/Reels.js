@@ -5,6 +5,10 @@ const ReelsSchema = mongoose.Schema({
     type: String,
     required: [true, "Title is required."],
   },
+  image: {
+    type: String,
+    required: [true, "Image is required."],
+  },
   video: {
     type: String,
     required: [true, "Video is required."],

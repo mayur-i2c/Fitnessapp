@@ -291,3 +291,41 @@ export const deleteMultReel = (data) => {
     data: { Ids: data }
   });
 };
+
+//Get All Exercise Library
+export const getAllExeLibrary = () =>
+  axios.get(`${mainUrl}/admin/exeLibrary/getAllExeLibrary`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Exercise Library
+export const addExeLibrary = (data) =>
+  axios.post(`${mainUrl}/admin/exeLibrary/addExeLibrary`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Exercise Library
+export const updateExeLibrary = (data, id) =>
+  axios.put(`${mainUrl}/admin/exeLibrary/updateExeLibrary/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Exercise Library Status
+export const updateExeLibraryStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/exeLibrary/updateExeLibraryStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Exercise Library
+export const deleteExeLibrary = (id) =>
+  axios.delete(`${mainUrl}/admin/exeLibrary/deleteExeLibrary/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Exercise Library
+export const deleteMultExeLibrary = (data) => {
+  return axios.delete(`${mainUrl}/admin/exeLibrary/deleteMultExeLibrary`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

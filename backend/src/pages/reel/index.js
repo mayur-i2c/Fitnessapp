@@ -56,6 +56,22 @@ const Reel = () => {
   }, []);
   const columns = [
     {
+      name: 'image',
+      label: 'Image',
+      options: {
+        customBodyRender: (image) =>
+          image ? (
+            <img
+              src={`${process.env.REACT_APP_API_KEY_IMAGE_REEL_PATH}${image}`}
+              alt={image}
+              style={{ height: '50px', width: '50px', borderRadius: '50%' }}
+            />
+          ) : (
+            ''
+          )
+      }
+    },
+    {
       name: 'title',
       label: 'Title',
       options: {

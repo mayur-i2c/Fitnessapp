@@ -50,6 +50,7 @@ const NavItem = ({ item, level }) => {
 
   return (
     <ListItemButton
+      style={{ borderBottom: '1px solid #80808042' }}
       {...listItemProps}
       disabled={item.disabled}
       onClick={() => itemHandler(item.id)}

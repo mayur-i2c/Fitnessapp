@@ -1,5 +1,12 @@
 // assets
-import { DashboardOutlined, UserOutlined, MedicineBoxOutlined, AppstoreAddOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import {
+  DashboardOutlined,
+  UserOutlined,
+  MedicineBoxOutlined,
+  AppstoreAddOutlined,
+  VideoCameraOutlined,
+  FileDoneOutlined
+} from '@ant-design/icons';
 
 // icons
 const icons = {
@@ -7,7 +14,8 @@ const icons = {
   UserOutlined,
   MedicineBoxOutlined,
   AppstoreAddOutlined,
-  VideoCameraOutlined
+  VideoCameraOutlined,
+  FileDoneOutlined
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -47,6 +55,14 @@ const dashboard = {
       type: 'item',
       url: '/reels',
       icon: icons.VideoCameraOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'exeLibrary',
+      title: 'Exercise Library',
+      type: 'item',
+      url: '/exeLibrary',
+      icon: icons.FileDoneOutlined,
       breadcrumbs: false
     }
   ]

@@ -20,6 +20,8 @@ const ReelForm = () => {
   const navigate = useNavigate();
   const [isHovering, setIsHovering] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [newUrl, setNewUrl] = useState(upload);
+  const [isImageHovering, setImageIsHovering] = useState(false);
 
   const {
     register,
@@ -33,10 +35,11 @@ const ReelForm = () => {
       const { editdata, imageurl } = state;
       setisupdate(editdata._id);
       setValue('title', editdata.title);
+      setNewUrl(imageurl + editdata.image);
       setSelectedVideo(imageurl + editdata.video);
     }
     setdefaultLoading(false);
-  });
+  }, []);
   const handleFileUpload = (e) => {
     const file = e.target.files[0]; // Get the selected video file
     if (file) {
@@ -51,11 +54,29 @@ const ReelForm = () => {
   const handleMouseOut = () => {
     setIsHovering(false);
   };
+
+  const handleFileUploadIcon = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setNewUrl(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  };
+  const handleMouseOverIcon = () => {
+    setImageIsHovering(true);
+  };
+  const handleMouseOutIcon = () => {
+    setImageIsHovering(false);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(false);
     let formData = new FormData(); //formdata object
     Object.keys(data).forEach(function (key) {
-      if (key === 'video') {
+      if (key === 'video' || key === 'image') {
         formData.append(key, data[key][0]);
       } else {
         formData.append(key, data[key]);
@@ -71,7 +92,7 @@ const ReelForm = () => {
           })
           .catch((err) => {
             if (!err.response.data.isSuccess) {
-              toast.error(capitalizeFirstLetter(err.response.data.message));
+              toast.error(err.response.data.message);
             } else {
               toast.error('Something Went Wrong!', {
                 position: 'top-right',
@@ -93,7 +114,7 @@ const ReelForm = () => {
           })
           .catch((err) => {
             if (!err.response.data.isSuccess) {
-              toast.error(capitalizeFirstLetter(err.response.data.message));
+              toast.error(err.response.data.message);
             } else {
               toast.error('Something Went Wrong!', {
                 position: 'top-right',
@@ -143,8 +164,42 @@ const ReelForm = () => {
                       onChange={(e) => setValue('title', e.target.value)}
                     />
 
-                    <Grid xs={3} mt={2} spacing={3}>
-                      <Grid item xs={12} mt={2} style={{ textAlign: 'center' }}>
+                    <Grid xs={12} mt={2} spacing={3} container>
+                      <Grid item xs={6} mt={2} style={{ textAlign: 'center' }}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          style={{ display: 'block' }}
+                          spacing={2}
+                          sx={6}
+                          onMouseOver={handleMouseOverIcon}
+                          onMouseOut={handleMouseOutIcon}
+                        >
+                          <label htmlFor="icon-button-file-icon" style={{ textAlign: 'center' }}>
+                            <Input
+                              name="image"
+                              accept="image/*"
+                              {...register('image', { required: isupdate ? false : true })}
+                              id="icon-button-file-icon"
+                              type="file"
+                              onChange={handleFileUploadIcon}
+                              alignItems="center"
+                              style={{ top: '-9999px', left: '-9999px' }}
+                            />
+                            {!isImageHovering ? (
+                              <img src={newUrl} alt="Reel" width="100" height={100} style={{ borderRadius: '50%' }} />
+                            ) : (
+                              <img src={upload} alt="Reel" width="100" height={100} style={{ borderRadius: '50%' }} />
+                            )}
+                          </label>
+                          <br />
+                          <span>Image</span>
+                          <FormHelperText error style={{ textAlign: 'center' }}>
+                            {errors.image && 'Image is required'}
+                          </FormHelperText>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={6} mt={2} style={{ textAlign: 'center' }}>
                         <Stack
                           direction="row"
                           alignItems="center"
@@ -167,7 +222,7 @@ const ReelForm = () => {
                             />
                             {!isHovering ? (
                               selectedVideo ? (
-                                <video controls width="200" height="150" style={{ margin: '0 20px' }}>
+                                <video controls width="150" height="100" style={{ margin: '0 20px' }}>
                                   <source src={selectedVideo} type="video/mp4" />
                                   <track label="English Captions" kind="subtitles" srcLang="en" src="captions.vtt" default />
                                   Your browser does not support the video tag.
@@ -179,6 +234,8 @@ const ReelForm = () => {
                               <img src={upload} alt="Reel" width="100" height={100} style={{ borderRadius: '50%' }} />
                             )}
                           </label>
+                          <br />
+                          <span>Video</span>
                           <FormHelperText error>{errors.video && 'Video is required'}</FormHelperText>
                         </Stack>
                       </Grid>

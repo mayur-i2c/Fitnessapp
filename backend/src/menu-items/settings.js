@@ -1,11 +1,24 @@
 // assets
-import { DashboardOutlined, UserOutlined, MedicineBoxOutlined, CaretRightOutlined, CaretDownOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  DashboardOutlined,
+  UserOutlined,
+  MedicineBoxOutlined,
+  CaretRightOutlined,
+  CaretDownOutlined,
+  QuestionCircleOutlined,
+  SettingOutlined,
+  LockOutlined,
+  FileDoneOutlined
+} from '@ant-design/icons';
 
 // icons
 const icons = {
   DashboardOutlined,
   UserOutlined,
   MedicineBoxOutlined,
+  QuestionCircleOutlined,
+  LockOutlined,
+  FileDoneOutlined,
   CollapseIcon: {
     collapsed: CaretRightOutlined, // Icon when collapsed
     expanded: CaretDownOutlined // Icon when expanded
@@ -32,6 +45,30 @@ const settings = {
       type: 'item',
       url: 'settings/medicalCondition',
       icon: icons.MedicineBoxOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'terms_conditions',
+      title: 'Terms & Conditions',
+      type: 'item',
+      url: 'settings/tc',
+      icon: icons.FileDoneOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'privacy_policy',
+      title: 'Privacy Policy',
+      type: 'item',
+      url: 'settings/privacy_policy',
+      icon: icons.LockOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'faqs',
+      title: 'FAQs',
+      type: 'item',
+      url: 'settings/faqs',
+      icon: icons.QuestionCircleOutlined,
       breadcrumbs: false
     }
   ]

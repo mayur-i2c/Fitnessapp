@@ -1,4 +1,5 @@
 const MedicalConditions = require("../../models/MedicalConditions");
+const TC = require("../../models/Tc");
 const {
   createResponse,
   successResponse,
@@ -103,6 +104,21 @@ const getActiveMedicalCon = async (req, res, next) => {
   }
 };
 
+//Update Terms &  Conditions
+const updatetc = async (req, res, next) => {
+  try {
+    const { description } = req.body;
+    const tc = await TC.findById(req.params.id);
+    if (!tc) return queryErrorRelatedResponse(req, res, 404, "Terms & Condition not found.");
+
+    tc.description = description;
+    const result = await tc.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addMedicalCon,
   getAllMedicalCon,
@@ -111,4 +127,5 @@ module.exports = {
   deleteMultMedicalCon,
   updateMedicalConStatus,
   getActiveMedicalCon,
+  updatetc,
 };

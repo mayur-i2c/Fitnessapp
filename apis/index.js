@@ -42,6 +42,7 @@ app.use(errorController);
 app.use("/public", express.static(path.join(__dirname, "./public/images/")));
 app.use("/public/essentials", express.static(path.join(__dirname, "./public/images/essentials")));
 app.use("/public/reels", express.static(path.join(__dirname, "./public/images/reels")));
+app.use("/public/exerciseLibrary", express.static(path.join(__dirname, "./public/images/exerciseLibrary")));
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection Error"));

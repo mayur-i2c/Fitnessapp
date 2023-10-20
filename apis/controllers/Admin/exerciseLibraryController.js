@@ -66,7 +66,8 @@ const deleteExeLibrary = async (req, res, next) => {
     const id = new mongoose.Types.ObjectId(req.params.id);
     const exeLibrary = await ExerciseLibrary.findById(id);
     if (!exeLibrary) return queryErrorRelatedResponse(req, res, 404, "Exercise Library not found.");
-
+    deleteFiles("exerciseLibrary/" + exeLibrary.video);
+    deleteFiles("exerciseLibrary/" + exeLibrary.icon);
     await ExerciseLibrary.deleteOne({ _id: id });
     deleteResponse(res, "Exercise Library deleted successfully.");
   } catch (err) {
@@ -80,6 +81,10 @@ const deleteMultExeLibrary = async (req, res, next) => {
     const { Ids } = req.body;
     Ids.map(async (item) => {
       const id = new mongoose.Types.ObjectId(item);
+      const exeLibrary = await ExerciseLibrary.findById(id);
+      deleteFiles("exerciseLibrary/" + exeLibrary.video);
+      deleteFiles("exerciseLibrary/" + exeLibrary.icon);
+
       await ExerciseLibrary.deleteOne({ _id: id });
     });
     deleteResponse(res, "All selected records deleted successfully.");

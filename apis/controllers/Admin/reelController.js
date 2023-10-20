@@ -12,9 +12,15 @@ const deleteFiles = require("../../helper/deleteFiles");
 const addReel = async (req, res, next) => {
   try {
     const addedReel = req.body;
-    if (req.file) {
-      addedReel.video = req.file.filename;
+
+    if (req.files["video"]) {
+      addedReel.video = req.files["video"][0].filename;
     }
+
+    if (req.files["image"]) {
+      addedReel.image = req.files["image"][0].filename;
+    }
+
     const NewReel = await new Reels(addedReel);
 
     const result = await NewReel.save();
@@ -32,9 +38,16 @@ const updateReel = async (req, res, next) => {
 
     const updatedData = req.body;
     updatedData.video = reel.video;
-    if (req.file) {
-      deleteFiles("reel/" + reel.video);
-      updatedData.video = req.file.filename;
+    updatedData.image = reel.image;
+
+    if (req.files["video"]) {
+      deleteFiles("reels/" + reel.video);
+      updatedData.video = req.files["video"][0].filename;
+    }
+
+    if (req.files["image"]) {
+      deleteFiles("reels/" + reel.image);
+      updatedData.image = req.files["image"][0].filename;
     }
 
     const isUpdate = await Reels.findByIdAndUpdate(req.params.id, { $set: updatedData });
@@ -69,7 +82,8 @@ const deleteReel = async (req, res, next) => {
     const id = new mongoose.Types.ObjectId(req.params.id);
     const reel = await Reels.findById(id);
     if (!reel) return queryErrorRelatedResponse(req, res, 404, "Reel not found.");
-
+    deleteFiles("reels/" + reel.image);
+    deleteFiles("reels/" + reel.video);
     await Reels.deleteOne({ _id: id });
     deleteResponse(res, "Reel deleted successfully.");
   } catch (err) {
@@ -83,6 +97,9 @@ const deleteMultReel = async (req, res, next) => {
     const { Ids } = req.body;
     Ids.map(async (item) => {
       const id = new mongoose.Types.ObjectId(item);
+      const reel = await Reels.findById(id);
+      deleteFiles("reels/" + reel.image);
+      deleteFiles("reels/" + reel.video);
       await Reels.deleteOne({ _id: id });
     });
     deleteResponse(res, "All selected records deleted successfully.");

@@ -8,6 +8,7 @@ const {
   deleteMultMedicalCon,
   updateMedicalConStatus,
   getActiveMedicalCon,
+  updatetc,
 } = require("../../controllers/Admin/settingController");
 const authenticAdmin = require("../../helper/verifyAdminToken");
 
@@ -18,5 +19,6 @@ router.put("/updateMedicalCon/:id", authenticAdmin, updateMedicalCon);
 router.delete("/deleteMedicalCon/:id", authenticAdmin, deleteMedicalCon);
 router.delete("/deleteMultMedicalCon", authenticAdmin, deleteMultMedicalCon);
 router.put("/updateMedicalConStatus/:id", authenticAdmin, updateMedicalConStatus);
+router.put("/updatetc/:id", authenticAdmin, updatetc);
 
 module.exports = router;
