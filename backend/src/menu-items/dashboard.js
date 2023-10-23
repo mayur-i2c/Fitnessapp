@@ -7,7 +7,7 @@ import {
   VideoCameraOutlined,
   FileDoneOutlined
 } from '@ant-design/icons';
-
+import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined';
 // icons
 const icons = {
   DashboardOutlined,
@@ -15,7 +15,8 @@ const icons = {
   MedicineBoxOutlined,
   AppstoreAddOutlined,
   VideoCameraOutlined,
-  FileDoneOutlined
+  FileDoneOutlined,
+  AccessibilityNewOutlinedIcon
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -55,6 +56,14 @@ const dashboard = {
       type: 'item',
       url: '/reels',
       icon: icons.VideoCameraOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'workoutCollection',
+      title: 'Workout Collections',
+      type: 'item',
+      url: '/workoutCollection',
+      icon: icons.AccessibilityNewOutlinedIcon,
       breadcrumbs: false
     },
     {

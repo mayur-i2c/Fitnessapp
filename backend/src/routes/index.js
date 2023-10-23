@@ -28,6 +28,10 @@ const UserForm = Loadable(lazy(() => import('pages/users/userform')));
 
 const MedicalCondition = Loadable(lazy(() => import('pages/settings/MedicalCondition')));
 const MedicalConditionForm = Loadable(lazy(() => import('pages/settings/MedicalConditionForm')));
+const TCForm = Loadable(lazy(() => import('pages/settings/TCForm')));
+const PrivacyPolicyForm = Loadable(lazy(() => import('pages/settings/PrivacyPolicyForm')));
+const Faq = Loadable(lazy(() => import('pages/settings/Faq')));
+const FaqForm = Loadable(lazy(() => import('pages/settings/FaqForm')));
 
 const Essentials = Loadable(lazy(() => import('pages/essentials')));
 const EssentialsForm = Loadable(lazy(() => import('pages/essentials/EssentialsForm')));
@@ -39,17 +43,12 @@ const EssSubCatLevel2Form = Loadable(lazy(() => import('pages/essentials/EssSubC
 const Reel = Loadable(lazy(() => import('pages/reel')));
 const ReelForm = Loadable(lazy(() => import('pages/reel/ReelForm')));
 
+const WorkoutCollection = Loadable(lazy(() => import('pages/workoutCollection')));
+const WorkoutCollectionForm = Loadable(lazy(() => import('pages/workoutCollection/workoutCollectionForm')));
+
 const ExerciseLibrary = Loadable(lazy(() => import('pages/exerciseLibrary')));
 const ExerciseLibraryForm = Loadable(lazy(() => import('pages/exerciseLibrary/ExerciseLibraryForm')));
 
-// render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
-
-// render - utilities
-const Typography = Loadable(lazy(() => import('pages/components-overview/Typography')));
-const Color = Loadable(lazy(() => import('pages/components-overview/Color')));
-const Shadow = Loadable(lazy(() => import('pages/components-overview/Shadow')));
-const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons')));
 // ==============================|| ROUTING RENDER ||============================== //
 import { useUserState } from '../context/UserContext';
 
@@ -91,11 +90,13 @@ export default function ThemeRoutes() {
         <Route path="exeLibrary/manage" element={<ExerciseLibraryForm />} />
         <Route path="settings/medicalCondition" element={<MedicalCondition />} />
         <Route path="settings/medicalCondition/manage" element={<MedicalConditionForm />} />
-        <Route path="color" element={<Color />} />
-        <Route path="sample-page" element={<SamplePage />} />
-        <Route path="shadow" element={<Shadow />} />
-        <Route path="typography" element={<Typography />} />
-        <Route path="icons/ant" element={<AntIcons />} />
+        <Route path="settings/tc/manage" element={<TCForm />} />
+        <Route path="settings/privacyPolicy/manage" element={<PrivacyPolicyForm />} />
+        <Route path="settings/faq" element={<Faq />} />
+        <Route path="/settings/faq/manage" element={<FaqForm />} />
+        <Route path="workoutCollection" element={<WorkoutCollection />} />
+        <Route path="workoutCollection/manage" element={<WorkoutCollectionForm />} />
+        workoutCollection
       </Route>
     </Routes>
   );

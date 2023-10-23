@@ -329,3 +329,65 @@ export const deleteMultExeLibrary = (data) => {
     data: { Ids: data }
   });
 };
+
+//Get T&C
+export const gettc = () =>
+  axios.get(`${mainUrl}/admin/setting/gettc`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update T&C
+export const updatetc = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updatetc/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get Privacy Policy
+export const getpolicy = () =>
+  axios.get(`${mainUrl}/admin/setting/getpolicy`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Privacy Policy
+export const updatepolicy = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updatepolicy/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Faq
+export const addfaqs = (data) =>
+  axios.post(`${mainUrl}/admin/setting/addfaqs`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get Faq
+export const getAllFaqs = () =>
+  axios.get(`${mainUrl}/admin/setting/getAllFaqs`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Faq
+export const updateFaq = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateFaq/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Faq Status
+export const updateFaqStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateFaqStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Faq
+export const deletefaq = (id) =>
+  axios.delete(`${mainUrl}/admin/setting/deletefaq/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Faq
+export const deleteMultFaq = (data) => {
+  return axios.delete(`${mainUrl}/admin/setting/deleteMultFaq`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

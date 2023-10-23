@@ -51,7 +51,7 @@ const settings = {
       id: 'terms_conditions',
       title: 'Terms & Conditions',
       type: 'item',
-      url: 'settings/tc',
+      url: 'settings/tc/manage',
       icon: icons.FileDoneOutlined,
       breadcrumbs: false
     },
@@ -59,15 +59,15 @@ const settings = {
       id: 'privacy_policy',
       title: 'Privacy Policy',
       type: 'item',
-      url: 'settings/privacy_policy',
+      url: 'settings/privacyPolicy/manage',
       icon: icons.LockOutlined,
       breadcrumbs: false
     },
     {
-      id: 'faqs',
+      id: 'faq',
       title: 'FAQs',
       type: 'item',
-      url: 'settings/faqs',
+      url: 'settings/faq',
       icon: icons.QuestionCircleOutlined,
       breadcrumbs: false
     }
