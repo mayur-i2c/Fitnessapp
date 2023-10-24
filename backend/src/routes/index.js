@@ -44,7 +44,7 @@ const Reel = Loadable(lazy(() => import('pages/reel')));
 const ReelForm = Loadable(lazy(() => import('pages/reel/ReelForm')));
 
 const WorkoutCollection = Loadable(lazy(() => import('pages/workoutCollection')));
-const WorkoutCollectionForm = Loadable(lazy(() => import('pages/workoutCollection/workoutCollectionForm')));
+const WorkoutCollectionForm = Loadable(lazy(() => import('pages/workoutCollection/WorkoutCollectionForm')));
 
 const ExerciseLibrary = Loadable(lazy(() => import('pages/exerciseLibrary')));
 const ExerciseLibraryForm = Loadable(lazy(() => import('pages/exerciseLibrary/ExerciseLibraryForm')));

@@ -391,3 +391,41 @@ export const deleteMultFaq = (data) => {
     data: { Ids: data }
   });
 };
+
+//Add Workout Collection
+export const addWorkCollection = (data) =>
+  axios.post(`${mainUrl}/admin/workCollection/addWorkCollection`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get Workout Collection
+export const getAllCollection = () =>
+  axios.get(`${mainUrl}/admin/workCollection/getAllCollection`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Workout Collection
+export const updateWorkCollection = (data, id) =>
+  axios.put(`${mainUrl}/admin/workCollection/updateWorkCollection/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Workout Collection Status
+export const updateCollectionStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/workCollection/updateCollectionStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Workout Collection
+export const deletecollection = (id) =>
+  axios.delete(`${mainUrl}/admin/workCollection/deletecollection/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Workout Collection
+export const deleteMultCollection = (data) => {
+  return axios.delete(`${mainUrl}/admin/workCollection/deleteMultCollection`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

@@ -68,9 +68,9 @@ const updateCollectionStatus = async (req, res, next) => {
 const deletecollection = async (req, res, next) => {
   try {
     const id = new mongoose.Types.ObjectId(req.params.id);
-    const colelction = await WorkoutCollection.findById(id);
-    if (!colelction) return queryErrorRelatedResponse(req, res, 404, "Workout Collection not found.");
-
+    const collection = await WorkoutCollection.findById(id);
+    if (!collection) return queryErrorRelatedResponse(req, res, 404, "Workout Collection not found.");
+    await deleteFiles("workoutCollection/" + collection.image);
     await WorkoutCollection.deleteOne({ _id: id });
     deleteResponse(res, "Workout Collection deleted successfully.");
   } catch (err) {
@@ -84,6 +84,8 @@ const deleteMultCollection = async (req, res, next) => {
     const { Ids } = req.body;
     Ids.map(async (item) => {
       const id = new mongoose.Types.ObjectId(item);
+      const collection = await WorkoutCollection.findById(id);
+      await deleteFiles("workoutCollection/" + collection.image);
       await WorkoutCollection.deleteOne({ _id: id });
     });
     deleteResponse(res, "All selected records deleted successfully.");
