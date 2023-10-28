@@ -10,7 +10,8 @@ import {
   LockOutlined,
   FileDoneOutlined
 } from '@ant-design/icons';
-
+import LocalDiningOutlinedIcon from '@mui/icons-material/LocalDiningOutlined';
+import FastfoodOutlinedIcon from '@mui/icons-material/FastfoodOutlined';
 // icons
 const icons = {
   DashboardOutlined,
@@ -19,6 +20,8 @@ const icons = {
   QuestionCircleOutlined,
   LockOutlined,
   FileDoneOutlined,
+  LocalDiningOutlinedIcon,
+  FastfoodOutlinedIcon,
   CollapseIcon: {
     collapsed: CaretRightOutlined, // Icon when collapsed
     expanded: CaretDownOutlined // Icon when expanded
@@ -45,6 +48,22 @@ const settings = {
       type: 'item',
       url: 'settings/medicalCondition',
       icon: icons.MedicineBoxOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'nutrition_settings',
+      title: 'Nutrition Settings',
+      type: 'item',
+      url: 'settings/nutritionSettings/manage',
+      icon: icons.LocalDiningOutlinedIcon,
+      breadcrumbs: false
+    },
+    {
+      id: 'meal_settings',
+      title: 'Meal Settings',
+      type: 'item',
+      url: 'settings/mealSettings/manage',
+      icon: icons.FastfoodOutlinedIcon,
       breadcrumbs: false
     },
     {

@@ -167,19 +167,44 @@ const updateUserProfile = async (req, res, next) => {
     const user = await User.findById(req.body.userid);
     if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid User!!");
 
-    const isUpdate = await User.findByIdAndUpdate(req.body.userid, { $set: req.body });
-    if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
+    const height = req.body.height_measure == 1 ? req.body.height * 30.48 : req.body.height;
 
-    const updatedUser = await User.findById(req.body.userid);
+    //For male
+    if (req.body.sex == 1) {
+      bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age + 5;
+    } else {
+      bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age - 161;
+    }
 
-    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
-    // Assuming you have a `baseUrl` variable
-    const userWithBaseUrl = {
-      ...updatedUser.toObject(),
-      baseUrl: baseUrl,
-    };
+    // Sedentary (little or no exercise): BMR * 1.2
+    // Lightly active (light exercise or sports 1-3 days a week): BMR * 1.375
+    // Moderately active (moderate exercise or sports 3-5 days a week): BMR * 1.55
+    // Very active (hard exercise or sports 6-7 days a week): BMR * 1.725
 
-    successResponse(res, userWithBaseUrl);
+    if (req.body.active_status == 1) {
+      req.body.cal = bmr * 1.2 - 500;
+    } else if (req.body.active_status == 2) {
+      req.body.cal = bmr * 1.375 - 500;
+    } else if (req.body.active_status == 3) {
+      req.body.cal = bmr * 1.55 - 500;
+    } else {
+      req.body.cal = bmr * 1.725 - 500;
+    }
+
+    console.log(req.body);
+    // const isUpdate = await User.findByIdAndUpdate(req.body.userid, { $set: req.body });
+    // if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
+
+    // const updatedUser = await User.findById(req.body.userid);
+
+    // const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
+    // // Assuming you have a `baseUrl` variable
+    // const userWithBaseUrl = {
+    //   ...updatedUser.toObject(),
+    //   baseUrl: baseUrl,
+    // };
+
+    // successResponse(res, userWithBaseUrl);
   } catch (err) {
     next(err);
   }

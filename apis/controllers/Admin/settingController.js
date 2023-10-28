@@ -2,6 +2,8 @@ const MedicalConditions = require("../../models/MedicalConditions");
 const TC = require("../../models/Tc");
 const PrivacyPolicy = require("../../models/PrivacyPolicy");
 const Faqs = require("../../models/Faqs");
+const NutritionSettings = require("../../models/NutritionSettings");
+const MealSettings = require("../../models/MealSettings");
 
 const {
   createResponse,
@@ -273,6 +275,123 @@ const deleteMultFaq = async (req, res, next) => {
   }
 };
 
+//Add Nutrition Settings
+const addNutritionSettings = async (req, res, next) => {
+  try {
+    const { protein, carb, fat, fibre } = req.body;
+    const newpp = await NutritionSettings.create({
+      protein,
+      carb,
+      fat,
+      fibre,
+    });
+    const result = await newpp.save();
+    return createResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update Nutrition Settings
+const updateNutritionSettings = async (req, res, next) => {
+  try {
+    const { protein, carb, fat, fibre } = req.body;
+    const nutrition = await NutritionSettings.findById(req.params.id);
+    if (!nutrition) return queryErrorRelatedResponse(req, res, 404, "Nutrition Settings not found.");
+    const proteinNum = Number(protein);
+    const carbNum = Number(carb);
+    const fatNum = Number(fat);
+    const sum = proteinNum + carbNum + fatNum;
+
+    if (sum !== 100) {
+      return queryErrorRelatedResponse(req, res, 400, "Protein, carb, and fat must sum to 100.");
+    }
+
+    nutrition.protein = protein;
+    nutrition.carb = carb;
+    nutrition.fat = fat;
+    nutrition.fibre = fibre;
+    const result = await nutrition.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get Nutrition Settings
+const getNutrition = async (req, res, next) => {
+  try {
+    const nutrition = await NutritionSettings.find();
+    if (!nutrition) return queryErrorRelatedResponse(req, res, 404, "Nutrition Settings not found.");
+    successResponse(res, nutrition);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Add Meal Settings
+const addMealSettings = async (req, res, next) => {
+  try {
+    const { breakfast, morning_snack, lunch, evening_snack, dinner } = req.body;
+    const newMeal = await MealSettings.create({
+      breakfast,
+      morning_snack,
+      lunch,
+      evening_snack,
+      dinner,
+    });
+    const result = await newMeal.save();
+    return createResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update Meal Settings
+const updateMealSettings = async (req, res, next) => {
+  try {
+    const { breakfast, morning_snack, lunch, evening_snack, dinner } = req.body;
+    const meal = await MealSettings.findById(req.params.id);
+    if (!meal) return queryErrorRelatedResponse(req, res, 404, "Meal Settings not found.");
+    const breakfastNum = Number(breakfast);
+    const morning_snackNum = Number(morning_snack);
+    const lunchNum = Number(lunch);
+    const evening_snackNum = Number(evening_snack);
+    const dinnerNum = Number(dinner);
+    const sum = breakfastNum + morning_snackNum + lunchNum + evening_snackNum + dinnerNum;
+
+    if (sum !== 100) {
+      return queryErrorRelatedResponse(
+        req,
+        res,
+        400,
+        "Breakfast, Morning snack, Lunch, Evening Snack and Dinner must sum to 100."
+      );
+    }
+
+    meal.breakfast = breakfastNum;
+    meal.morning_snack = morning_snackNum;
+    meal.lunch = lunchNum;
+    meal.evening_snack = evening_snackNum;
+    meal.dinner = dinnerNum;
+    const result = await meal.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get Meal Settings
+const getMeal = async (req, res, next) => {
+  try {
+    const meal = await MealSettings.find();
+    if (!meal) return queryErrorRelatedResponse(req, res, 404, "Meal Settings not found.");
+    successResponse(res, meal);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addMedicalCon,
   getAllMedicalCon,
@@ -293,4 +412,10 @@ module.exports = {
   updateFaqStatus,
   deleteMultFaq,
   deletefaq,
+  addNutritionSettings,
+  updateNutritionSettings,
+  getNutrition,
+  addMealSettings,
+  updateMealSettings,
+  getMeal,
 };

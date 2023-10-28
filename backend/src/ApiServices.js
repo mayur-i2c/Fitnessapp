@@ -429,3 +429,27 @@ export const deleteMultCollection = (data) => {
     data: { Ids: data }
   });
 };
+
+//Get Nutrition Settings
+export const getNutrition = () =>
+  axios.get(`${mainUrl}/admin/setting/getNutrition`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Nutrition Settings
+export const updateNutritionSettings = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateNutritionSettings/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get Meal Settings
+export const getMeal = () =>
+  axios.get(`${mainUrl}/admin/setting/getMeal`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Meal Settings
+export const updateMealSettings = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateMealSettings/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
