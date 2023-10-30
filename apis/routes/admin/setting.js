@@ -26,6 +26,12 @@ const {
   addMealSettings,
   updateMealSettings,
   getMeal,
+  addRecipeUnits,
+  getAllRecipeUnits,
+  updateRecipeUnits,
+  updateRecipeUnitsStatus,
+  deleteRecipeUnit,
+  deleteMultRecipeUnit,
 } = require("../../controllers/Admin/settingController");
 const authenticAdmin = require("../../helper/verifyAdminToken");
 
@@ -54,5 +60,11 @@ router.get("/getNutrition", authenticAdmin, getNutrition);
 router.post("/addMealSettings", authenticAdmin, addMealSettings);
 router.put("/updateMealSettings/:id", authenticAdmin, updateMealSettings);
 router.get("/getMeal", authenticAdmin, getMeal);
+router.post("/addRecipeUnits", authenticAdmin, addRecipeUnits);
+router.get("/getAllRecipeUnits", authenticAdmin, getAllRecipeUnits);
+router.put("/updateRecipeUnits/:id", authenticAdmin, updateRecipeUnits);
+router.delete("/deleteRecipeUnit/:id", authenticAdmin, deleteRecipeUnit);
+router.delete("/deleteMultRecipeUnit", authenticAdmin, deleteMultRecipeUnit);
+router.put("/updateRecipeUnitsStatus/:id", authenticAdmin, updateRecipeUnitsStatus);
 
 module.exports = router;

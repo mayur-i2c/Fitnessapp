@@ -74,6 +74,10 @@ const UserSchema = mongoose.Schema(
       type: String,
       default: "",
     },
+    cal: {
+      type: String,
+      default: "",
+    },
     medical_condition: {
       type: Array,
       default: "",

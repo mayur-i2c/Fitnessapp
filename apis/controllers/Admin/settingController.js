@@ -4,6 +4,7 @@ const PrivacyPolicy = require("../../models/PrivacyPolicy");
 const Faqs = require("../../models/Faqs");
 const NutritionSettings = require("../../models/NutritionSettings");
 const MealSettings = require("../../models/MealSettings");
+const RecipeUnits = require("../../models/RecipeUnits");
 
 const {
   createResponse,
@@ -392,6 +393,90 @@ const getMeal = async (req, res, next) => {
   }
 };
 
+//Add Recipe Units
+const addRecipeUnits = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const newUnit = await RecipeUnits.create({
+      name,
+    });
+    const result = await newUnit.save();
+    return createResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get All Recipe Units
+const getAllRecipeUnits = async (req, res, next) => {
+  try {
+    const units = await RecipeUnits.find();
+    if (!units) return queryErrorRelatedResponse(req, res, 404, "Recipe Units not found.");
+    successResponse(res, units);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update Recipe Units
+const updateRecipeUnits = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const unit = await RecipeUnits.findById(req.params.id);
+    if (!unit) return queryErrorRelatedResponse(req, res, 404, "Recipe Units not found.");
+
+    unit.name = name;
+    const result = await unit.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update Recipe Units Status
+const updateRecipeUnitsStatus = async (req, res, next) => {
+  try {
+    // Convert string is into Object id
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const unit = await RecipeUnits.findById(id);
+    if (!unit) return queryErrorRelatedResponse(req, res, 404, "Recipe Units not found.");
+
+    unit.status = !unit.status;
+    const result = await unit.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Delete Single Recipe Units
+const deleteRecipeUnit = async (req, res, next) => {
+  try {
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const unit = await RecipeUnits.findById(id);
+    if (!unit) return queryErrorRelatedResponse(req, res, 404, "Recipe Units not found.");
+
+    await RecipeUnits.deleteOne({ _id: id });
+    deleteResponse(res, "Recipe Unit deleted successfully.");
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Delete Multiple Recipe Units
+const deleteMultRecipeUnit = async (req, res, next) => {
+  try {
+    const { Ids } = req.body;
+    Ids.map(async (item) => {
+      const id = new mongoose.Types.ObjectId(item);
+      await RecipeUnits.deleteOne({ _id: id });
+    });
+    deleteResponse(res, "All selected records deleted successfully.");
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addMedicalCon,
   getAllMedicalCon,
@@ -418,4 +503,10 @@ module.exports = {
   addMealSettings,
   updateMealSettings,
   getMeal,
+  addRecipeUnits,
+  getAllRecipeUnits,
+  updateRecipeUnits,
+  updateRecipeUnitsStatus,
+  deleteRecipeUnit,
+  deleteMultRecipeUnit,
 };

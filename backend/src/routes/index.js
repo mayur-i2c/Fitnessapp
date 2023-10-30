@@ -34,6 +34,8 @@ const Faq = Loadable(lazy(() => import('pages/settings/Faq')));
 const FaqForm = Loadable(lazy(() => import('pages/settings/FaqForm')));
 const NutritionSettingForm = Loadable(lazy(() => import('pages/settings/NutritionSettingForm')));
 const MealSettingForm = Loadable(lazy(() => import('pages/settings/MealSettingForm')));
+const RecipeUnits = Loadable(lazy(() => import('pages/settings/RecipeUnits')));
+const RecipeUnitsForm = Loadable(lazy(() => import('pages/settings/RecipeUnitsForm')));
 
 const Essentials = Loadable(lazy(() => import('pages/essentials')));
 const EssentialsForm = Loadable(lazy(() => import('pages/essentials/EssentialsForm')));
@@ -44,6 +46,11 @@ const EssSubCatLevel2Form = Loadable(lazy(() => import('pages/essentials/EssSubC
 
 const Reel = Loadable(lazy(() => import('pages/reel')));
 const ReelForm = Loadable(lazy(() => import('pages/reel/ReelForm')));
+
+const Recipes = Loadable(lazy(() => import('pages/recipes')));
+const RecipesForm = Loadable(lazy(() => import('pages/recipes/RecipesForm')));
+const RecipesSubcat = Loadable(lazy(() => import('pages/recipes/RecipesSubcat')));
+const RecipesSubcatForm = Loadable(lazy(() => import('pages/recipes/RecipesSubcatForm')));
 
 const WorkoutCollection = Loadable(lazy(() => import('pages/workoutCollection')));
 const WorkoutCollectionForm = Loadable(lazy(() => import('pages/workoutCollection/WorkoutCollectionForm')));
@@ -90,16 +97,22 @@ export default function ThemeRoutes() {
         <Route path="reels/manage" element={<ReelForm />} />
         <Route path="exeLibrary" element={<ExerciseLibrary />} />
         <Route path="exeLibrary/manage" element={<ExerciseLibraryForm />} />
+        <Route path="recipes" element={<Recipes />} />
+        <Route path="recipes/manage" element={<RecipesForm />} />
+        <Route path="recipes/recipessubcat" element={<RecipesSubcat />} />
+        <Route path="recipes/recipessubcat/manage" element={<RecipesSubcatForm />} />
         <Route path="settings/medicalCondition" element={<MedicalCondition />} />
         <Route path="settings/medicalCondition/manage" element={<MedicalConditionForm />} />
         <Route path="settings/tc/manage" element={<TCForm />} />
         <Route path="settings/privacyPolicy/manage" element={<PrivacyPolicyForm />} />
         <Route path="settings/faq" element={<Faq />} />
-        <Route path="/settings/faq/manage" element={<FaqForm />} />
+        <Route path="settings/faq/manage" element={<FaqForm />} />
         <Route path="workoutCollection" element={<WorkoutCollection />} />
         <Route path="workoutCollection/manage" element={<WorkoutCollectionForm />} />
         <Route path="settings/nutritionSettings/manage" element={<NutritionSettingForm />} />
         <Route path="settings/mealSettings/manage" element={<MealSettingForm />} />
+        <Route path="settings/recipeUnits" element={<RecipeUnits />} />
+        <Route path="settings/recipeUnits/manage" element={<RecipeUnitsForm />} />
       </Route>
     </Routes>
   );

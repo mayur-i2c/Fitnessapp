@@ -8,6 +8,7 @@ import {
   FileDoneOutlined
 } from '@ant-design/icons';
 import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined';
+import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 // icons
 const icons = {
   DashboardOutlined,
@@ -16,7 +17,8 @@ const icons = {
   AppstoreAddOutlined,
   VideoCameraOutlined,
   FileDoneOutlined,
-  AccessibilityNewOutlinedIcon
+  AccessibilityNewOutlinedIcon,
+  RestaurantOutlinedIcon
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -72,6 +74,14 @@ const dashboard = {
       type: 'item',
       url: '/exeLibrary',
       icon: icons.FileDoneOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'recipes',
+      title: 'Recipes',
+      type: 'item',
+      url: '/recipes',
+      icon: icons.RestaurantOutlinedIcon,
       breadcrumbs: false
     }
   ]

@@ -44,6 +44,7 @@ app.use("/public/essentials", express.static(path.join(__dirname, "./public/imag
 app.use("/public/reels", express.static(path.join(__dirname, "./public/images/reels")));
 app.use("/public/exerciseLibrary", express.static(path.join(__dirname, "./public/images/exerciseLibrary")));
 app.use("/public/workoutCollection", express.static(path.join(__dirname, "./public/images/workoutCollection")));
+app.use("/public/recipes", express.static(path.join(__dirname, "./public/images/recipes")));
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection Error"));

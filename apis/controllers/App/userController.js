@@ -169,10 +169,11 @@ const updateUserProfile = async (req, res, next) => {
 
     const height = req.body.height_measure == 1 ? req.body.height * 30.48 : req.body.height;
 
-    //For male
     if (req.body.sex == 1) {
+      //For male
       bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age + 5;
     } else {
+      //For Female
       bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age - 161;
     }
 
@@ -182,29 +183,28 @@ const updateUserProfile = async (req, res, next) => {
     // Very active (hard exercise or sports 6-7 days a week): BMR * 1.725
 
     if (req.body.active_status == 1) {
-      req.body.cal = bmr * 1.2 - 500;
+      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.2 - 500 : bmr * 1.2 + 500;
     } else if (req.body.active_status == 2) {
-      req.body.cal = bmr * 1.375 - 500;
+      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.375 - 500 : bmr * 1.375 + 500;
     } else if (req.body.active_status == 3) {
-      req.body.cal = bmr * 1.55 - 500;
+      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.55 - 500 : bmr * 1.55 + 500;
     } else {
-      req.body.cal = bmr * 1.725 - 500;
+      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.725 - 500 : bmr * 1.725 + 500;
     }
 
-    console.log(req.body);
-    // const isUpdate = await User.findByIdAndUpdate(req.body.userid, { $set: req.body });
-    // if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
+    const isUpdate = await User.findByIdAndUpdate(req.body.userid, { $set: req.body });
+    if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
 
-    // const updatedUser = await User.findById(req.body.userid);
+    const updatedUser = await User.findById(req.body.userid);
 
-    // const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
-    // // Assuming you have a `baseUrl` variable
-    // const userWithBaseUrl = {
-    //   ...updatedUser.toObject(),
-    //   baseUrl: baseUrl,
-    // };
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
+    // Assuming you have a `baseUrl` variable
+    const userWithBaseUrl = {
+      ...updatedUser.toObject(),
+      baseUrl: baseUrl,
+    };
 
-    // successResponse(res, userWithBaseUrl);
+    successResponse(res, userWithBaseUrl);
   } catch (err) {
     next(err);
   }

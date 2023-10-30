@@ -73,7 +73,7 @@ const deleteEssentials = async (req, res, next) => {
     const id = new mongoose.Types.ObjectId(req.params.id);
     const cat = await Essentials.findById(id);
     if (!cat) return queryErrorRelatedResponse(req, res, 404, "Essentials not found.");
-
+    deleteFiles("essentials/" + cat.image);
     await Essentials.deleteOne({ _id: id });
     deleteResponse(res, "Essentials deleted successfully.");
   } catch (err) {
@@ -87,6 +87,11 @@ const deleteMultEssentials = async (req, res, next) => {
     const { Ids } = req.body;
     Ids.map(async (item) => {
       const id = new mongoose.Types.ObjectId(item);
+
+      const cat = await Essentials.findById(id);
+      if (!cat) return queryErrorRelatedResponse(req, res, 404, "Essentials not found.");
+      deleteFiles("essentials/" + cat.image);
+
       await Essentials.deleteOne({ _id: id });
     });
     deleteResponse(res, "All selected records deleted successfully.");

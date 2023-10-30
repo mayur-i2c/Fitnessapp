@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import LocalDiningOutlinedIcon from '@mui/icons-material/LocalDiningOutlined';
 import FastfoodOutlinedIcon from '@mui/icons-material/FastfoodOutlined';
+import EmojiFoodBeverageOutlinedIcon from '@mui/icons-material/EmojiFoodBeverageOutlined';
 // icons
 const icons = {
   DashboardOutlined,
@@ -22,6 +23,7 @@ const icons = {
   FileDoneOutlined,
   LocalDiningOutlinedIcon,
   FastfoodOutlinedIcon,
+  EmojiFoodBeverageOutlinedIcon,
   CollapseIcon: {
     collapsed: CaretRightOutlined, // Icon when collapsed
     expanded: CaretDownOutlined // Icon when expanded
@@ -43,11 +45,19 @@ const settings = {
   icon: icons.SettingOutlined,
   children: [
     {
-      id: 'medical_condition',
+      id: 'medicalCondition',
       title: 'Medical Conditions',
       type: 'item',
       url: 'settings/medicalCondition',
       icon: icons.MedicineBoxOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'recipeUnits',
+      title: 'Recipe Units',
+      type: 'item',
+      url: 'settings/recipeUnits',
+      icon: icons.EmojiFoodBeverageOutlinedIcon,
       breadcrumbs: false
     },
     {

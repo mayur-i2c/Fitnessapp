@@ -453,3 +453,79 @@ export const updateMealSettings = (data, id) =>
   axios.put(`${mainUrl}/admin/setting/updateMealSettings/${id}`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+//Add Recipe Units
+export const addRecipeUnits = (data) =>
+  axios.post(`${mainUrl}/admin/setting/addRecipeUnits`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get Recipe Units
+export const getAllRecipeUnits = () =>
+  axios.get(`${mainUrl}/admin/setting/getAllRecipeUnits`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Recipe Units
+export const updateRecipeUnits = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateRecipeUnits/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Recipe Units Status
+export const updateRecipeUnitsStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateRecipeUnitsStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Recipe Units
+export const deleteRecipeUnit = (id) =>
+  axios.delete(`${mainUrl}/admin/setting/deleteRecipeUnit/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Recipe Units
+export const deleteMultRecipeUnit = (data) => {
+  return axios.delete(`${mainUrl}/admin/setting/deleteMultRecipeUnit`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};
+
+//Add Recipe
+export const addRecipes = (data) =>
+  axios.post(`${mainUrl}/admin/recipe/addRecipes`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get Recipe
+export const getAllRecipes = () =>
+  axios.get(`${mainUrl}/admin/recipe/getAllRecipes`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Recipe
+export const updateRecipes = (data, id) =>
+  axios.put(`${mainUrl}/admin/recipe/updateRecipes/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Recipe Status
+export const updateRecStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/recipe/updateRecStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Recipe
+export const deleteRecipe = (id) =>
+  axios.delete(`${mainUrl}/admin/recipe/deleteRecipe/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Recipe
+export const deleteMultRecipe = (data) => {
+  return axios.delete(`${mainUrl}/admin/recipe/deleteMultRecipe`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};
