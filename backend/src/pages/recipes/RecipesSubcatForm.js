@@ -1,18 +1,29 @@
 import { useLocation } from 'react-router-dom';
-import { Button, Grid, Typography, CircularProgress, Input, FormHelperText } from '@mui/material';
+import { Button, Grid, Typography, CircularProgress, Input, FormHelperText, MenuItem } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import CustomInput from 'components/CustomInput';
 import MainCard from 'components/MainCard';
 import { useForm, Controller } from 'react-hook-form';
 import React, { useState, useEffect } from 'react';
-import { addRecipes, updateRecipes } from '../../ApiServices';
+import { addRecipes, updateRecipes, getAllRecipeUnits } from '../../ApiServices';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import upload from 'assets/images/upload3.jpg';
+import TextField from '@mui/material/TextField';
 
 const RecipesSubcatForm = () => {
   const { state } = useLocation();
+
+  var [defaultLoading, setdefaultLoading] = useState(true);
+  var [isLoading, setIsLoading] = useState(false);
+  const [isupdate, setisupdate] = useState('');
+  const navigate = useNavigate();
+  const [isHovering, setIsHovering] = useState(false);
+  const [newUrl, setNewUrl] = useState(upload);
+  const [units, setUnits] = useState([]);
+  const [formValues, setFormValues] = useState([{ unit: '', cal: '', qty: '1', protein: '', fat: '', carb: '', fiber: '' }]);
+  // const [lastData, setLastData] = useState([]);
   const {
     register,
     getValues,
@@ -21,34 +32,12 @@ const RecipesSubcatForm = () => {
     control,
     formState: { errors }
   } = useForm();
-  var [defaultLoading, setdefaultLoading] = useState(true);
-  const [inputs, setInputs] = useState([{ field1: '', field2: '', field3: '' }]);
-
-  const handleInputChange = (index, fieldName, value) => {
-    const updatedInputs = [...inputs];
-    updatedInputs[index][fieldName] = value;
-    setInputs(updatedInputs);
-  };
-
-  const handleAddInput = () => {
-    setInputs([...inputs, { field1: '', field2: '', field3: '' }]);
-  };
-
-  const handleRemoveInput = (index) => {
-    console.log(inputs);
-    const updatedInputs = [...inputs];
-    updatedInputs.splice(index, 1);
-    setInputs(updatedInputs);
-    console.log(inputs);
-  };
-
-  var [isLoading, setIsLoading] = useState(false);
-  const [isupdate, setisupdate] = useState('');
-  const navigate = useNavigate();
-  const [isHovering, setIsHovering] = useState(false);
-  const [newUrl, setNewUrl] = useState(upload);
 
   useEffect(() => {
+    getAllRecipeUnits().then((response) => {
+      setUnits(response.data.info);
+    });
+
     if (state) {
       const { editdata, imageurl } = state;
       setisupdate(editdata._id);
@@ -57,6 +46,24 @@ const RecipesSubcatForm = () => {
     }
     setdefaultLoading(false);
   }, []);
+
+  let handleChange = (i, e) => {
+    let newFormValues = [...formValues];
+    newFormValues[i][e.target.name] = e.target.value;
+    setFormValues(newFormValues);
+  };
+
+  let addFormFields = () => {
+    setFormValues([...formValues, { unit: '', cal: '', qty: '1', protein: '', fat: '', carb: '', fiber: '' }]);
+  };
+
+  let removeFormFields = (i) => {
+    let newFormValues = [...formValues];
+    console.log(newFormValues);
+    newFormValues.splice(i, 1);
+    setFormValues(newFormValues);
+  };
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -74,63 +81,22 @@ const RecipesSubcatForm = () => {
   const handleMouseOut = () => {
     setIsHovering(false);
   };
+
   const onSubmit = (data) => {
     console.log(data);
-    // setIsLoading(false);
-    // let formData = new FormData(); //formdata object
-    // Object.keys(data).forEach(function (key) {
-    //   if (key === 'image') {
-    //     formData.append(key, data[key][0]);
-    //   } else {
-    //     formData.append(key, data[key]);
-    //   }
-    // });
+    alert(JSON.stringify(formValues));
+    data.calValues = formValues;
+    console.log(data);
 
-    // isupdate === ''
-    //   ? addRecipes(formData)
-    //       .then(() => {
-    //         localStorage.setItem('redirectSuccess', 'true');
-    //         localStorage.setItem('redirectMessage', 'Added successfully!');
-    //         navigate('/recipes');
-    //       })
-    //       .catch((err) => {
-    //         if (!err.response.data.isSuccess) {
-    //           toast.error(capitalizeFirstLetter(err.response.data.message));
-    //         } else {
-    //           toast.error('Something Went Wrong!', {
-    //             position: 'top-right',
-    //             autoClose: 5000,
-    //             hideProgressBar: false,
-    //             closeOnClick: false,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined
-    //           });
-    //         }
-    //         setIsLoading(false);
-    //       })
-    //   : updateRecipes(formData, isupdate)
-    //       .then(() => {
-    //         localStorage.setItem('redirectSuccess', 'true');
-    //         localStorage.setItem('redirectMessage', 'Updated successfully!');
-    //         navigate('/recipes');
-    //       })
-    //       .catch((err) => {
-    //         if (!err.response.data.isSuccess) {
-    //           toast.error(capitalizeFirstLetter(err.response.data.message));
-    //         } else {
-    //           toast.error('Something Went Wrong!', {
-    //             position: 'top-right',
-    //             autoClose: 5000,
-    //             hideProgressBar: false,
-    //             closeOnClick: false,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined
-    //           });
-    //         }
-    //         setIsLoading(false);
-    //       });
+    let formData = new FormData(); //formdata object
+    Object.keys(data).forEach(function (key) {
+      if (key === 'image') {
+        formData.append(key, data[key][0]);
+      } else {
+        formData.append(key, data[key]);
+      }
+    });
+    console.log(formData);
   };
 
   return (
@@ -139,7 +105,7 @@ const RecipesSubcatForm = () => {
       <Grid item xs={12} md={6} lg={6}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">{isupdate === '' ? 'Add' : 'Update'} Recipe</Typography>
+            <Typography variant="h5">{isupdate === '' ? 'Add' : 'Update'} Recipe SubCategory</Typography>
           </Grid>
           <Grid item />
         </Grid>
@@ -199,58 +165,142 @@ const RecipesSubcatForm = () => {
                         </Stack>
                       </Grid>
                     </Grid>
+                    {formValues.map((element, index) => (
+                      <div className="form-inline" key={index}>
+                        <TextField
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                          label="Unit"
+                          name="unit"
+                          margin="normal"
+                          placeholder="Unit"
+                          select
+                          variant="outlined" // Add this line
+                          value={element.unit || ''}
+                          onChange={(e) => handleChange(index, e)}
+                          style={{ width: '20%' }}
+                        >
+                          {units.map((unit) => (
+                            <MenuItem key={unit._id} value={unit._id}>
+                              {unit.name}
+                            </MenuItem>
+                          ))}
+                        </TextField>
 
-                    {inputs.map((input, index) => (
-                      <div key={index}>
-                        <Controller
-                          name={`inputs[${index}].field1`}
-                          control={control}
-                          defaultValue={input.field1}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="text"
-                              placeholder="Field 1"
-                              //   onChange={(e) => handleInputChange(index, 'field1', e.target.value)}
-                            />
-                          )}
+                        <TextField
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                          label="Qty"
+                          margin="normal"
+                          type="text"
+                          placeholder="Qty"
+                          name="qty"
+                          value="1"
+                          onChange={(e) => handleChange(index, e)}
+                          disabled={true}
+                          variant="outlined"
+                          style={{ width: '10%' }}
                         />
-                        <Controller
-                          name={`inputs[${index}].field2`}
-                          control={control}
-                          defaultValue={input.field2}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="text"
-                              placeholder="Field 2"
-                              //   onChange={(e) => handleInputChange(index, 'field2', e.target.value)}
-                            />
-                          )}
+
+                        <TextField
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                          label="Calory"
+                          margin="normal"
+                          placeholder="Calory"
+                          type="text"
+                          name="cal"
+                          variant="outlined"
+                          value={element.cal || ''}
+                          onChange={(e) => handleChange(index, e)}
+                          style={{ width: '15%' }}
                         />
-                        <Controller
-                          name={`inputs[${index}].field3`}
-                          control={control}
-                          defaultValue={input.field3}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="text"
-                              placeholder="Field 3"
-                              //   onChange={(e) => handleInputChange(index, 'field3', e.target.value)}
-                            />
-                          )}
+                        <TextField
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                          label="Protein"
+                          margin="normal"
+                          placeholder="Protein"
+                          type="text"
+                          name="protein"
+                          variant="outlined"
+                          value={element.protein || ''}
+                          onChange={(e) => handleChange(index, e)}
+                          style={{ width: '15%' }}
                         />
-                        <button type="button" onClick={() => handleRemoveInput(index)}>
-                          Remove
-                        </button>
+                        <TextField
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                          label="Carb"
+                          margin="normal"
+                          placeholder="Carb"
+                          type="text"
+                          name="carb"
+                          variant="outlined"
+                          value={element.carb || ''}
+                          onChange={(e) => handleChange(index, e)}
+                          style={{ width: '15%' }}
+                        />
+                        <TextField
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                          label="Fat"
+                          margin="normal"
+                          placeholder="Fat"
+                          type="text"
+                          name="fat"
+                          variant="outlined"
+                          value={element.fat || ''}
+                          onChange={(e) => handleChange(index, e)}
+                          style={{ width: '15%' }}
+                        />
+                        <TextField
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                          label="Fiber"
+                          margin="normal"
+                          placeholder="Fiber"
+                          type="text"
+                          name="fiber"
+                          variant="outlined"
+                          value={element.fiber || ''}
+                          onChange={(e) => handleChange(index, e)}
+                          style={{ width: '15%' }}
+                        />
+
+                        {/* <select name="unit" value={element.unit || ''} onChange={(e) => handleChange(index, e)} variant="outlined">
+                          <option value="">Select Unit</option>
+                          {units.map((unit) => {
+                            return (
+                              <option key={unit._id} value={unit._id}>
+                                {unit.name}
+                              </option>
+                            );
+                          })}
+                        </select> */}
+
+                        {index ? (
+                          <button type="button" className="button remove" onClick={() => removeFormFields(index)}>
+                            Remove
+                          </button>
+                        ) : null}
                       </div>
                     ))}
-
-                    <button type="button" onClick={handleAddInput}>
-                      Add Input
-                    </button>
-
+                    <div className="button-section">
+                      <button className="button add" type="button" onClick={() => addFormFields()}>
+                        Add
+                      </button>
+                      {/* <button className="button submit" type="submit">
+                        Submit
+                      </button> */}
+                    </div>
                     {isLoading ? (
                       <Grid item xs={12} mt={2} style={{ textAlign: 'center' }}>
                         <CircularProgress size={26} fullWidth style={{ 'margin-top': '15px' }} />
@@ -278,4 +328,5 @@ const RecipesSubcatForm = () => {
     </Grid>
   );
 };
+
 export default RecipesSubcatForm;
