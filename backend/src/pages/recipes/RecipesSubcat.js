@@ -1,4 +1,4 @@
-import { getAllRecipes, deleteRecipe, deleteMultRecipe, updateRecStatus } from '../../ApiServices';
+import { getAllRecSubCat, deleteRecSubCat, deleteMultRecSubcat, updateRecSubCatStatus } from '../../ApiServices';
 import React, { useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,16 +8,18 @@ import { useNavigate } from 'react-router-dom';
 import { Grid, CircularProgress, IconButton, Button, Typography } from '@mui/material';
 import swal from 'sweetalert';
 import Switch from '@mui/material/Switch';
+import { useLocation } from 'react-router-dom';
 
 const RecipesSubcat = () => {
   const [datatableData, setdatatableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [baseurl, setbaseurl] = useState([]);
-
+  const { state } = useLocation();
+  const { catdata } = state;
   const list = async () => {
     setIsLoading(true);
-    await getAllRecipes()
+    await getAllRecSubCat(catdata._id)
       .then((response) => {
         setIsLoading(false);
         setdatatableData(response.data.info);
@@ -92,7 +94,7 @@ const RecipesSubcat = () => {
               checked={status}
               onChange={() => {
                 const data = { id: _id, status: !status };
-                updateRecStatus(data, _id)
+                updateRecSubCatStatus(data, _id)
                   .then(() => {
                     toast.success('status changed successfully!', {
                       key: data._id
@@ -129,7 +131,7 @@ const RecipesSubcat = () => {
                 }}
                 onClick={() => {
                   const editdata = datatableData.find((data) => data._id === value);
-                  navigate('/recipes/recipessubcat/manage', { state: { editdata: editdata, imageurl: baseurl } });
+                  navigate('/recipes/recipessubcat/manage', { state: { catdata: catdata, editdata: editdata, imageurl: baseurl } });
                 }}
               />
               <Icons.Delete
@@ -151,7 +153,7 @@ const RecipesSubcat = () => {
                     dangerMode: true
                   });
                   if (confirm) {
-                    deleteRecipe(value)
+                    deleteRecSubCat(value)
                       .then(() => {
                         toast.success('deleted successfully!', {
                           key: value
@@ -184,7 +186,7 @@ const RecipesSubcat = () => {
     });
 
     if (confirm) {
-      deleteMultRecipe(ids)
+      deleteMultRecSubcat(ids)
         .then(() => {
           list();
           toast.success('Deleted successfully!', {
@@ -223,8 +225,8 @@ const RecipesSubcat = () => {
 
           <div className="text-container">
             <div className="left-text">
-              <Typography variant="h4" size="sm">
-                Recipes Sub-Category
+              <Typography variant="h4" size="sm" className="subHead">
+                <a href="/recipes">{catdata.name}</a> &gt; Sub-Category
               </Typography>
             </div>
             <div className="right-text">
@@ -233,7 +235,9 @@ const RecipesSubcat = () => {
                 size="medium"
                 color="primary"
                 onClick={() => {
-                  navigate('/recipes/recipessubcat/manage');
+                  navigate('/recipes/recipessubcat/manage', {
+                    state: { catdata: catdata }
+                  });
                 }}
               >
                 Add Recipe Sub-Category

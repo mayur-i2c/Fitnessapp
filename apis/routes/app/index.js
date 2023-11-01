@@ -11,6 +11,7 @@ router.use("/app/user", userRouter);
 router.use("/app/setting", settingRouter);
 router.use("/app/essentials", essentialsRouter);
 router.use("/app/reel", reelsRouter);
+router.use("/app/exeLibrary", exeLibraryRouter);
 router.use("/app/workCollection", workoutCollectionRouter);
 
 module.exports = router;

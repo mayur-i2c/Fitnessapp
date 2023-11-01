@@ -178,7 +178,7 @@ const deleteEssSubCat1 = async (req, res, next) => {
     const id = new mongoose.Types.ObjectId(req.params.id);
     const subcat = await EssSubcategoryLevel1.findById(id);
     if (!subcat) return queryErrorRelatedResponse(req, res, 404, "Sub-category not found.");
-
+    deleteFiles("essentials/" + subcat.image);
     await EssSubcategoryLevel1.deleteOne({ _id: id });
     deleteResponse(res, "Sub-category deleted successfully.");
   } catch (err) {
@@ -192,6 +192,9 @@ const deleteMultSubCat1 = async (req, res, next) => {
     const { Ids } = req.body;
     Ids.map(async (item) => {
       const id = new mongoose.Types.ObjectId(item);
+      const subcat = await EssSubcategoryLevel1.findById(id);
+      if (!subcat) return queryErrorRelatedResponse(req, res, 404, "Sub-category not found.");
+      deleteFiles("essentials/" + subcat.image);
       await EssSubcategoryLevel1.deleteOne({ _id: id });
     });
     deleteResponse(res, "All selected records deleted successfully.");
@@ -296,6 +299,8 @@ const deleteEssSubCat2 = async (req, res, next) => {
     const subcat = await EssSubcategoryLevel2.findById(id);
     if (!subcat) return queryErrorRelatedResponse(req, res, 404, "Sub-category not found.");
 
+    deleteFiles("essentials/" + subcat.image_video);
+    deleteFiles("essentials/" + subcat.icon);
     await EssSubcategoryLevel2.deleteOne({ _id: id });
     deleteResponse(res, "Sub-category deleted successfully.");
   } catch (err) {
@@ -309,6 +314,10 @@ const deleteMultSubCat2 = async (req, res, next) => {
     const { Ids } = req.body;
     Ids.map(async (item) => {
       const id = new mongoose.Types.ObjectId(item);
+      const subcat = await EssSubcategoryLevel2.findById(id);
+      if (!subcat) return queryErrorRelatedResponse(req, res, 404, "Sub-category not found.");
+      deleteFiles("essentials/" + subcat.image_video);
+      deleteFiles("essentials/" + subcat.icon);
       await EssSubcategoryLevel2.deleteOne({ _id: id });
     });
     deleteResponse(res, "All selected records deleted successfully.");
@@ -328,13 +337,11 @@ const updateEssSubCat2 = async (req, res, next) => {
     updatedData.icon = subcat.icon;
 
     if (req.files["video"]) {
-      console.log("video");
       deleteFiles("essentials/" + subcat.image_video);
       updatedData.image_video = req.files["video"][0].filename;
     }
 
     if (req.files["icon"]) {
-      console.log("icon");
       deleteFiles("essentials/" + subcat.icon);
       updatedData.icon = req.files["icon"][0].filename;
     }

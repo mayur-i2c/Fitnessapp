@@ -529,3 +529,41 @@ export const deleteMultRecipe = (data) => {
     data: { Ids: data }
   });
 };
+
+//Add Recipe SubCategory
+export const addRecipesSubCat = (data, id) =>
+  axios.post(`${mainUrl}/admin/recipe/addRecipesSubCat/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get All Recipe SubCategory
+export const getAllRecSubCat = (id) =>
+  axios.get(`${mainUrl}/admin/recipe/getAllRecSubCat/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Recipe SubCategory
+export const updateRecSubcat = (data, id) =>
+  axios.put(`${mainUrl}/admin/recipe/updateRecSubcat/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Recipe SubCategory Status
+export const updateRecSubCatStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/recipe/updateRecSubCatStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Recipe SubCategory
+export const deleteRecSubCat = (id) =>
+  axios.delete(`${mainUrl}/admin/recipe/deleteRecSubCat/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Recipe SubCategory
+export const deleteMultRecSubcat = (data) => {
+  return axios.delete(`${mainUrl}/admin/recipe/deleteMultRecSubcat`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};

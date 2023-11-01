@@ -10,10 +10,17 @@ const RecipesSubCatSchema = mongoose.Schema(
       type: String,
       required: [true, "Image is required."],
     },
-    cal: {
-      type: String,
-      required: [true, "Calory is required."],
-    },
+    calData: [
+      {
+        unit: String,
+        cal: Number,
+        qty: Number,
+        protein: Number,
+        fat: Number,
+        carb: Number,
+        fiber: Number,
+      },
+    ],
     status: {
       type: Boolean,
       default: true,

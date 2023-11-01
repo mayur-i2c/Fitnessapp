@@ -28,3 +28,14 @@
   width: 100%;
   background-color: white;
 }
+.remove {
+  margin: 17px 15px;
+  width: 8%;
+  padding: 6px;
+}
+.add {
+  width: 8%;
+  padding: 7px;
+  color: green;
+  border-color: green;
+}

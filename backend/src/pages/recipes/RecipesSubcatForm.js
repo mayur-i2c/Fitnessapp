@@ -3,18 +3,19 @@ import { Button, Grid, Typography, CircularProgress, Input, FormHelperText, Menu
 import Stack from '@mui/material/Stack';
 import CustomInput from 'components/CustomInput';
 import MainCard from 'components/MainCard';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import React, { useState, useEffect } from 'react';
-import { addRecipes, updateRecipes, getAllRecipeUnits } from '../../ApiServices';
+import { addRecipesSubCat, updateRecSubcat, getAllRecipeUnits } from '../../ApiServices';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import upload from 'assets/images/upload3.jpg';
 import TextField from '@mui/material/TextField';
+import { PlusCircleOutlined, CloseOutlined } from '@ant-design/icons';
 
 const RecipesSubcatForm = () => {
   const { state } = useLocation();
-
+  const { editdata, imageurl, catdata } = state;
   var [defaultLoading, setdefaultLoading] = useState(true);
   var [isLoading, setIsLoading] = useState(false);
   const [isupdate, setisupdate] = useState('');
@@ -23,26 +24,27 @@ const RecipesSubcatForm = () => {
   const [newUrl, setNewUrl] = useState(upload);
   const [units, setUnits] = useState([]);
   const [formValues, setFormValues] = useState([{ unit: '', cal: '', qty: '1', protein: '', fat: '', carb: '', fiber: '' }]);
-  // const [lastData, setLastData] = useState([]);
+  const [baseurl, setbaseurl] = useState([]);
+
   const {
     register,
     getValues,
     setValue,
     handleSubmit,
-    control,
     formState: { errors }
   } = useForm();
 
   useEffect(() => {
+    setbaseurl(`${process.env.REACT_APP_IMAGE_RECIPES_PATH}`);
+
     getAllRecipeUnits().then((response) => {
       setUnits(response.data.info);
     });
-
-    if (state) {
-      const { editdata, imageurl } = state;
+    if (state && state.editdata) {
       setisupdate(editdata._id);
       setValue('name', editdata.name);
       setNewUrl(imageurl + editdata.image);
+      setFormValues(editdata.calData || []);
     }
     setdefaultLoading(false);
   }, []);
@@ -84,28 +86,83 @@ const RecipesSubcatForm = () => {
 
   const onSubmit = (data) => {
     console.log(data);
-    alert(JSON.stringify(formValues));
-    data.calValues = formValues;
-    console.log(data);
+    // alert(JSON.stringify(formValues));
+    data.calData = formValues;
+    // console.log(JSON.stringify(formValues));
 
     let formData = new FormData(); //formdata object
-    Object.keys(data).forEach(function (key) {
-      if (key === 'image') {
-        formData.append(key, data[key][0]);
-      } else {
-        formData.append(key, data[key]);
-      }
+    formData.append('name', data.name);
+    formData.append('image', data.image[0]);
+
+    // Append the calData as a JSON string
+    data.calData.forEach((calData, index) => {
+      // Append each field from the calData object separately
+      formData.append(`calData[${index}][unit]`, calData.unit);
+      formData.append(`calData[${index}][cal]`, calData.cal);
+      formData.append(`calData[${index}][qty]`, calData.qty);
+      formData.append(`calData[${index}][protein]`, calData.protein);
+      formData.append(`calData[${index}][fat]`, calData.fat);
+      formData.append(`calData[${index}][carb]`, calData.carb);
+      formData.append(`calData[${index}][fiber]`, calData.fiber);
     });
     console.log(formData);
+    isupdate === ''
+      ? addRecipesSubCat(formData, catdata._id)
+          .then(() => {
+            localStorage.setItem('redirectSuccess', 'true');
+            localStorage.setItem('redirectMessage', 'Added successfully!');
+            navigate('/recipes/recipessubcat', { state: { catdata: catdata, imageurl: baseurl } });
+          })
+          .catch((err) => {
+            console.log(err);
+            if (!err.response.data.isSuccess) {
+              toast.error(err.response.data.message);
+            } else {
+              toast.error('Something Went Wrong!', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined
+              });
+            }
+            setIsLoading(false);
+          })
+      : updateRecSubcat(formData, isupdate)
+          .then(() => {
+            localStorage.setItem('redirectSuccess', 'true');
+            localStorage.setItem('redirectMessage', 'Updated successfully!');
+            navigate('/recipes/recipessubcat', { state: { catdata: catdata, imageurl: baseurl } });
+          })
+          .catch((err) => {
+            if (!err.response.data.isSuccess) {
+              toast.error(err.response.data.message);
+            } else {
+              toast.error('Something Went Wrong!', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined
+              });
+            }
+            setIsLoading(false);
+          });
   };
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       {/* row 2 */}
-      <Grid item xs={12} md={6} lg={6}>
+      <Grid item xs={12}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">{isupdate === '' ? 'Add' : 'Update'} Recipe SubCategory</Typography>
+            <Typography variant="h5" className="subHead">
+              <a href="/recipes">{catdata.name}</a> &gt; {isupdate === '' ? 'Add' : 'Update'} SubCategory
+            </Typography>
           </Grid>
           <Grid item />
         </Grid>
@@ -118,33 +175,31 @@ const RecipesSubcatForm = () => {
                   <p>Loading...</p>
                 ) : (
                   <div>
-                    <CustomInput
-                      xs={12}
-                      m={2}
-                      spacing={3}
-                      id="name"
-                      name="name"
-                      label="Name"
-                      inputRef={register('name', { required: true })}
-                      error={!!errors.name}
-                      helperText={errors.name && 'Name is required'} // Display the error message here
-                      placeholder="Name"
-                      defaultValue={getValues('name')}
-                      onChange={(e) => setValue('name', e.target.value)}
-                    />
+                    <Grid xs={12} mt={2} spacing={3} container>
+                      <CustomInput
+                        xs={8}
+                        id="name"
+                        name="name"
+                        label="name"
+                        inputRef={register('name', { required: true })}
+                        error={!!errors.name}
+                        helperText={errors.name && 'name is required'} // Display the error message here
+                        placeholder="name"
+                        defaultValue={getValues('name')}
+                        onChange={(e) => setValue('name', e.target.value)}
+                      />
 
-                    <Grid xs={3} mt={2} spacing={3}>
-                      <Grid item xs={12} mt={2} style={{ textAlign: 'center' }}>
+                      <Grid item xs={3} style={{ textAlign: 'center' }}>
                         <Stack
                           direction="row"
                           alignItems="center"
-                          style={{ display: 'block' }}
+                          style={{ display: 'grid' }}
                           spacing={2}
                           sx={6}
                           onMouseOver={handleMouseOver}
                           onMouseOut={handleMouseOut}
                         >
-                          <label htmlFor="icon-button-file" style={{ textAlign: 'center' }}>
+                          <label htmlFor="icon-button-file" style={{ textAlign: 'center', marginTop: '-40px' }}>
                             <Input
                               name="image"
                               accept="image/*"
@@ -156,12 +211,16 @@ const RecipesSubcatForm = () => {
                               style={{ top: '-9999px', left: '-9999px' }}
                             />
                             {!isHovering ? (
-                              <img src={newUrl} alt="recipes" width="100" height={100} style={{ borderRadius: '50%' }} />
+                              <img src={newUrl} alt="WorkoutCollection" width="100" height={100} style={{ borderRadius: '50%' }} />
                             ) : (
-                              <img src={upload} alt="recipes" width="100" height={100} style={{ borderRadius: '50%' }} />
+                              <img src={upload} alt="WorkoutCollection" width="100" height={100} style={{ borderRadius: '50%' }} />
                             )}
                           </label>
-                          <FormHelperText error>{errors.image && 'Image is required'}</FormHelperText>
+                          {/* <br /> */}
+                          <span>Image</span>
+                          <FormHelperText error style={{ textAlign: 'center' }}>
+                            {errors.image && 'Image is required'}
+                          </FormHelperText>
                         </Stack>
                       </Grid>
                     </Grid>
@@ -179,7 +238,8 @@ const RecipesSubcatForm = () => {
                           variant="outlined" // Add this line
                           value={element.unit || ''}
                           onChange={(e) => handleChange(index, e)}
-                          style={{ width: '20%' }}
+                          style={{ width: '10%' }}
+                          required
                         >
                           {units.map((unit) => (
                             <MenuItem key={unit._id} value={unit._id}>
@@ -202,6 +262,7 @@ const RecipesSubcatForm = () => {
                           disabled={true}
                           variant="outlined"
                           style={{ width: '10%' }}
+                          required
                         />
 
                         <TextField
@@ -216,7 +277,8 @@ const RecipesSubcatForm = () => {
                           variant="outlined"
                           value={element.cal || ''}
                           onChange={(e) => handleChange(index, e)}
-                          style={{ width: '15%' }}
+                          style={{ width: '10%' }}
+                          required
                         />
                         <TextField
                           InputLabelProps={{
@@ -230,7 +292,8 @@ const RecipesSubcatForm = () => {
                           variant="outlined"
                           value={element.protein || ''}
                           onChange={(e) => handleChange(index, e)}
-                          style={{ width: '15%' }}
+                          style={{ width: '10%' }}
+                          required
                         />
                         <TextField
                           InputLabelProps={{
@@ -244,7 +307,8 @@ const RecipesSubcatForm = () => {
                           variant="outlined"
                           value={element.carb || ''}
                           onChange={(e) => handleChange(index, e)}
-                          style={{ width: '15%' }}
+                          style={{ width: '10%' }}
+                          required
                         />
                         <TextField
                           InputLabelProps={{
@@ -258,7 +322,8 @@ const RecipesSubcatForm = () => {
                           variant="outlined"
                           value={element.fat || ''}
                           onChange={(e) => handleChange(index, e)}
-                          style={{ width: '15%' }}
+                          style={{ width: '10%' }}
+                          required
                         />
                         <TextField
                           InputLabelProps={{
@@ -272,31 +337,40 @@ const RecipesSubcatForm = () => {
                           variant="outlined"
                           value={element.fiber || ''}
                           onChange={(e) => handleChange(index, e)}
-                          style={{ width: '15%' }}
+                          style={{ width: '10%' }}
+                          required
                         />
 
-                        {/* <select name="unit" value={element.unit || ''} onChange={(e) => handleChange(index, e)} variant="outlined">
-                          <option value="">Select Unit</option>
-                          {units.map((unit) => {
-                            return (
-                              <option key={unit._id} value={unit._id}>
-                                {unit.name}
-                              </option>
-                            );
-                          })}
-                        </select> */}
-
                         {index ? (
-                          <button type="button" className="button remove" onClick={() => removeFormFields(index)}>
-                            Remove
-                          </button>
+                          <Button
+                            margin="normal"
+                            type="button"
+                            variant="outlined"
+                            size="medium"
+                            color="error"
+                            className="button remove"
+                            endIcon={<CloseOutlined />}
+                            style={{ width: '10%' }}
+                            onClick={() => removeFormFields(index)}
+                          >
+                            REMOVE
+                          </Button>
                         ) : null}
                       </div>
                     ))}
                     <div className="button-section">
-                      <button className="button add" type="button" onClick={() => addFormFields()}>
-                        Add
-                      </button>
+                      <Button
+                        variant="outlined"
+                        size="medium"
+                        color="success"
+                        className="button add"
+                        type="button"
+                        style={{ width: '10%' }}
+                        endIcon={<PlusCircleOutlined />}
+                        onClick={() => addFormFields()}
+                      >
+                        ADD
+                      </Button>
                       {/* <button className="button submit" type="submit">
                         Submit
                       </button> */}
