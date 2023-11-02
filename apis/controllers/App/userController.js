@@ -1,5 +1,7 @@
 const express = require("express");
 const User = require("../../models/User");
+const CalData = require("../../models/CalData");
+
 const {
   createResponse,
   queryErrorRelatedResponse,
@@ -198,10 +200,25 @@ const updateUserProfile = async (req, res, next) => {
     const updatedUser = await User.findById(req.body.userid);
 
     const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const existingDoc = await CalData.findOne({ date: today, userId: req.body.userid });
+    let calData = existingDoc;
+    if (existingDoc) {
+      existingDoc.cal = req.body.cal;
+      calData = await existingDoc.save();
+    } else {
+      const newDoc = new CalData({ date: today, userId: req.body.userid, cal: req.body.cal });
+      calData = await newDoc.save();
+    }
+
     // Assuming you have a `baseUrl` variable
     const userWithBaseUrl = {
       ...updatedUser.toObject(),
       baseUrl: baseUrl,
+      caloryData: calData,
     };
 
     successResponse(res, userWithBaseUrl);

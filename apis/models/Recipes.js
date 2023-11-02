@@ -17,7 +17,7 @@ const RecipesSchema = mongoose.Schema(
     subcategories: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "RecipesSubCat",
+        ref: "recipesSubCat",
       },
     ],
   },

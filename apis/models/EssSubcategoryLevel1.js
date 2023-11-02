@@ -17,7 +17,7 @@ const EssSubcategoryLevel1Schema = mongoose.Schema(
     subcategories: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "EssSubcategoryLevel2",
+        ref: "essSubCatlevel2",
       },
     ],
   },

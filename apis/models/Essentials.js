@@ -17,7 +17,7 @@ const EssentialsSchema = mongoose.Schema(
     subcategories: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "EssSubcategoryLevel1",
+        ref: "essSubCatlevel1",
       },
     ],
   },

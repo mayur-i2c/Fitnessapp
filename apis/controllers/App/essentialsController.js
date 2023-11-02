@@ -14,7 +14,15 @@ const mongoose = require("mongoose");
 //Get All Active Essentials
 const getAllEssentials = async (req, res, next) => {
   try {
-    const cat = await Essentials.find({ status: true });
+    const cat = await Essentials.find({ status: true }).populate({
+      path: "subcategories",
+      match: { status: true },
+      populate: {
+        path: "subcategories",
+        match: { status: true },
+        model: "essSubCatlevel2", // Replace with your actual Unit model name
+      },
+    });
     if (!cat) return queryErrorRelatedResponse(req, res, 404, "Essentials not found.");
 
     // Assuming you have a `baseUrl` variable

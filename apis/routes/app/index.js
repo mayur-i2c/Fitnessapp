@@ -5,6 +5,7 @@ const essentialsRouter = require("../app/essentials");
 const reelsRouter = require("../app/reels");
 const exeLibraryRouter = require("../app/exeLibrary");
 const workoutCollectionRouter = require("../app/workoutCollection");
+const recipesRouter = require("../app/recipes");
 
 // Use router in index
 router.use("/app/user", userRouter);
@@ -13,5 +14,6 @@ router.use("/app/essentials", essentialsRouter);
 router.use("/app/reel", reelsRouter);
 router.use("/app/exeLibrary", exeLibraryRouter);
 router.use("/app/workCollection", workoutCollectionRouter);
+router.use("/app/recipes", recipesRouter);
 
 module.exports = router;
