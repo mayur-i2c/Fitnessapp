@@ -17,7 +17,6 @@ const mongoose = require("mongoose");
 //Add Medical Conditions
 const addMedicalCon = async (req, res, next) => {
   try {
-    console.log("Add Medical Conditions");
     const { title } = req.body;
     const newMedicalCon = await MedicalConditions.create({
       title,
