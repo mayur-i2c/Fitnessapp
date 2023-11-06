@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 const cors = require("cors");
 const http = require("http").Server(app);
 const path = require("path");
+process.env.TZ = "Asia/Kolkata";
 
 // Get error controller
 const errorController = require("./helper/errorController");
@@ -51,6 +52,41 @@ db.on("error", console.error.bind(console, "Connection Error"));
 db.once("open", function () {
   // console.log("Connected Successfully");
 });
+
+const cron = require("node-cron");
+const CalCronData = require("./models/CalCronData");
+
+// Creating a cron job which runs on every 10 second
+// cron.schedule("*/10 * * * * *", function () {
+//   console.log("running a task every 10 second");
+//   console.log("Cron job executed at:", new Date().toLocaleString());
+//   console.log("Cron job executed every hour:", new Date().toLocaleString());
+//   const newCal = CalCronData.create({
+//     userId: "123",
+//     cal: "1000",
+//     date: new Date(),
+//   });
+//   const result = CalCronData.save();
+// });
+
+cron.schedule("0 12 * * *", () => {
+  // Your code to run at 12 PM daily goes here
+  console.log("Cron job executed at 12 PM.");
+  console.log("Cron job executed at:", new Date().toLocaleString());
+
+  const newCal = CalCronData.create({
+    userId: "123",
+    cal: "1000",
+    date: new Date(),
+  });
+  const result = CalCronData.save();
+});
+
+// // Schedule a cron job to run every hour (at minute 0)
+// cron.schedule("0 * * * *", () => {
+//   // Your code to run every hour goes here
+//   console.log("Cron job executed every hour:", new Date().toLocaleString());
+// });
 
 // var server = app.listen(5000);
 const port = process.env.PORT || 5055;

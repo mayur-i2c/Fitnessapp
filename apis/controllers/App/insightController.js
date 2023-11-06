@@ -2,8 +2,9 @@ const express = require("express");
 const TrackedMeal = require("../../models/TrackedMeal");
 const RecipesSubCat = require("../../models/RecipesSubCat");
 const User = require("../../models/User");
-const CalData = require("../../models/CalData");
-
+const CalCronData = require("../../models/CalCronData");
+const { formatDate } = require("../../helper/formatterFiles");
+const { getMealwiseRecipes } = require("../../helper/commonServices");
 const {
   createResponse,
   successResponse,
@@ -62,31 +63,29 @@ const addMeal = async (req, res, next) => {
 const getAllTrackedMeal = async (req, res, next) => {
   try {
     const { userid, date } = req.body;
-    const FormattedDate = new Date(date);
-    FormattedDate.setHours(0, 0, 0, 0);
+    const requestDate = moment(date, "MM/DD/YYYY").toDate();
 
-    const user_id = new mongoose.Types.ObjectId(userid);
-    const user = await User.findById(user_id);
-    const today_cal = user.cal;
+    // Query the database for matching documents
+    const results = await CalCronData.find({ userId: userid });
 
-    const existingDoc = await CalData.findOne({ date: FormattedDate, userId: userid });
-    if (existingDoc) {
-      const last_cal = existingDoc.cal;
-      console.log(existingDoc);
+    // Filter results based on date matching (ignoring time)
+    const matchingResults = results.filter((result) => {
+      const storedDate = moment(result.date).startOf("day").toDate(); // Set time to 00:00:00
+      return moment(requestDate).isSame(storedDate, "day");
+    });
+
+    if (matchingResults.length > 0) {
+      user_cal = matchingResults[0].cal;
     } else {
-      // If the exact date doesn't exist, find the nearest date that exists
-      const nearestDoc = await CalData.findOne({ date: { $lte: FormattedDate }, userId: userid })
-        .sort({ date: -1 })
-        .limit(1);
-
-      console.log(nearestDoc);
+      const user_id = new mongoose.Types.ObjectId(userid);
+      const user = await User.findById(user_id);
+      user_cal = user.cal;
     }
-
-    console.log(today_cal);
-
+    const recipes = getMealwiseRecipes(date, userid, 1);
     // const recipes = await TrackedMeal.find({
-    //   date: FormattedDate,
+    //   date: formatDate(date),
     //   userid: userid,
+    //   mealime: 1,
     // }).populate({
     //   path: "subcatid",
     //   model: "recipesSubCat",
@@ -95,18 +94,24 @@ const getAllTrackedMeal = async (req, res, next) => {
     //     model: "recipeUnits", // Replace with your actual Unit model name
     //   },
     // });
-    // if (!recipes) return queryErrorRelatedResponse(req, res, 404, "Meal not found.");
+    if (!recipes) return queryErrorRelatedResponse(req, res, 404, "Meal not found.");
 
-    // // Assuming you have a `baseUrl` variable
-    // const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_RECIPES_PATH; // Replace with your actual base URL
+    // Assuming you have a `baseUrl` variable
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_RECIPES_PATH; // Replace with your actual base URL
 
-    // // Modify the response objects to include a `url` property
+    // Modify the response objects to include a `url` property
     // const modifiedRecipes = recipes.map((data) => ({
     //   ...data.toObject(), // Convert the Mongoose document to a plain JavaScript object
     //   baseUrl: `${baseUrl}`,
+    //   totalCal: user_cal,
     // }));
+    const finalResponse = {
+      recipes: recipes,
+      baseUrl: baseUrl,
+      totalCal: user_cal,
+    };
 
-    // successResponse(res, modifiedRecipes);
+    successResponse(res, finalResponse);
   } catch (err) {
     next(err);
   }
