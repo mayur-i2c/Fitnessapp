@@ -1,7 +1,7 @@
 const express = require("express");
 const User = require("../../models/User");
 const CalData = require("../../models/CalData");
-
+const CalCronData = require("../../models/CalCronData");
 const {
   createResponse,
   queryErrorRelatedResponse,
@@ -185,13 +185,13 @@ const updateUserProfile = async (req, res, next) => {
     // Very active (hard exercise or sports 6-7 days a week): BMR * 1.725
 
     if (req.body.active_status == 1) {
-      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.2 - 500 : bmr * 1.2 + 500;
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.2 - 500 : bmr * 1.2 + 500);
     } else if (req.body.active_status == 2) {
-      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.375 - 500 : bmr * 1.375 + 500;
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.375 - 500 : bmr * 1.375 + 500);
     } else if (req.body.active_status == 3) {
-      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.55 - 500 : bmr * 1.55 + 500;
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.55 - 500 : bmr * 1.55 + 500);
     } else {
-      req.body.cal = req.body.c_weight > req.body.t_weight ? bmr * 1.725 - 500 : bmr * 1.725 + 500;
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.725 - 500 : bmr * 1.725 + 500);
     }
 
     const isUpdate = await User.findByIdAndUpdate(req.body.userid, { $set: req.body });
@@ -201,24 +201,49 @@ const updateUserProfile = async (req, res, next) => {
 
     const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(); // Get the current date and time
+    today.setHours(0, 0, 0, 0); // Set the time to the start of the day
 
-    const existingDoc = await CalData.findOne({ date: today, userId: req.body.userid });
-    let calData = existingDoc;
-    if (existingDoc) {
-      existingDoc.cal = req.body.cal;
-      calData = await existingDoc.save();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1); // Set it to the start of the next day
+
+    const isAdded = await CalCronData.findOne({
+      date: {
+        $gte: today,
+        $lt: tomorrow,
+      },
+      userId: req.body.userid,
+    });
+
+    if (isAdded) {
+      isAdded.cal = req.body.cal ? req.body.cal : "0";
+      await isAdded.save();
     } else {
-      const newDoc = new CalData({ date: today, userId: req.body.userid, cal: req.body.cal });
-      calData = await newDoc.save();
+      const newCalCronData = new CalCronData({
+        userId: req.body.userid,
+        cal: req.body.cal ? req.body.cal : "0",
+        date: new Date(),
+      });
+      newCalCronData.save();
     }
+
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0);
+
+    // const existingDoc = await CalData.findOne({ date: today, userId: req.body.userid });
+    // let calData = existingDoc;
+    // if (existingDoc) {
+    //   existingDoc.cal = req.body.cal;
+    //   calData = await existingDoc.save();
+    // } else {
+    //   const newDoc = new CalData({ date: today, userId: req.body.userid, cal: req.body.cal });
+    //   calData = await newDoc.save();
+    // }
 
     // Assuming you have a `baseUrl` variable
     const userWithBaseUrl = {
       ...updatedUser.toObject(),
       baseUrl: baseUrl,
-      caloryData: calData,
     };
 
     successResponse(res, userWithBaseUrl);
