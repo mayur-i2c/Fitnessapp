@@ -9,14 +9,20 @@ const getMealTimewiseRecipes = async (date, userid, mealtime) => {
       userid: userid,
       mealime: mealtime,
     })
-      .populate({
-        path: "subcatid",
-        model: "recipesSubCat",
-        populate: {
-          path: "calData.unit",
-          model: "recipeUnits", // Replace with your actual Unit model name
+      .populate([
+        {
+          path: "subcatid",
+          model: "recipesSubCat",
+          populate: {
+            path: "calData.unit",
+            model: "recipeUnits", // Replace with your actual Unit model name
+          },
         },
-      })
+        {
+          path: "unitid",
+          model: "recipeUnits",
+        },
+      ])
       .lean();
     // Use .lean() to obtain plain JavaScript objects
 

@@ -4,6 +4,7 @@ const RecipesSubCat = require("../../models/RecipesSubCat");
 const User = require("../../models/User");
 const CalCronData = require("../../models/CalCronData");
 const mealSettings = require("../../models/MealSettings");
+const NutritionSettings = require("../../models/NutritionSettings");
 const { formatDate } = require("../../helper/formatterFiles");
 const { getMealTimewiseRecipes } = require("../../helper/commonServices");
 const {
@@ -19,10 +20,16 @@ const moment = require("moment");
 const addMeal = async (req, res, next) => {
   try {
     const { userid, date, mealime, subcatid, qty, unitid, protine, carbs, fats, fiber, cal } = req.body;
-    const FormattedDate = new Date(date);
-    FormattedDate.setHours(0, 0, 0, 0);
+    // const FormattedDate = new Date(date);
+    // FormattedDate.setHours(0, 0, 0, 0);
+
+    // const tomorrow = new Date(FormattedDate);
+    // tomorrow.setDate(FormattedDate.getDate() + 1); // Set it to the start of the next day
+
+    // console.log(date);
+
     const existingMeal = await TrackedMeal.findOne({
-      date: FormattedDate,
+      date: formatDate(date),
       userid: userid,
       subcatid: subcatid,
       mealime: mealime,
@@ -39,17 +46,17 @@ const addMeal = async (req, res, next) => {
       calData = await existingMeal.save();
     } else {
       const NewMeal = await TrackedMeal.create({
-        userid,
-        date,
-        mealime,
-        subcatid,
-        qty,
-        unitid,
-        protine,
-        carbs,
-        fats,
-        fiber,
-        cal,
+        userid: userid,
+        date: formatDate(date),
+        mealime: mealime,
+        subcatid: subcatid,
+        qty: qty,
+        unitid: unitid,
+        protine: protine,
+        carbs: carbs,
+        fats: fats,
+        fiber: fiber,
+        cal: cal,
       });
       calData = await NewMeal.save();
     }
@@ -166,4 +173,276 @@ const getAllTrackedMeal = async (req, res, next) => {
   }
 };
 
-module.exports = { addMeal, getAllTrackedMeal };
+//Get All Tracked Meal
+const getEatenCal = async (req, res, next) => {
+  try {
+    const { userid, date } = req.body;
+    const requestDate = moment(date, "MM/DD/YYYY").toDate();
+
+    // Query the database for matching documents
+    const results = await CalCronData.find({ userId: userid });
+
+    // Filter results based on date matching (ignoring time)
+    const matchingResults = results.filter((result) => {
+      const storedDate = moment(result.date).startOf("day").toDate(); // Set time to 00:00:00
+      return moment(requestDate).isSame(storedDate, "day");
+    });
+
+    if (matchingResults.length > 0) {
+      user_cal = matchingResults[0].cal;
+    } else {
+      const user_id = new mongoose.Types.ObjectId(userid);
+      const user = await User.findById(user_id);
+      user_cal = user.cal;
+    }
+
+    const recipes = await TrackedMeal.find({ date: formatDate(date), userid: userid });
+
+    // Calculate the sum of "cal" values
+    const totalUsedCalories = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.cal);
+    }, 0);
+
+    const response = {
+      totalCal: parseInt(user_cal),
+      totalUsedCalories: parseInt(totalUsedCalories),
+    };
+
+    successResponse(res, response);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get All Calory Budget
+const getAllCalBudget = async (req, res, next) => {
+  try {
+    const { userid, date } = req.body;
+    const requestDate = moment(date, "MM/DD/YYYY").toDate();
+
+    // Query the database for matching documents
+    const results = await CalCronData.find({ userId: userid });
+
+    // Filter results based on date matching (ignoring time)
+    const matchingResults = results.filter((result) => {
+      const storedDate = moment(result.date).startOf("day").toDate(); // Set time to 00:00:00
+      return moment(requestDate).isSame(storedDate, "day");
+    });
+
+    if (matchingResults.length > 0) {
+      user_cal = matchingResults[0].cal;
+    } else {
+      const user_id = new mongoose.Types.ObjectId(userid);
+      const user = await User.findById(user_id);
+      user_cal = user.cal;
+    }
+
+    const recipes = await TrackedMeal.find({ date: formatDate(date), userid: userid }).populate([
+      {
+        path: "subcatid",
+        model: "recipesSubCat",
+        populate: {
+          path: "calData.unit",
+          model: "recipeUnits", // Replace with your actual Unit model name
+        },
+      },
+      {
+        path: "unitid",
+        model: "recipeUnits",
+      },
+    ]);
+
+    // Calculate the sum of "cal" values
+    const totalUsedCalories = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.cal);
+    }, 0);
+
+    // Calculate the sum of "protine" values
+    const UsedProteinCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.protine);
+    }, 0);
+
+    // Calculate the sum of "protine" values
+    const UsedFatCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.fats);
+    }, 0);
+
+    // Calculate the sum of "protine" values
+    const UsedCarbCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.carbs);
+    }, 0);
+
+    // Calculate the sum of "protine" values
+    const UsedFibreCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.fiber);
+    }, 0);
+
+    const cal_per = Math.round((totalUsedCalories * 100) / user_cal);
+
+    const nutritionPer = await NutritionSettings.findOne();
+
+    let totalProteinCalory = 0;
+    let totalCarbCalory = 0;
+    let totalFatCalory = 0;
+    let totalFibreCalory = 0;
+
+    if (nutritionPer) {
+      totalProteinCalory = ((user_cal * nutritionPer.protein) / 100 / 4).toFixed(1);
+      totalCarbCalory = ((user_cal * nutritionPer.carb) / 100 / 4).toFixed(1);
+      totalFatCalory = ((user_cal * nutritionPer.fat) / 100 / 9).toFixed(1);
+      totalFibreCalory = Number(nutritionPer.fibre).toFixed(1);
+    }
+
+    macronutrients = {
+      protine: {
+        total: totalProteinCalory,
+        used: UsedProteinCalory.toFixed(1),
+        percent: Math.round((UsedProteinCalory * 100) / totalProteinCalory),
+      },
+      fats: {
+        total: totalFatCalory,
+        used: UsedFatCalory.toFixed(1),
+        percent: Math.round((UsedFatCalory * 100) / totalFatCalory),
+      },
+      carbs: {
+        total: totalCarbCalory,
+        used: UsedCarbCalory.toFixed(1),
+        percent: Math.round((UsedCarbCalory * 100) / totalCarbCalory),
+      },
+      fibre: {
+        total: totalFibreCalory,
+        used: UsedFibreCalory.toFixed(1),
+        percent: Math.round((UsedFibreCalory * 100) / totalFibreCalory),
+      },
+    };
+    const response = {
+      totalCal: parseInt(user_cal),
+      totalUsedCalories: parseInt(totalUsedCalories),
+      calPercent: cal_per,
+      macronutrients: macronutrients,
+      recipes: recipes,
+    };
+
+    successResponse(res, response);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get Mealtimewise Calory Budget
+const getMealwiseCalBudget = async (req, res, next) => {
+  try {
+    const { userid, date, mealtime } = req.body;
+
+    const requestDate = moment(date, "MM/DD/YYYY").toDate();
+
+    // Query the database for matching documents
+    const results = await CalCronData.find({ userId: userid });
+
+    // Filter results based on date matching (ignoring time)
+    const matchingResults = results.filter((result) => {
+      const storedDate = moment(result.date).startOf("day").toDate(); // Set time to 00:00:00
+      return moment(requestDate).isSame(storedDate, "day");
+    });
+
+    if (matchingResults.length > 0) {
+      user_cal = matchingResults[0].cal;
+    } else {
+      const user_id = new mongoose.Types.ObjectId(userid);
+      const user = await User.findById(user_id);
+      user_cal = user.cal;
+    }
+
+    const mealPer = await mealSettings.findOne();
+    let totalCalory = 0;
+
+    if (mealPer) {
+      if (mealtime == 1) {
+        totalCalory = parseInt((user_cal * mealPer.breakfast) / 100);
+      } else if (mealtime == 2) {
+        totalCalory = parseInt((user_cal * mealPer.morning_snack) / 100);
+      } else if (mealtime == 3) {
+        totalCalory = parseInt((user_cal * mealPer.lunch) / 100);
+      } else if (mealtime == 4) {
+        totalCalory = parseInt((user_cal * mealPer.evening_snack) / 100);
+      } else if (mealtime == 5) {
+        totalCalory = parseInt((user_cal * mealPer.dinner) / 100);
+      }
+    }
+
+    const recipesData = await getMealTimewiseRecipes(date, userid, mealtime);
+
+    const recipes = recipesData.recipes;
+
+    // // Calculate the sum of "protine" values
+    const UsedProteinCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.protine);
+    }, 0);
+
+    // Calculate the sum of "protine" values
+    const UsedFatCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.fats);
+    }, 0);
+
+    // Calculate the sum of "protine" values
+    const UsedCarbCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.carbs);
+    }, 0);
+
+    // Calculate the sum of "protine" values
+    const UsedFibreCalory = recipes.reduce((totalCalories, recipe) => {
+      return totalCalories + parseFloat(recipe.fiber);
+    }, 0);
+
+    const cal_per = Math.round((recipesData.totalUsedCalories * 100) / totalCalory);
+
+    const nutritionPer = await NutritionSettings.findOne();
+
+    let totalProteinCalory = 0;
+    let totalCarbCalory = 0;
+    let totalFatCalory = 0;
+    let totalFibreCalory = 0;
+
+    if (nutritionPer) {
+      totalProteinCalory = ((totalCalory * nutritionPer.protein) / 100 / 4).toFixed(1);
+      totalCarbCalory = ((totalCalory * nutritionPer.carb) / 100 / 4).toFixed(1);
+      totalFatCalory = ((totalCalory * nutritionPer.fat) / 100 / 9).toFixed(1);
+      totalFibreCalory = Number(nutritionPer.fibre).toFixed(1);
+    }
+
+    macronutrients = {
+      protine: {
+        total: totalProteinCalory,
+        used: UsedProteinCalory.toFixed(1),
+        percent: Math.round((UsedProteinCalory * 100) / totalProteinCalory),
+      },
+      fats: {
+        total: totalFatCalory,
+        used: UsedFatCalory.toFixed(1),
+        percent: Math.round((UsedFatCalory * 100) / totalFatCalory),
+      },
+      carbs: {
+        total: totalCarbCalory,
+        used: UsedCarbCalory.toFixed(1),
+        percent: Math.round((UsedCarbCalory * 100) / totalCarbCalory),
+      },
+      fibre: {
+        total: totalFibreCalory,
+        used: UsedFibreCalory.toFixed(1),
+        percent: Math.round((UsedFibreCalory * 100) / totalFibreCalory),
+      },
+    };
+    const response = {
+      totalCal: parseInt(totalCalory),
+      totalUsedCalories: parseInt(recipesData.totalUsedCalories),
+      calPercent: cal_per,
+      macronutrients: macronutrients,
+      recipes: recipes,
+    };
+
+    successResponse(res, response);
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = { addMeal, getAllTrackedMeal, getEatenCal, getAllCalBudget, getMealwiseCalBudget };
