@@ -25,6 +25,7 @@ const Profile = Loadable(lazy(() => import('pages/profile/profile')));
 
 const Users = Loadable(lazy(() => import('pages/users')));
 const UserForm = Loadable(lazy(() => import('pages/users/userform')));
+const UserInsights = Loadable(lazy(() => import('pages/users/insights')));
 
 const MedicalCondition = Loadable(lazy(() => import('pages/settings/MedicalCondition')));
 const MedicalConditionForm = Loadable(lazy(() => import('pages/settings/MedicalConditionForm')));
@@ -85,6 +86,7 @@ export default function ThemeRoutes() {
       <Route path="/" element={<PrivateRoute />}>
         <Route path="users" element={<Users />} />
         <Route path="user/manage" element={<UserForm />} />
+        <Route path="user/insights" element={<UserInsights />} />
         <Route path="profile" element={<Profile />} />
         <Route path="dashboard" element={<DashboardDefault />} />
         <Route path="essentials" element={<Essentials />} />

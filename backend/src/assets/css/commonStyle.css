@@ -39,3 +39,73 @@
   color: green;
   border-color: green;
 }
+.insightsIcon {
+  color: #008000e6;
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: 5px;
+  margin: 0px 6px;
+  font-size: 30px;
+  padding: 4px;
+}
+.editIcon {
+  color: #6495ed;
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: 5px;
+  margin: 0px 6px;
+  font-size: 30px;
+  padding: 4px;
+}
+.deleteIcon {
+  color: #ff5733;
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: 5px;
+  margin: 0px 6px;
+  font-size: 30px;
+  padding: 4px;
+}
+
+/* Insights.css */
+
+.insights-container {
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #333;
+}
+
+.info-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.recipe {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.meal-title {
+  font-size: 20px;
+  color: #555;
+}
+
+.recipe-item {
+  margin: 10px 0;
+}
+
+/* Add date picker styling here */

@@ -38,7 +38,7 @@ const getAllRecipes = async (req, res, next) => {
   }
 };
 
-//Get All Active Receipes
+//Get Search Receipes
 const getSearchRecipes = async (req, res, next) => {
   try {
     const recipes = await RecipesSubCat.find({

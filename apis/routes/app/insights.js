@@ -10,9 +10,9 @@ const {
 const verifyToken = require("../../helper/verifyAppToken");
 
 router.post("/addMeal", verifyToken, addMeal);
-router.get("/getAllTrackedMeal", verifyToken, getAllTrackedMeal);
-router.get("/getEatenCal", verifyToken, getEatenCal);
-router.get("/getAllCalBudget", verifyToken, getAllCalBudget);
-router.get("/getMealwiseCalBudget", verifyToken, getMealwiseCalBudget);
+router.post("/getAllTrackedMeal", verifyToken, getAllTrackedMeal);
+router.post("/getEatenCal", verifyToken, getEatenCal);
+router.post("/getAllCalBudget", verifyToken, getAllCalBudget);
+router.post("/getMealwiseCalBudget", verifyToken, getMealwiseCalBudget);
 
 module.exports = router;

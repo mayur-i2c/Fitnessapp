@@ -134,43 +134,28 @@ const Users = () => {
         customBodyRender: (value) => {
           return (
             <div>
-              {/* <Icons.Visibility
-                style={{
-                  color: '#52c41a',
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  borderRadius: '5px',
-                  margin: '0px 6px',
-                  fontSize: '30px',
-                  padding: '4px'
+              <Icons.BarChart
+                className="insightsIcon"
+                onClick={() => {
+                  const userdata = datatableData.find((data) => data._id === value);
+
+                  const currentDate = new Date();
+                  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+                  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(currentDate);
+                  const insightdata = { userid: value, date: '11/8/2023' };
+
+                  navigate('/user/insights', { state: { userdata: userdata, insightdata: insightdata, imageurl: baseurl } });
                 }}
-              /> */}
+              />
               <Icons.Edit
-                style={{
-                  color: '#6495ED',
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  borderRadius: '5px',
-                  margin: '0px 6px',
-                  fontSize: '30px',
-                  padding: '4px'
-                }}
+                className="editIcon"
                 onClick={() => {
                   const editdata = datatableData.find((data) => data._id === value);
-                  console.log(editdata);
                   navigate('/user/manage', { state: { editdata: editdata, imageurl: baseurl } });
                 }}
               />
               <Icons.Delete
-                style={{
-                  color: '#FF5733',
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  borderRadius: '5px',
-                  margin: '0px 6px',
-                  fontSize: '30px',
-                  padding: '4px'
-                }}
+                className="deleteIcon"
                 onClick={async () => {
                   const confirm = await swal({
                     title: 'Are you sure?',

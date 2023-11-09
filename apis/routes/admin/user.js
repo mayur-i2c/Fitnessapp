@@ -7,6 +7,7 @@ const {
   updateUserStatus,
   updateUserProfile,
   addUser,
+  getAllTrackedMeal,
 } = require("../../controllers/Admin/userController");
 const authenticAdmin = require("../../helper/verifyAdminToken");
 const { singleFileUpload } = require("../../helper/imageUpload");
@@ -27,5 +28,7 @@ router.post(
   singleFileUpload("public/images", ["image/png", "image/jpeg", "image/jpg"], 1024 * 1024, "image"),
   addUser
 );
+
+router.post("/getAllTrackedMeal", authenticAdmin, getAllTrackedMeal);
 
 module.exports = router;

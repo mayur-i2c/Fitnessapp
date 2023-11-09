@@ -567,3 +567,9 @@ export const deleteMultRecSubcat = (data) => {
     data: { Ids: data }
   });
 };
+
+//Get All Tracked Meal
+export const getAllTrackedMeal = (data) =>
+  axios.post(`${mainUrl}/admin/user/getAllTrackedMeal`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
