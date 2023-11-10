@@ -171,35 +171,40 @@ const getAllTrackedMeal = async (req, res, next) => {
 
     const totalBfUsedCalory = parseInt(bf_recipes.totalUsedCalories);
     const breakfastData = {
-      totalBreakfastCalory: totalBreakfastCalory,
+      totalCalory: totalBreakfastCalory,
       totalUsedCalories: totalBfUsedCalory,
+      cal_per: Math.round((totalBfUsedCalory * 100) / totalBreakfastCalory),
       receipes: bf_recipes.recipes,
     };
     const totalmoUsedCalory = parseInt(mo_recipes.totalUsedCalories);
     const morningData = {
-      totalMorningCalory: totalMorningCalory,
+      totalCalory: totalMorningCalory,
       totalUsedCalories: totalmoUsedCalory,
+      cal_per: Math.round((totalmoUsedCalory * 100) / totalMorningCalory),
       receipes: mo_recipes.recipes,
     };
 
     const totalLunchUsedCalory = parseInt(lunch_recipes.totalUsedCalories);
     const lunchData = {
-      totalLunchCalory: totalLunchCalory,
+      totalCalory: totalLunchCalory,
       totalUsedCalories: totalLunchUsedCalory,
+      cal_per: Math.round((totalLunchUsedCalory * 100) / totalLunchCalory),
       receipes: lunch_recipes.recipes,
     };
 
     const totalEveningUsedCalory = parseInt(eve_recipes.totalUsedCalories);
     const eveningData = {
-      totalEveningCalory: totalEveningCalory,
+      totalCalory: totalEveningCalory,
       totalUsedCalories: totalEveningUsedCalory,
+      cal_per: Math.round((totalEveningUsedCalory * 100) / totalEveningCalory),
       receipes: eve_recipes.recipes,
     };
 
     const totalDinnerUsedCalory = parseInt(dinner_recipes.totalUsedCalories);
     const dinnerData = {
-      totalDinnerCalory: totalDinnerCalory,
+      totalCalory: totalDinnerCalory,
       totalUsedCalories: totalDinnerUsedCalory,
+      cal_per: Math.round((totalDinnerUsedCalory * 100) / totalDinnerCalory),
       receipes: dinner_recipes.recipes,
     };
 
