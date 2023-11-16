@@ -142,7 +142,7 @@ const Users = () => {
                   const currentDate = new Date();
                   const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
                   const formattedDate = new Intl.DateTimeFormat('en-US', options).format(currentDate);
-                  const insightdata = { userid: value, date: '11/8/2023' };
+                  const insightdata = { userid: value, date: formattedDate };
 
                   navigate('/user/insights', { state: { userdata: userdata, insightdata: insightdata, imageurl: baseurl } });
                 }}

@@ -11,7 +11,9 @@ const deleteFiles = require("../../helper/deleteFiles");
 const CalCronData = require("../../models/CalCronData");
 const mealSettings = require("../../models/MealSettings");
 const { getMealTimewiseRecipes } = require("../../helper/commonServices");
-
+const NutritionSettings = require("../../models/NutritionSettings");
+const TrackedMeal = require("../../models/TrackedMeal");
+const { formatDate } = require("../../helper/formatterFiles");
 const moment = require("moment");
 // Get All User
 const AllUsers = async (req, res, next) => {
@@ -120,6 +122,62 @@ const addUser = async (req, res, next) => {
   }
 };
 
+const getMicronutrition = async (recipesData, totalCalory) => {
+  const recipes = recipesData.recipes;
+
+  // // Calculate the sum of "protine" values
+  const UsedProteinCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.protine);
+  }, 0);
+  // Calculate the sum of "protine" values
+  const UsedFatCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.fats);
+  }, 0);
+  // Calculate the sum of "protine" values
+  const UsedCarbCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.carbs);
+  }, 0);
+  // Calculate the sum of "protine" values
+  const UsedFibreCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.fiber);
+  }, 0);
+  const cal_per = Math.round((recipesData.totalUsedCalories * 100) / totalCalory);
+  const nutritionPer = await NutritionSettings.findOne();
+  let totalProteinCalory = 0;
+  let totalCarbCalory = 0;
+  let totalFatCalory = 0;
+  let totalFibreCalory = 0;
+  if (nutritionPer) {
+    totalProteinCalory = ((totalCalory * nutritionPer.protein) / 100 / 4).toFixed(1);
+    totalCarbCalory = ((totalCalory * nutritionPer.carb) / 100 / 4).toFixed(1);
+    totalFatCalory = ((totalCalory * nutritionPer.fat) / 100 / 9).toFixed(1);
+    totalFibreCalory = Number(nutritionPer.fibre).toFixed(1);
+  }
+  macronutrients = {
+    protine: {
+      total: totalProteinCalory,
+      used: UsedProteinCalory.toFixed(1),
+      percent: Math.round((UsedProteinCalory * 100) / totalProteinCalory),
+    },
+    fats: {
+      total: totalFatCalory,
+      used: UsedFatCalory.toFixed(1),
+      percent: Math.round((UsedFatCalory * 100) / totalFatCalory),
+    },
+    carbs: {
+      total: totalCarbCalory,
+      used: UsedCarbCalory.toFixed(1),
+      percent: Math.round((UsedCarbCalory * 100) / totalCarbCalory),
+    },
+    fibre: {
+      total: totalFibreCalory,
+      used: UsedFibreCalory.toFixed(1),
+      percent: Math.round((UsedFibreCalory * 100) / totalFibreCalory),
+    },
+  };
+  return macronutrients;
+};
+
 //Get All Tracked Meal
 const getAllTrackedMeal = async (req, res, next) => {
   try {
@@ -166,6 +224,12 @@ const getAllTrackedMeal = async (req, res, next) => {
     const eve_recipes = await getMealTimewiseRecipes(date, userid, 4);
     const dinner_recipes = await getMealTimewiseRecipes(date, userid, 5);
 
+    const bf_macronutrients = await getMicronutrition(bf_recipes, totalBreakfastCalory);
+    const morning_macronutrients = await getMicronutrition(mo_recipes, totalMorningCalory);
+    const lunch_macronutrients = await getMicronutrition(lunch_recipes, totalLunchCalory);
+    const eve_macronutrients = await getMicronutrition(eve_recipes, totalEveningCalory);
+    const dinner_macronutrients = await getMicronutrition(dinner_recipes, totalDinnerCalory);
+
     // Assuming you have a `baseUrl` variable
     const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_RECIPES_PATH; // Replace with your actual base URL
 
@@ -175,6 +239,7 @@ const getAllTrackedMeal = async (req, res, next) => {
       totalUsedCalories: totalBfUsedCalory,
       cal_per: Math.round((totalBfUsedCalory * 100) / totalBreakfastCalory),
       receipes: bf_recipes.recipes,
+      macronutrients: bf_macronutrients,
     };
     const totalmoUsedCalory = parseInt(mo_recipes.totalUsedCalories);
     const morningData = {
@@ -182,6 +247,7 @@ const getAllTrackedMeal = async (req, res, next) => {
       totalUsedCalories: totalmoUsedCalory,
       cal_per: Math.round((totalmoUsedCalory * 100) / totalMorningCalory),
       receipes: mo_recipes.recipes,
+      macronutrients: morning_macronutrients,
     };
 
     const totalLunchUsedCalory = parseInt(lunch_recipes.totalUsedCalories);
@@ -190,6 +256,7 @@ const getAllTrackedMeal = async (req, res, next) => {
       totalUsedCalories: totalLunchUsedCalory,
       cal_per: Math.round((totalLunchUsedCalory * 100) / totalLunchCalory),
       receipes: lunch_recipes.recipes,
+      macronutrients: lunch_macronutrients,
     };
 
     const totalEveningUsedCalory = parseInt(eve_recipes.totalUsedCalories);
@@ -198,6 +265,7 @@ const getAllTrackedMeal = async (req, res, next) => {
       totalUsedCalories: totalEveningUsedCalory,
       cal_per: Math.round((totalEveningUsedCalory * 100) / totalEveningCalory),
       receipes: eve_recipes.recipes,
+      macronutrients: eve_macronutrients,
     };
 
     const totalDinnerUsedCalory = parseInt(dinner_recipes.totalUsedCalories);
@@ -206,6 +274,7 @@ const getAllTrackedMeal = async (req, res, next) => {
       totalUsedCalories: totalDinnerUsedCalory,
       cal_per: Math.round((totalDinnerUsedCalory * 100) / totalDinnerCalory),
       receipes: dinner_recipes.recipes,
+      macronutrients: dinner_macronutrients,
     };
 
     const recipes = {
@@ -219,11 +288,17 @@ const getAllTrackedMeal = async (req, res, next) => {
     const totalUsedCal =
       totalBfUsedCalory + totalmoUsedCalory + totalLunchUsedCalory + totalEveningUsedCalory + totalDinnerUsedCalory;
 
+    const allRecipes = await getMealTimewiseRecipes(date, userid);
+
+    const totalMacronutrientsawait = await getMicronutrition(allRecipes, totalUsedCal);
+
     const finalResponse = {
       recipes: recipes,
       baseUrl: baseUrl,
       totalCal: parseInt(user_cal),
       totalUsedCal: parseInt(totalUsedCal),
+      cal_per: Math.round((totalUsedCal * 100) / user_cal),
+      macronutrients: totalMacronutrientsawait,
     };
 
     successResponse(res, finalResponse);

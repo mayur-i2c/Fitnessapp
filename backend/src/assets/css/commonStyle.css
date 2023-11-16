@@ -109,3 +109,15 @@
 }
 
 /* Add date picker styling here */
+.css-17qjh8i-MuiPaper-root-MuiAccordion-root.Mui-expanded {
+  margin: 0px !important;
+}
+.css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
+  margin: 14px 0 !important;
+}
+.textRight {
+  text-align: right !important;
+}
+.textcenter {
+  text-align: center;
+}

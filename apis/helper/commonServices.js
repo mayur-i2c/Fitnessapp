@@ -2,13 +2,19 @@ const { formatDate } = require("../helper/formatterFiles");
 const TrackedMeal = require("../models/TrackedMeal");
 const CalCronData = require("../models/CalCronData");
 
-const getMealTimewiseRecipes = async (date, userid, mealtime) => {
+const getMealTimewiseRecipes = async (date, userid, mealtime = null) => {
   try {
-    const recipes = await TrackedMeal.find({
+    const query = {
       date: formatDate(date),
       userid: userid,
-      mealime: mealtime,
-    })
+    };
+
+    // Add mealtime to the query if it's provided
+    if (mealtime !== null) {
+      query.mealime = mealtime;
+    }
+
+    const recipes = await TrackedMeal.find(query)
       .populate([
         {
           path: "subcatid",
