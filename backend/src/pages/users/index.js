@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { Grid, CircularProgress, IconButton, Button, Typography } from '@mui/material';
 import swal from 'sweetalert';
 import Switch from '@mui/material/Switch';
+import no_profile from 'assets/images/users/no_profile.jpeg';
 
 const Users = () => {
   const [datatableData, setdatatableData] = useState([]);
@@ -68,7 +69,7 @@ const Users = () => {
               style={{ height: '50px', width: '50px', borderRadius: '50%' }}
             />
           ) : (
-            ''
+            <img src={no_profile} alt={image} style={{ height: '50px', width: '50px', borderRadius: '50%' }} />
           )
       }
     },

@@ -122,7 +122,7 @@ const addUser = async (req, res, next) => {
   }
 };
 
-const getMicronutrition = async (recipesData, totalCalory) => {
+const getMicronutrition = async (recipesData, totalCalory, mealPer) => {
   const recipes = recipesData.recipes;
 
   // // Calculate the sum of "protine" values
@@ -151,7 +151,7 @@ const getMicronutrition = async (recipesData, totalCalory) => {
     totalProteinCalory = ((totalCalory * nutritionPer.protein) / 100 / 4).toFixed(1);
     totalCarbCalory = ((totalCalory * nutritionPer.carb) / 100 / 4).toFixed(1);
     totalFatCalory = ((totalCalory * nutritionPer.fat) / 100 / 9).toFixed(1);
-    totalFibreCalory = Number(nutritionPer.fibre).toFixed(1);
+    totalFibreCalory = Number((nutritionPer.fibre * mealPer) / 100).toFixed(1);
   }
   macronutrients = {
     protine: {
@@ -224,11 +224,11 @@ const getAllTrackedMeal = async (req, res, next) => {
     const eve_recipes = await getMealTimewiseRecipes(date, userid, 4);
     const dinner_recipes = await getMealTimewiseRecipes(date, userid, 5);
 
-    const bf_macronutrients = await getMicronutrition(bf_recipes, totalBreakfastCalory);
-    const morning_macronutrients = await getMicronutrition(mo_recipes, totalMorningCalory);
-    const lunch_macronutrients = await getMicronutrition(lunch_recipes, totalLunchCalory);
-    const eve_macronutrients = await getMicronutrition(eve_recipes, totalEveningCalory);
-    const dinner_macronutrients = await getMicronutrition(dinner_recipes, totalDinnerCalory);
+    const bf_macronutrients = await getMicronutrition(bf_recipes, totalBreakfastCalory, mealPer.breakfast);
+    const morning_macronutrients = await getMicronutrition(mo_recipes, totalMorningCalory, mealPer.morning_snack);
+    const lunch_macronutrients = await getMicronutrition(lunch_recipes, totalLunchCalory, mealPer.lunch);
+    const eve_macronutrients = await getMicronutrition(eve_recipes, totalEveningCalory, mealPer.evening_snack);
+    const dinner_macronutrients = await getMicronutrition(dinner_recipes, totalDinnerCalory, mealPer.dinner);
 
     // Assuming you have a `baseUrl` variable
     const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_RECIPES_PATH; // Replace with your actual base URL
@@ -290,7 +290,7 @@ const getAllTrackedMeal = async (req, res, next) => {
 
     const allRecipes = await getMealTimewiseRecipes(date, userid);
 
-    const totalMacronutrientsawait = await getMicronutrition(allRecipes, totalUsedCal);
+    const totalMacronutrientsawait = await getMicronutrition(allRecipes, user_cal, 100);
 
     const finalResponse = {
       recipes: recipes,

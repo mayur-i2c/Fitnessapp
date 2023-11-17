@@ -121,3 +121,76 @@
 .textcenter {
   text-align: center;
 }
+.pd-2 {
+  padding-top: 2px !important;
+}
+.dateRight {
+  justify-content: flex-end;
+  display: flex;
+  margin-top: 9px;
+}
+.border50 {
+  border-radius: 50%;
+}
+.mr-8 {
+  margin-right: 8px;
+}
+.udiv {
+  padding: 4px 20px;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.mo-div {
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.mealCalDiv {
+  border-bottom: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #8080803d;
+}
+.arrowStyle {
+  text-align: center;
+  padding-top: 6px;
+}
+.calperColor {
+  color: #0f958e;
+}
+.recipesHeader {
+  background-color: #a2b2eb7d;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 20px !important;
+}
+.mt-0 {
+  margin-top: 0px !important;
+}
+.text-center {
+  text-align: center;
+}
+.nutrientHeader {
+  background-color: antiquewhite;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 20px !important;
+}
+.mainborder {
+  border: 1px solid #80808047;
+}
+.allNutrientDiv {
+  background: #80808026;
+  border-bottom: 1px solid #8080804a;
+}
+.resIcon {
+  border: 1px solid;
+  color: orange;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 7px;
+}
+.circularIcon {
+  text-align: center;
+  margin-top: 20px;
+}
