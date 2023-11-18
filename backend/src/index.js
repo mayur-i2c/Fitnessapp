@@ -26,7 +26,7 @@ root.render(
   <StrictMode>
     <UserProvider>
       <ReduxProvider store={store}>
-        <BrowserRouter basename="">
+        <BrowserRouter basename="/fitness-app/backend">
           <App />
         </BrowserRouter>
       </ReduxProvider>

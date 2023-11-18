@@ -222,6 +222,7 @@ const ReelForm = () => {
                             />
                             {!isHovering ? (
                               selectedVideo ? (
+                                /* eslint-disable-next-line jsx-a11y/media-has-caption */
                                 <video controls width="150" height="100" style={{ margin: '0 20px' }}>
                                   <source src={selectedVideo} type="video/mp4" />
                                   <track label="English Captions" kind="subtitles" srcLang="en" src="captions.vtt" default />

@@ -12,10 +12,9 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -102,9 +101,9 @@ const Insights = () => {
         <Grid item xs={12} md={6} lg={6} className="dateRight">
           <Stack spacing={3} sx={{ mt: 2 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs} fullWidth>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker label="Choose Date" value={selectedDate} onChange={handleDateChange} format="DD/MM/YYYY" />
-              </DemoContainer>
+              {/* <DemoContainer components={['DatePicker']}> */}
+              <DatePicker label="Choose Date" value={selectedDate} onChange={handleDateChange} format="DD/MM/YYYY" />
+              {/* </DemoContainer> */}
             </LocalizationProvider>
           </Stack>
         </Grid>

@@ -242,6 +242,7 @@ const EssSubCatLevel2Form = () => {
                             />
                             {!isVideoHovering ? (
                               selectedVideo ? (
+                                /* eslint-disable-next-line jsx-a11y/media-has-caption */
                                 <video controls width="200" height="150">
                                   <source src={selectedVideo} type="video/mp4" />
                                   <track label="English Captions" kind="subtitles" srcLang="en" src="captions.vtt" default />
