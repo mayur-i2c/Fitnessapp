@@ -573,3 +573,9 @@ export const getAllTrackedMeal = (data) =>
   axios.post(`${mainUrl}/admin/user/getAllTrackedMeal`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+//Get Dashboard Count Data
+export const getDashboardCount = () =>
+  axios.get(`${mainUrl}/admin/dashboard/getDashboardCount`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });

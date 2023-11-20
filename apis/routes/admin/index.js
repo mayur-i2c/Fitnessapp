@@ -7,6 +7,7 @@ const reelRouter = require("../admin/reel");
 const exeLibraryRouter = require("../admin/exeLibrary");
 const workoutCollectionRouter = require("../admin/workoutCollection");
 const recipeRouter = require("../admin/recipe");
+const dashboardRouter = require("../admin/dashboard");
 
 // Use router in index
 router.use("/admin", adminRouter);
@@ -17,5 +18,6 @@ router.use("/admin/reel", reelRouter);
 router.use("/admin/exeLibrary", exeLibraryRouter);
 router.use("/admin/workCollection", workoutCollectionRouter);
 router.use("/admin/recipe", recipeRouter);
+router.use("/admin/dashboard", dashboardRouter);
 
 module.exports = router;
