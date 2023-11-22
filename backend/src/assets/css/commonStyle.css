@@ -194,3 +194,36 @@
   text-align: center;
   margin-top: 20px;
 }
+.h4Box {
+  font-size: 34px;
+  /* color: #faad14; */
+}
+.countdiv {
+  text-align: center !important;
+  display: block;
+}
+.MuiCardContent-root {
+  padding: 0px !important;
+}
+.countheader {
+  color: black;
+  padding: 12px;
+}
+.countfooter {
+  padding: 4px;
+  color: black;
+}
+.textdecoration {
+  text-decoration: none;
+}
+.pt-12 {
+  padding-top: 12px;
+}
+.activeP {
+  color: green;
+  font-weight: bold;
+}
+.deactiveP {
+  color: #ff0000ba;
+  font-weight: bold;
+}

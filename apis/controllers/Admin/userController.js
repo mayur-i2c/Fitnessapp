@@ -306,6 +306,31 @@ const getAllTrackedMeal = async (req, res, next) => {
     next(err);
   }
 };
+
+// Get last 10 Signup Users
+const getLastUsers = async (req, res, next) => {
+  try {
+    const users = await User.find().sort({ createdAt: "descending" }).limit(10);
+    successResponse(res, users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// API endpoint to get the total count of active and inactive users
+const getStatuswiseUserCount = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    const activeCount = users.filter((user) => user.status).length;
+    const inactiveCount = users.length - activeCount;
+
+    const result = { activeCount: activeCount, inactiveCount: inactiveCount };
+    successResponse(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   AllUsers,
   DeleteUser,
@@ -314,4 +339,6 @@ module.exports = {
   updateUserProfile,
   addUser,
   getAllTrackedMeal,
+  getLastUsers,
+  getStatuswiseUserCount,
 };

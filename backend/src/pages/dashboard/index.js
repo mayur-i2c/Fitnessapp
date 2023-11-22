@@ -1,88 +1,48 @@
 import { useState, useEffect } from 'react';
 
 // material-ui
-import {
-  Avatar,
-  AvatarGroup,
-  Box,
-  Button,
-  Grid,
-  List,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemSecondaryAction,
-  ListItemText,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-  CircularProgress
-} from '@mui/material';
+import { Grid, List, ListItemButton, ListItemText, Typography, CircularProgress } from '@mui/material';
+import no_profile from 'assets/images/users/no_profile.jpeg';
 
 // project import
-import OrdersTable from './OrdersTable';
-import IncomeAreaChart from './IncomeAreaChart';
-import MonthlyBarChart from './MonthlyBarChart';
-import ReportAreaChart from './ReportAreaChart';
-import SalesColumnChart from './SalesColumnChart';
+import PieChart from './PieChart';
 import MainCard from 'components/MainCard';
 import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
-
-// assets
-import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
-import avatar1 from 'assets/images/users/avatar-1.png';
-import avatar2 from 'assets/images/users/avatar-2.png';
-import avatar3 from 'assets/images/users/avatar-3.png';
-import avatar4 from 'assets/images/users/avatar-4.png';
-
-import { getDashboardCount } from '../../ApiServices';
-
-// avatar style
-const avatarSX = {
-  width: 36,
-  height: 36,
-  fontSize: '1rem'
-};
-
-// action style
-const actionSX = {
-  mt: 0.75,
-  ml: 1,
-  top: 'auto',
-  right: 'auto',
-  alignSelf: 'flex-start',
-  transform: 'none'
-};
-
-// sales report status
-const status = [
-  {
-    value: 'today',
-    label: 'Today'
-  },
-  {
-    value: 'month',
-    label: 'This Month'
-  },
-  {
-    value: 'year',
-    label: 'This Year'
-  }
-];
+import MUIDataTable from 'mui-datatables';
+import { getDashboardCount, getLastUsers, getStatuswiseUserCount } from '../../ApiServices';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 const DashboardDefault = () => {
-  const [value, setValue] = useState('today');
-  const [slot, setSlot] = useState('week');
   const [isLoading, setIsLoading] = useState(true);
   const [allCount, setAllCount] = useState(null);
+  const [userCount, setuserCount] = useState(null);
+  const [datatableData, setdatatableData] = useState([]);
 
   const getAllCount = async () => {
     try {
       const response = await getDashboardCount();
+      const resUserCount = await getStatuswiseUserCount();
+      setuserCount(resUserCount.data.info);
       const newAllCount = response.data.info;
       setAllCount(newAllCount);
+      getUsers();
+      // setIsLoading(false);
+    } catch (err) {
+      if (!err.response.data.isSuccess) {
+        if (err.response.data.status === 401) {
+          toast.error(err.response.data.message);
+        } else {
+          console.log(err.response.data, 'else');
+        }
+      }
+    }
+  };
+
+  const getUsers = async () => {
+    try {
+      const response = await getLastUsers();
+      setdatatableData(response.data.info);
       setIsLoading(false);
     } catch (err) {
       if (!err.response.data.isSuccess) {
@@ -96,9 +56,73 @@ const DashboardDefault = () => {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     getAllCount();
   }, []);
+
+  const columns = [
+    {
+      name: 'image',
+      label: 'Profile',
+      options: {
+        customHeadRender: () => (
+          <th key="Profile" style={{ textAlign: 'center' }}>
+            Profile
+          </th>
+        ),
+        customBodyRender: (image) => (
+          <div style={{ textAlign: 'center' }}>
+            {image ? (
+              <img
+                src={`${process.env.REACT_APP_API_KEY_IMAGE_PATH}${image}`}
+                alt={image}
+                style={{ height: '50px', width: '50px', borderRadius: '50%' }}
+              />
+            ) : (
+              <img src={no_profile} alt={image} style={{ height: '50px', width: '50px', borderRadius: '50%' }} />
+            )}
+          </div>
+        )
+      }
+    },
+    {
+      name: 'name',
+      label: 'Name',
+      options: {
+        filter: true,
+        sort: true
+      }
+    },
+    {
+      name: 'email',
+      label: 'Email',
+      options: {
+        filter: true,
+        sort: true
+      }
+    },
+    {
+      name: 'mo_no',
+      label: 'Mobile No',
+      options: {
+        filter: true,
+        sort: true
+      }
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      options: {
+        filter: true,
+        sort: false,
+        customBodyRender: (_, { rowIndex }) => {
+          const { status } = datatableData[rowIndex];
+          return <div>{status ? <p className="activeP">Active</p> : <p className="deactiveP">De-Active</p>}</div>;
+        }
+      }
+    }
+  ];
 
   return (
     <div>
@@ -114,42 +138,71 @@ const DashboardDefault = () => {
           </Grid>
 
           <Grid item xs={12} sm={8} md={3} lg={2}>
-            <AnalyticEcommerce title="Total Users" count={allCount.userCount} percentage={70.5} extra="8,900" />
+            <AnalyticEcommerce
+              title="Total Users"
+              count={allCount.userCount}
+              extra="8,900"
+              viewurl="users"
+              headerBackground="#8000801f"
+              footerBackground="#80008045"
+            />
           </Grid>
           <Grid item xs={12} sm={8} md={3} lg={2}>
-            <AnalyticEcommerce title="Total Essentials" count={allCount.essentialsCount} percentage={59.3} extra="35,000" />
+            <AnalyticEcommerce
+              title="Total Essentials"
+              count={allCount.essentialsCount}
+              extra="35,000"
+              viewurl="essentials"
+              headerBackground="#0000ff2e"
+              footerBackground="#0000ff61"
+            />
           </Grid>
           <Grid item xs={12} sm={8} md={3} lg={2}>
-            <AnalyticEcommerce title="Total Reels" count={allCount.reelsCount} percentage={27.4} isLoss color="warning" extra="1,943" />
+            <AnalyticEcommerce
+              title="Total Reels"
+              count={allCount.reelsCount}
+              isLoss
+              color="warning"
+              extra="1,943"
+              viewurl="reels"
+              headerBackground="#ffa50036"
+              footerBackground="#ffa5006b"
+            />
           </Grid>
           <Grid item xs={12} sm={8} md={3} lg={2}>
             <AnalyticEcommerce
               title="Total Workout Collections"
               count={allCount.workCollCount}
-              percentage={27.4}
               isLoss
               color="warning"
               extra="$20,395"
+              viewurl="workoutCollection"
+              headerBackground="#80808047"
+              footerBackground="#80808069"
             />
           </Grid>
           <Grid item xs={12} sm={8} md={3} lg={2}>
             <AnalyticEcommerce
               title="Total Exercise Library"
               count={allCount.exLibCount}
-              percentage={27.4}
               isLoss
               color="warning"
               extra="$20,395"
+              viewurl="exeLibrary"
+              headerBackground="#00800033"
+              footerBackground="#00800057"
             />
           </Grid>
           <Grid item xs={12} sm={8} md={3} lg={2}>
             <AnalyticEcommerce
               title="Total Recipes"
               count={allCount.recipesCount}
-              percentage={27.4}
               isLoss
               color="warning"
               extra="$20,395"
+              viewurl="recipes"
+              headerBackground="#5f9ea059"
+              footerBackground="#5f9ea085"
             />
           </Grid>
 
@@ -159,12 +212,20 @@ const DashboardDefault = () => {
           <Grid item xs={12} md={7} lg={8}>
             <Grid container alignItems="center" justifyContent="space-between">
               <Grid item>
-                <Typography variant="h5">Recent Orders</Typography>
+                <Typography variant="h5">Last Signup Users</Typography>
               </Grid>
               <Grid item />
             </Grid>
             <MainCard sx={{ mt: 2 }} content={false}>
-              <OrdersTable />
+              <MUIDataTable
+                data={datatableData}
+                columns={columns}
+                options={{
+                  selectableRows: false, // This removes the checkbox column
+                  pagination: false, // This removes the pagination
+                  rowsPerPageOptions: false // This removes the rows per page options
+                }}
+              />
             </MainCard>
           </Grid>
           <Grid item xs={12} md={5} lg={4}>
@@ -177,19 +238,15 @@ const DashboardDefault = () => {
             <MainCard sx={{ mt: 2 }} content={false}>
               <List sx={{ p: 0, '& .MuiListItemButton-root': { py: 2 } }}>
                 <ListItemButton divider>
-                  <ListItemText primary="Company Finance Growth" />
-                  <Typography variant="h5">+45.14%</Typography>
+                  <ListItemText primary="Active Users" />
+                  <Typography variant="h5">{userCount.activeCount}</Typography>
                 </ListItemButton>
                 <ListItemButton divider>
-                  <ListItemText primary="Company Expenses Ratio" />
-                  <Typography variant="h5">0.58%</Typography>
-                </ListItemButton>
-                <ListItemButton>
-                  <ListItemText primary="Business Risk Cases" />
-                  <Typography variant="h5">Low</Typography>
+                  <ListItemText primary="De-Active Users" />
+                  <Typography variant="h5">{userCount.inactiveCount}</Typography>
                 </ListItemButton>
               </List>
-              <ReportAreaChart />
+              <PieChart activeUsersCount={userCount.activeCount} inactiveUsersCount={userCount.inactiveCount} />
             </MainCard>
           </Grid>
         </Grid>

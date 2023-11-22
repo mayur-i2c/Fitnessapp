@@ -579,3 +579,15 @@ export const getDashboardCount = () =>
   axios.get(`${mainUrl}/admin/dashboard/getDashboardCount`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+//Get Last Signup Users Data
+export const getLastUsers = () =>
+  axios.get(`${mainUrl}/admin/user/getLastUsers`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Get Statuswise Users Count
+export const getStatuswiseUserCount = () =>
+  axios.get(`${mainUrl}/admin/user/getStatuswiseUserCount`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
