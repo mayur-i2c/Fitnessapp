@@ -355,18 +355,24 @@ const getMealwiseCalBudget = async (req, res, next) => {
 
     const mealPer = await mealSettings.findOne();
     let totalCalory = 0;
+    let mealtimewisePer = 0;
 
     if (mealPer) {
       if (mealtime == 1) {
         totalCalory = parseInt((user_cal * mealPer.breakfast) / 100);
+        mealtimewisePer = mealPer.breakfast;
       } else if (mealtime == 2) {
         totalCalory = parseInt((user_cal * mealPer.morning_snack) / 100);
+        mealtimewisePer = mealPer.morning_snack;
       } else if (mealtime == 3) {
         totalCalory = parseInt((user_cal * mealPer.lunch) / 100);
+        mealtimewisePer = mealPer.lunch;
       } else if (mealtime == 4) {
         totalCalory = parseInt((user_cal * mealPer.evening_snack) / 100);
+        mealtimewisePer = mealPer.evening_snack;
       } else if (mealtime == 5) {
         totalCalory = parseInt((user_cal * mealPer.dinner) / 100);
+        mealtimewisePer = mealPer.dinner;
       }
     }
 
@@ -407,7 +413,7 @@ const getMealwiseCalBudget = async (req, res, next) => {
       totalProteinCalory = ((totalCalory * nutritionPer.protein) / 100 / 4).toFixed(1);
       totalCarbCalory = ((totalCalory * nutritionPer.carb) / 100 / 4).toFixed(1);
       totalFatCalory = ((totalCalory * nutritionPer.fat) / 100 / 9).toFixed(1);
-      totalFibreCalory = Number(nutritionPer.fibre).toFixed(1);
+      totalFibreCalory = Number((nutritionPer.fibre * mealtimewisePer) / 100).toFixed(1);
     }
 
     macronutrients = {
