@@ -205,7 +205,7 @@ const getAllTrackedMeal = async (req, res, next) => {
     // const eve_recipes = await getMealTimewiseRecipes(date, userid, 4);
     // const dinner_recipes = await getMealTimewiseRecipes(date, userid, 5);
 
-    const [bf_recipes, mo_recipes, lunch_recipes, eve_recipes, dinner_recipes, allRecipes] = await Promise.all([
+    const [bf_recipes, mo_recipes, lunch_recipes, eve_recipes, dinner_recipes] = await Promise.all([
       getMealTimewiseRecipes(date, userid, 1),
       getMealTimewiseRecipes(date, userid, 2),
       getMealTimewiseRecipes(date, userid, 3),
@@ -277,7 +277,7 @@ const getAllTrackedMeal = async (req, res, next) => {
     const totalUsedCal =
       totalBfUsedCalory + totalmoUsedCalory + totalLunchUsedCalory + totalEveningUsedCalory + totalDinnerUsedCalory;
 
-    // const allRecipes = await getMealTimewiseRecipes(date, userid);
+    const allRecipes = await getMealTimewiseRecipes(date, userid);
 
     const totalMacronutrientsawait = await getMicronutrition(allRecipes, user_cal, 100);
 
