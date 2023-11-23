@@ -125,38 +125,57 @@ const addUser = async (req, res, next) => {
 const getMicronutrition = async (recipesData, totalCalory, mealPer) => {
   const recipes = recipesData.recipes;
 
-  const reduceNutrient = (nutrient) =>
-    recipes.reduce((totalCalories, recipe) => totalCalories + parseFloat(recipe[nutrient]), 0);
-
-  const UsedProteinCalory = reduceNutrient("protine");
-  const UsedFatCalory = reduceNutrient("fats");
-  const UsedCarbCalory = reduceNutrient("carbs");
-  const UsedFibreCalory = reduceNutrient("fiber");
-
+  // // Calculate the sum of "protine" values
+  const UsedProteinCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.protine);
+  }, 0);
+  // Calculate the sum of "protine" values
+  const UsedFatCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.fats);
+  }, 0);
+  // Calculate the sum of "protine" values
+  const UsedCarbCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.carbs);
+  }, 0);
+  // Calculate the sum of "protine" values
+  const UsedFibreCalory = recipes.reduce((totalCalories, recipe) => {
+    return totalCalories + parseFloat(recipe.fiber);
+  }, 0);
   const cal_per = Math.round((recipesData.totalUsedCalories * 100) / totalCalory);
-
   const nutritionPer = await NutritionSettings.findOne();
-  const macronutrients = {
-    protine: calculateNutrient("protein", totalCalory, nutritionPer, UsedProteinCalory),
-    fats: calculateNutrient("fat", totalCalory, nutritionPer, UsedFatCalory),
-    carbs: calculateNutrient("carb", totalCalory, nutritionPer, UsedCarbCalory),
-    fibre: calculateNutrient("fibre", totalCalory, nutritionPer, UsedFibreCalory),
+  let totalProteinCalory = 0;
+  let totalCarbCalory = 0;
+  let totalFatCalory = 0;
+  let totalFibreCalory = 0;
+  if (nutritionPer) {
+    totalProteinCalory = ((totalCalory * nutritionPer.protein) / 100 / 4).toFixed(1);
+    totalCarbCalory = ((totalCalory * nutritionPer.carb) / 100 / 4).toFixed(1);
+    totalFatCalory = ((totalCalory * nutritionPer.fat) / 100 / 9).toFixed(1);
+    totalFibreCalory = Number((nutritionPer.fibre * mealPer) / 100).toFixed(1);
+  }
+  macronutrients = {
+    protine: {
+      total: totalProteinCalory,
+      used: UsedProteinCalory.toFixed(1),
+      percent: Math.round((UsedProteinCalory * 100) / totalProteinCalory),
+    },
+    fats: {
+      total: totalFatCalory,
+      used: UsedFatCalory.toFixed(1),
+      percent: Math.round((UsedFatCalory * 100) / totalFatCalory),
+    },
+    carbs: {
+      total: totalCarbCalory,
+      used: UsedCarbCalory.toFixed(1),
+      percent: Math.round((UsedCarbCalory * 100) / totalCarbCalory),
+    },
+    fibre: {
+      total: totalFibreCalory,
+      used: UsedFibreCalory.toFixed(1),
+      percent: Math.round((UsedFibreCalory * 100) / totalFibreCalory),
+    },
   };
-
   return macronutrients;
-};
-
-const calculateNutrient = (nutrient, totalCalory, nutritionPer, usedCalory) => {
-  const totalNutrientCalory = ((totalCalory * nutritionPer[nutrient]) / 100 / (nutrient === "fibre" ? 1 : 4)).toFixed(
-    1
-  );
-  const percent = Math.round((usedCalory * 100) / totalNutrientCalory);
-
-  return {
-    total: totalNutrientCalory,
-    used: usedCalory.toFixed(1),
-    percent: percent,
-  };
 };
 
 //Get All Tracked Meal
@@ -166,7 +185,7 @@ const getAllTrackedMeal = async (req, res, next) => {
     const requestDate = moment(date, "MM/DD/YYYY").toDate();
 
     // Query the database for matching documents
-    const results = await CalCronData.find({ userId: userid }).lean();
+    const results = await CalCronData.find({ userId: userid });
 
     // Filter results based on date matching (ignoring time)
     const matchingResults = results.filter((result) => {
@@ -199,19 +218,11 @@ const getAllTrackedMeal = async (req, res, next) => {
       totalDinnerCalory = parseInt((user_cal * mealPer.dinner) / 100);
     }
 
-    // const bf_recipes = await getMealTimewiseRecipes(date, userid, 1);
-    // const mo_recipes = await getMealTimewiseRecipes(date, userid, 2);
-    // const lunch_recipes = await getMealTimewiseRecipes(date, userid, 3);
-    // const eve_recipes = await getMealTimewiseRecipes(date, userid, 4);
-    // const dinner_recipes = await getMealTimewiseRecipes(date, userid, 5);
-
-    const [bf_recipes, mo_recipes, lunch_recipes, eve_recipes, dinner_recipes] = await Promise.all([
-      getMealTimewiseRecipes(date, userid, 1),
-      getMealTimewiseRecipes(date, userid, 2),
-      getMealTimewiseRecipes(date, userid, 3),
-      getMealTimewiseRecipes(date, userid, 4),
-      getMealTimewiseRecipes(date, userid, 5),
-    ]);
+    const bf_recipes = await getMealTimewiseRecipes(date, userid, 1);
+    const mo_recipes = await getMealTimewiseRecipes(date, userid, 2);
+    const lunch_recipes = await getMealTimewiseRecipes(date, userid, 3);
+    const eve_recipes = await getMealTimewiseRecipes(date, userid, 4);
+    const dinner_recipes = await getMealTimewiseRecipes(date, userid, 5);
 
     const bf_macronutrients = await getMicronutrition(bf_recipes, totalBreakfastCalory, mealPer.breakfast);
     const morning_macronutrients = await getMicronutrition(mo_recipes, totalMorningCalory, mealPer.morning_snack);
