@@ -89,6 +89,31 @@ const updateUserProfile = async (req, res, next) => {
       updatedData.image = req.file.filename;
     }
 
+    const height = req.body.height_measure == 1 ? req.body.height * 30.48 : req.body.height;
+
+    if (req.body.sex == 1) {
+      //For male
+      bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age + 5;
+    } else {
+      //For Female
+      bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age - 161;
+    }
+
+    // Sedentary (little or no exercise): BMR * 1.2
+    // Lightly active (light exercise or sports 1-3 days a week): BMR * 1.375
+    // Moderately active (moderate exercise or sports 3-5 days a week): BMR * 1.55
+    // Very active (hard exercise or sports 6-7 days a week): BMR * 1.725
+
+    if (req.body.active_status == 1) {
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.2 - 500 : bmr * 1.2 + 500);
+    } else if (req.body.active_status == 2) {
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.375 - 500 : bmr * 1.375 + 500);
+    } else if (req.body.active_status == 3) {
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.55 - 500 : bmr * 1.55 + 500);
+    } else {
+      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.725 - 500 : bmr * 1.725 + 500);
+    }
+
     const isUpdate = await User.findByIdAndUpdate(req.params.id, { $set: updatedData });
     if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
 
