@@ -37,6 +37,7 @@ const NutritionSettingForm = Loadable(lazy(() => import('pages/settings/Nutritio
 const MealSettingForm = Loadable(lazy(() => import('pages/settings/MealSettingForm')));
 const RecipeUnits = Loadable(lazy(() => import('pages/settings/RecipeUnits')));
 const RecipeUnitsForm = Loadable(lazy(() => import('pages/settings/RecipeUnitsForm')));
+const HelpCenter = Loadable(lazy(() => import('pages/settings/HelpCenter')));
 
 const Essentials = Loadable(lazy(() => import('pages/essentials')));
 const EssentialsForm = Loadable(lazy(() => import('pages/essentials/EssentialsForm')));
@@ -115,6 +116,7 @@ export default function ThemeRoutes() {
         <Route path="settings/mealSettings/manage" element={<MealSettingForm />} />
         <Route path="settings/recipeUnits" element={<RecipeUnits />} />
         <Route path="settings/recipeUnits/manage" element={<RecipeUnitsForm />} />
+        <Route path="settings/helpcenter" element={<HelpCenter />} />
       </Route>
     </Routes>
   );

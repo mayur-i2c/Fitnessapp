@@ -99,6 +99,14 @@ const settings = {
       url: 'settings/faq',
       icon: icons.QuestionCircleOutlined,
       breadcrumbs: false
+    },
+    {
+      id: 'helpcenter',
+      title: 'Help Center',
+      type: 'item',
+      url: 'settings/helpcenter',
+      icon: icons.QuestionCircleOutlined,
+      breadcrumbs: false
     }
   ]
 };

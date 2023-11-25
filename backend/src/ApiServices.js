@@ -591,3 +591,15 @@ export const getStatuswiseUserCount = () =>
   axios.get(`${mainUrl}/admin/user/getStatuswiseUserCount`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+//Get User Issue
+export const userIssue = () =>
+  axios.get(`${mainUrl}/admin/user/userIssue`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update User Issue Status
+export const updateUserIssueStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/user/updateUserIssueStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });

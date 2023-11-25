@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const helpSchema = mongoose.Schema({
   userid: {
-    type: String,
-    required: [true, "UserId is required."],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
   },
   question: {
     type: String,

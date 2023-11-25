@@ -10,6 +10,8 @@ const {
   getAllTrackedMeal,
   getLastUsers,
   getStatuswiseUserCount,
+  userIssue,
+  updateUserIssueStatus,
 } = require("../../controllers/Admin/userController");
 const authenticAdmin = require("../../helper/verifyAdminToken");
 const { singleFileUpload } = require("../../helper/imageUpload");
@@ -34,5 +36,7 @@ router.post(
 router.post("/getAllTrackedMeal", authenticAdmin, getAllTrackedMeal);
 router.get("/getLastUsers", authenticAdmin, getLastUsers);
 router.get("/getStatuswiseUserCount", authenticAdmin, getStatuswiseUserCount);
+router.get("/userIssue", authenticAdmin, userIssue);
+router.put("/updateUserIssueStatus/:id", authenticAdmin, updateUserIssueStatus);
 
 module.exports = router;

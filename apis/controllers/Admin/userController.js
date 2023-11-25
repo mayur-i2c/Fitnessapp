@@ -12,6 +12,7 @@ const CalCronData = require("../../models/CalCronData");
 const mealSettings = require("../../models/MealSettings");
 const { getMealTimewiseRecipes } = require("../../helper/commonServices");
 const NutritionSettings = require("../../models/NutritionSettings");
+const HelpCenter = require("../../models/HelpCenter");
 const TrackedMeal = require("../../models/TrackedMeal");
 const { formatDate } = require("../../helper/formatterFiles");
 const moment = require("moment");
@@ -356,6 +357,32 @@ const getStatuswiseUserCount = async (req, res, next) => {
   }
 };
 
+// Get User Issue
+const userIssue = async (req, res, next) => {
+  try {
+    const issues = await HelpCenter.find().populate("userid");
+
+    successResponse(res, issues);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Update User Issue Status
+const updateUserIssueStatus = async (req, res, next) => {
+  try {
+    // Convert string is into Object id
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const issue = await HelpCenter.findById(id);
+    if (!issue) return queryErrorRelatedResponse(req, res, 404, "issue not found.");
+    issue.status = !issue.status;
+    const result = await issue.save();
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   AllUsers,
   DeleteUser,
@@ -366,4 +393,6 @@ module.exports = {
   getAllTrackedMeal,
   getLastUsers,
   getStatuswiseUserCount,
+  userIssue,
+  updateUserIssueStatus,
 };
