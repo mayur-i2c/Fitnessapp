@@ -2,7 +2,9 @@ const MedicalConditions = require("../../models/MedicalConditions");
 const TC = require("../../models/Tc");
 const PrivacyPolicy = require("../../models/PrivacyPolicy");
 const Faqs = require("../../models/Faqs");
-
+const HelpCenter = require("../../models/HelpCenter");
+const User = require("../../models/User");
+const { sendMail } = require("../../helper/emailSender");
 const {
   createResponse,
   successResponse,
@@ -54,9 +56,41 @@ const getAllFaqs = async (req, res, next) => {
   }
 };
 
+//Send Mail to Helpcenter
+const SendHelpMail = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.body.userid);
+    if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid User!!");
+
+    const newhelp = await new HelpCenter({
+      userid: req.body.userid,
+      question: req.body.question,
+    });
+    const helpcenter = await newhelp.save();
+
+    sendMail({
+      from: "mitalkachhadiya019@gmail.com",
+      to: "mk.idea2code@gmail.com",
+      cc: "jn.idea2code@gmail.com",
+      sub: "Fitness - Help Center - Issue Report",
+      htmlFile: "./emailTemplate/helpcenter.html",
+      extraData: {
+        username: user.name,
+        useremail: user.email,
+        usermo: user.mo_no,
+        question: req.body.question,
+      },
+    });
+    console.log(user.name);
+    successResponse(res, "Your request has been send successfully. We will respond you as soon as possible.");
+  } catch (err) {
+    next(err);
+  }
+};
 module.exports = {
   getAllMedicalCon,
   getTC,
   getPrivacyPolicy,
   getAllFaqs,
+  SendHelpMail,
 };
