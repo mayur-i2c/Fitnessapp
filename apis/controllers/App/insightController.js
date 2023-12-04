@@ -67,6 +67,20 @@ const addMeal = async (req, res, next) => {
   }
 };
 
+//Delete Tracking Meal
+const deleteMeal = async (req, res, next) => {
+  try {
+    const id = new mongoose.Types.ObjectId(req.params.id);
+    const recipe = await TrackedMeal.findById(id);
+    if (!recipe) return queryErrorRelatedResponse(req, res, 404, "Tracked meal not found.");
+
+    await TrackedMeal.deleteOne({ _id: id });
+    deleteResponse(res, "Meal removed successfully.");
+  } catch (err) {
+    next(err);
+  }
+};
+
 //Get All Tracked Meal
 const getAllTrackedMeal = async (req, res, next) => {
   try {
@@ -451,4 +465,4 @@ const getMealwiseCalBudget = async (req, res, next) => {
     next(err);
   }
 };
-module.exports = { addMeal, getAllTrackedMeal, getEatenCal, getAllCalBudget, getMealwiseCalBudget };
+module.exports = { addMeal, getAllTrackedMeal, getEatenCal, getAllCalBudget, getMealwiseCalBudget, deleteMeal };
