@@ -226,7 +226,7 @@ const RecipesSubcat = () => {
           <div className="text-container">
             <div className="left-text">
               <Typography variant="h4" size="sm" className="subHead">
-                <a href="/recipes">{catdata.name}</a> &gt; Sub-Category
+                <a href="/fitness-app/backend/recipes">{catdata.name}</a> &gt; Sub-Category
               </Typography>
             </div>
             <div className="right-text">

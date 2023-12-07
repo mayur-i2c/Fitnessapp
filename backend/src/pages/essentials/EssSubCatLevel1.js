@@ -245,7 +245,7 @@ const EssSubCatLevel1 = () => {
           <div className="text-container">
             <div className="left-text">
               <Typography variant="h4" size="sm" className="subHead">
-                <a href="/essentials">{catdata.title}</a> &gt; SubCategories Level 1
+                <a href="/fitness-app/backend/essentials">{catdata.title}</a> &gt; SubCategories Level 1
               </Typography>
             </div>
             <div className="right-text">

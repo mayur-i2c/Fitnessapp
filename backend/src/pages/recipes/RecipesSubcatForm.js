@@ -161,7 +161,7 @@ const RecipesSubcatForm = () => {
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5" className="subHead">
-              <a href="/recipes">{catdata.name}</a> &gt; {isupdate === '' ? 'Add' : 'Update'} SubCategory
+              <a href="/fitness-app/backend/recipes">{catdata.name}</a> &gt; {isupdate === '' ? 'Add' : 'Update'} SubCategory
             </Typography>
           </Grid>
           <Grid item />

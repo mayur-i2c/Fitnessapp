@@ -94,7 +94,7 @@ const CheckEmailId = async (req, res, next) => {
       htmlFile: "./emailTemplate/forgotPass.html",
       extraData: {
         OTP: otp,
-        reset_link: process.env.BACKEND_URL + `/reset-password/${resetCode}/${admin._id}`,
+        reset_link: process.env.BACKEND_URL + `/fitness-app/backend/reset-password/${resetCode}/${admin._id}`,
       },
     });
 

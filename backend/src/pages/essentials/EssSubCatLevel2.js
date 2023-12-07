@@ -228,7 +228,7 @@ const EssSubCatLevel2 = () => {
           <div className="text-container">
             <div className="left-text">
               <Typography variant="h4" size="sm" className="subHead">
-                <a href="/essentials">{catdata.title}</a> &nbsp;&gt;&nbsp;
+                <a href="/fitness-app/backend/essentials">{catdata.title}</a> &nbsp;&gt;&nbsp;
                 <Link to="/essentials/esssubcatlevel1" state={{ catdata: catdata, imageurl: baseurl }}>
                   {subcatdata.title}
                 </Link>
