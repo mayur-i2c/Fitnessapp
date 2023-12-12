@@ -118,6 +118,32 @@ const updateUserProfile = async (req, res, next) => {
     const isUpdate = await User.findByIdAndUpdate(req.params.id, { $set: updatedData });
     if (!isUpdate) return queryErrorRelatedResponse(req, res, 401, "Something Went wrong!!");
 
+    const today = new Date(); // Get the current date and time
+    today.setHours(0, 0, 0, 0); // Set the time to the start of the day
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1); // Set it to the start of the next day
+
+    const isAdded = await CalCronData.findOne({
+      date: {
+        $gte: today,
+        $lt: tomorrow,
+      },
+      userId: req.params.id,
+    });
+
+    if (isAdded) {
+      isAdded.cal = req.body.cal ? req.body.cal : "0";
+      await isAdded.save();
+    } else {
+      const newCalCronData = new CalCronData({
+        userId: req.params.id,
+        cal: req.body.cal ? req.body.cal : "0",
+        date: new Date(),
+      });
+      newCalCronData.save();
+    }
+
     const updatedUser = await User.findById(req.params.id);
     successResponse(res, updatedUser);
   } catch (err) {

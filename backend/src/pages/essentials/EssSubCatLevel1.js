@@ -9,6 +9,7 @@ import { Grid, CircularProgress, IconButton, Button, Typography } from '@mui/mat
 import swal from 'sweetalert';
 import Switch from '@mui/material/Switch';
 import { useLocation } from 'react-router-dom';
+import { useUserState } from '../../context/UserContext';
 
 const EssSubCatLevel1 = () => {
   const [datatableData, setdatatableData] = useState([]);
@@ -17,8 +18,8 @@ const EssSubCatLevel1 = () => {
   const [baseurl, setbaseurl] = useState([]);
   const { state } = useLocation();
   const { catdata } = state;
+  const { userRole } = useUserState();
 
-  console.log(state);
   const list = async () => {
     setIsLoading(true);
     await getAllEssSubCat1(catdata._id)
@@ -95,19 +96,23 @@ const EssSubCatLevel1 = () => {
             <Switch
               checked={status}
               onChange={() => {
-                const data = { id: _id, status: !status };
-                updateEssSubCat1Status(data, _id)
-                  .then(() => {
-                    toast.success('status changed successfully!', {
-                      key: data._id
+                if (userRole == 1) {
+                  const data = { id: _id, status: !status };
+                  updateEssSubCat1Status(data, _id)
+                    .then(() => {
+                      toast.success('status changed successfully!', {
+                        key: data._id
+                      });
+                      list();
+                    })
+                    .catch(() => {
+                      toast.error('something went wrong!', {
+                        key: data._id
+                      });
                     });
-                    list();
-                  })
-                  .catch(() => {
-                    toast.error('something went wrong!', {
-                      key: data._id
-                    });
-                  });
+                } else {
+                  toast.error('Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.');
+                }
               }}
             />
           );
@@ -132,8 +137,14 @@ const EssSubCatLevel1 = () => {
                   padding: '4px'
                 }}
                 onClick={() => {
-                  const editdata = datatableData.find((data) => data._id === value);
-                  navigate('/essentials/esssubcatlevel1/manage', { state: { catdata: catdata, editdata: editdata, imageurl: baseurl } });
+                  if (userRole == 1) {
+                    const editdata = datatableData.find((data) => data._id === value);
+                    navigate('/essentials/esssubcatlevel1/manage', { state: { catdata: catdata, editdata: editdata, imageurl: baseurl } });
+                  } else {
+                    toast.error(
+                      'Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.'
+                    );
+                  }
                 }}
               />
               <Icons.Delete
@@ -147,26 +158,32 @@ const EssSubCatLevel1 = () => {
                   padding: '4px'
                 }}
                 onClick={async () => {
-                  const confirm = await swal({
-                    title: 'Are you sure?',
-                    text: 'Are you sure that you want to delete this Essential?',
-                    icon: 'warning',
-                    buttons: ['No, cancel it!', 'Yes, I am sure!'],
-                    dangerMode: true
-                  });
-                  if (confirm) {
-                    deleteEssSubCat1(value)
-                      .then(() => {
-                        toast.success('deleted successfully!', {
-                          key: value
+                  if (userRole == 1) {
+                    const confirm = await swal({
+                      title: 'Are you sure?',
+                      text: 'Are you sure that you want to delete this Essential?',
+                      icon: 'warning',
+                      buttons: ['No, cancel it!', 'Yes, I am sure!'],
+                      dangerMode: true
+                    });
+                    if (confirm) {
+                      deleteEssSubCat1(value)
+                        .then(() => {
+                          toast.success('deleted successfully!', {
+                            key: value
+                          });
+                          list();
+                        })
+                        .catch(() => {
+                          toast.error('something went wrong!', {
+                            key: value
+                          });
                         });
-                        list();
-                      })
-                      .catch(() => {
-                        toast.error('something went wrong!', {
-                          key: value
-                        });
-                      });
+                    }
+                  } else {
+                    toast.error(
+                      'Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.'
+                    );
                   }
                 }}
               />
@@ -195,28 +212,32 @@ const EssSubCatLevel1 = () => {
   ];
 
   const deleteMultiple = async (index) => {
-    const ids = index.data.map((index1) => datatableData.find((data, index2) => index2 === index1.dataIndex && data._id)._id);
-    const confirm = await swal({
-      title: 'Are you sure?',
-      text: 'Are you sure that you want to delete this Essential?',
-      icon: 'warning',
-      buttons: ['No, cancel it!', 'Yes, I am sure!'],
-      dangerMode: true
-    });
+    if (userRole == 1) {
+      const ids = index.data.map((index1) => datatableData.find((data, index2) => index2 === index1.dataIndex && data._id)._id);
+      const confirm = await swal({
+        title: 'Are you sure?',
+        text: 'Are you sure that you want to delete this Essential?',
+        icon: 'warning',
+        buttons: ['No, cancel it!', 'Yes, I am sure!'],
+        dangerMode: true
+      });
 
-    if (confirm) {
-      deleteMultSubCat1(ids)
-        .then(() => {
-          list();
-          toast.success('Deleted successfully!', {
-            key: ids
+      if (confirm) {
+        deleteMultSubCat1(ids)
+          .then(() => {
+            list();
+            toast.success('Deleted successfully!', {
+              key: ids
+            });
+          })
+          .catch(() => {
+            toast.error('Something went wrong!', {
+              key: ids
+            });
           });
-        })
-        .catch(() => {
-          toast.error('Something went wrong!', {
-            key: ids
-          });
-        });
+      }
+    } else {
+      toast.error('Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.');
     }
   };
 
@@ -254,9 +275,15 @@ const EssSubCatLevel1 = () => {
                 size="medium"
                 color="primary"
                 onClick={() => {
-                  navigate('/essentials/esssubcatlevel1/manage', {
-                    state: { catdata: catdata }
-                  });
+                  if (userRole == 1) {
+                    navigate('/essentials/esssubcatlevel1/manage', {
+                      state: { catdata: catdata }
+                    });
+                  } else {
+                    toast.error(
+                      'Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.'
+                    );
+                  }
                 }}
               >
                 Add Essentials Level 1 Sub-Category

@@ -5,12 +5,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Grid, CircularProgress, Typography } from '@mui/material';
 import Switch from '@mui/material/Switch';
+import { useUserState } from '../../context/UserContext';
 
 // ==============================|| MEDICAL CONDITION PAGE ||============================== //
 
 const HelpCenter = () => {
   const [datatableData, setdatatableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { userRole } = useUserState();
 
   const list = async () => {
     setIsLoading(true);
@@ -96,19 +98,23 @@ const HelpCenter = () => {
             <Switch
               checked={status}
               onChange={() => {
-                const data = { id: _id, status: !status };
-                updateUserIssueStatus(data, _id)
-                  .then(() => {
-                    toast.success('status changed successfully!', {
-                      key: data._id
+                if (userRole == 1) {
+                  const data = { id: _id, status: !status };
+                  updateUserIssueStatus(data, _id)
+                    .then(() => {
+                      toast.success('status changed successfully!', {
+                        key: data._id
+                      });
+                      list();
+                    })
+                    .catch(() => {
+                      toast.error('something went wrong!', {
+                        key: data._id
+                      });
                     });
-                    list();
-                  })
-                  .catch(() => {
-                    toast.error('something went wrong!', {
-                      key: data._id
-                    });
-                  });
+                } else {
+                  toast.error('Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.');
+                }
               }}
             />
           );

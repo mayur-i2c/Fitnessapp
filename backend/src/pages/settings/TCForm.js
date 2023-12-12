@@ -8,11 +8,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import MainCard from 'components/MainCard';
 import ReactQuill from 'react-quill';
 import '../../../node_modules/react-quill/dist/quill.snow.css';
+import { useUserState } from '../../context/UserContext';
 
 const TCForm = () => {
   var [isLoading, setIsLoading] = useState(false);
   var [defaultLoading, setdefaultLoading] = useState(true);
   var [tcid, settcid] = useState(true);
+  const { userRole } = useUserState();
   const {
     handleSubmit,
     setValue,
@@ -37,35 +39,39 @@ const TCForm = () => {
   }, [setValue, getValues]);
 
   const onSubmit = (data) => {
-    // console.log(getValues());
-    setIsLoading(true);
-    updatetc(data, tcid)
-      .then((response) => {
-        if (response.data.isSuccess && response.data.status === 200) {
-          setIsLoading(false);
-          toast.success('Updated successfully!');
-        } else {
-          if ((response.data.status === 202 || 400) && !response.data.isSuccess) {
-            toast.error(response.data.message);
+    if (userRole == 1) {
+      // console.log(getValues());
+      setIsLoading(true);
+      updatetc(data, tcid)
+        .then((response) => {
+          if (response.data.isSuccess && response.data.status === 200) {
             setIsLoading(false);
-          }
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response.data);
-        if (!err.response.data.isSuccess) {
-          if (err.response.data.status === 400) {
-            toast.error(err.response.data.message);
-            setIsLoading(false);
+            toast.success('Updated successfully!');
           } else {
-            toast.error('Something is wrong in an input.');
+            if ((response.data.status === 202 || 400) && !response.data.isSuccess) {
+              toast.error(response.data.message);
+              setIsLoading(false);
+            }
+          }
+        })
+        .catch((err) => {
+          toast.error(err.response.data);
+          if (!err.response.data.isSuccess) {
+            if (err.response.data.status === 400) {
+              toast.error(err.response.data.message);
+              setIsLoading(false);
+            } else {
+              toast.error('Something is wrong in an input.');
+              setIsLoading(false);
+            }
+          } else {
+            toast.error('Something Went Wrong!');
             setIsLoading(false);
           }
-        } else {
-          toast.error('Something Went Wrong!');
-          setIsLoading(false);
-        }
-      });
+        });
+    } else {
+      toast.error('Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.');
+    }
   };
 
   return (

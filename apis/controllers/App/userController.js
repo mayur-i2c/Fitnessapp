@@ -169,29 +169,43 @@ const updateUserProfile = async (req, res, next) => {
     const user = await User.findById(req.body.userid);
     if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid User!!");
 
-    const height = req.body.height_measure == 1 ? req.body.height * 30.48 : req.body.height;
+    if (
+      req.body.c_weight &&
+      req.body.height_measure &&
+      req.body.height &&
+      req.body.age &&
+      req.body.active_status &&
+      req.body.t_weight
+    ) {
+      const height = req.body.height_measure == 1 ? req.body.height * 30.48 : req.body.height;
 
-    if (req.body.sex == 1) {
-      //For male
-      bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age + 5;
-    } else {
-      //For Female
-      bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age - 161;
+      if (req.body.sex == 1) {
+        //For male
+        bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age + 5;
+      } else {
+        //For Female
+        bmr = 10 * req.body.c_weight + 6.25 * height - 5 * req.body.age - 161;
+      }
+
+      // Sedentary (little or no exercise): BMR * 1.2
+      // Lightly active (light exercise or sports 1-3 days a week): BMR * 1.375
+      // Moderately active (moderate exercise or sports 3-5 days a week): BMR * 1.55
+      // Very active (hard exercise or sports 6-7 days a week): BMR * 1.725
+
+      if (req.body.active_status == 1) {
+        req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.2 - 500 : bmr * 1.2 + 500);
+      } else if (req.body.active_status == 2) {
+        req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.375 - 500 : bmr * 1.375 + 500);
+      } else if (req.body.active_status == 3) {
+        req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.55 - 500 : bmr * 1.55 + 500);
+      } else {
+        req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.725 - 500 : bmr * 1.725 + 500);
+      }
     }
 
-    // Sedentary (little or no exercise): BMR * 1.2
-    // Lightly active (light exercise or sports 1-3 days a week): BMR * 1.375
-    // Moderately active (moderate exercise or sports 3-5 days a week): BMR * 1.55
-    // Very active (hard exercise or sports 6-7 days a week): BMR * 1.725
-
-    if (req.body.active_status == 1) {
-      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.2 - 500 : bmr * 1.2 + 500);
-    } else if (req.body.active_status == 2) {
-      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.375 - 500 : bmr * 1.375 + 500);
-    } else if (req.body.active_status == 3) {
-      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.55 - 500 : bmr * 1.55 + 500);
-    } else {
-      req.body.cal = parseInt(req.body.c_weight > req.body.t_weight ? bmr * 1.725 - 500 : bmr * 1.725 + 500);
+    if (req.body.dob) {
+      const dateOfBirth = new Date(req.body.dob);
+      req.body.dob = dateOfBirth.getTime();
     }
 
     const isUpdate = await User.findByIdAndUpdate(req.body.userid, { $set: req.body });
@@ -276,6 +290,24 @@ const updateProfilePic = async (req, res, next) => {
   }
 };
 
+//Get User Profile Data
+const getUserProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid User!!");
+
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
+
+    const userWithBaseUrl = {
+      ...user.toObject(),
+      baseUrl: baseUrl,
+    };
+
+    successResponse(res, userWithBaseUrl);
+  } catch (err) {
+    next(err);
+  }
+};
 module.exports = {
   signupUser,
   signinUser,
@@ -286,4 +318,5 @@ module.exports = {
   updateUserProfile,
   updateProfilePic,
   RefreshToken,
+  getUserProfile,
 };

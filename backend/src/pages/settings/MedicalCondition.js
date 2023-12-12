@@ -8,13 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import { Grid, CircularProgress, IconButton, Button, Typography } from '@mui/material';
 import swal from 'sweetalert';
 import Switch from '@mui/material/Switch';
-
+import { useUserState } from '../../context/UserContext';
 // ==============================|| MEDICAL CONDITION PAGE ||============================== //
 
 const MedicalCondition = () => {
   const [datatableData, setdatatableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { userRole } = useUserState();
 
   const list = async () => {
     setIsLoading(true);
@@ -75,19 +76,23 @@ const MedicalCondition = () => {
             <Switch
               checked={status}
               onChange={() => {
-                const data = { id: _id, status: !status };
-                updateMedicalConStatus(data, _id)
-                  .then(() => {
-                    toast.success('status changed successfully!', {
-                      key: data._id
+                if (userRole == 1) {
+                  const data = { id: _id, status: !status };
+                  updateMedicalConStatus(data, _id)
+                    .then(() => {
+                      toast.success('status changed successfully!', {
+                        key: data._id
+                      });
+                      list();
+                    })
+                    .catch(() => {
+                      toast.error('something went wrong!', {
+                        key: data._id
+                      });
                     });
-                    list();
-                  })
-                  .catch(() => {
-                    toast.error('something went wrong!', {
-                      key: data._id
-                    });
-                  });
+                } else {
+                  toast.error('Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.');
+                }
               }}
             />
           );
@@ -112,9 +117,15 @@ const MedicalCondition = () => {
                   padding: '4px'
                 }}
                 onClick={() => {
-                  const editdata = datatableData.find((data) => data._id === value);
-                  console.log(editdata);
-                  navigate('/settings/medicalCondition/manage', { state: { editdata: editdata } });
+                  if (userRole == 1) {
+                    const editdata = datatableData.find((data) => data._id === value);
+                    console.log(editdata);
+                    navigate('/settings/medicalCondition/manage', { state: { editdata: editdata } });
+                  } else {
+                    toast.error(
+                      'Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.'
+                    );
+                  }
                 }}
               />
               <Icons.Delete
@@ -128,27 +139,33 @@ const MedicalCondition = () => {
                   padding: '4px'
                 }}
                 onClick={async () => {
-                  const confirm = await swal({
-                    title: 'Are you sure?',
-                    text: 'Are you sure that you want to delete this Medical Condition?',
-                    icon: 'warning',
-                    buttons: ['No, cancel it!', 'Yes, I am sure!'],
-                    dangerMode: true
-                  });
-                  if (confirm) {
-                    console.log(value);
-                    deleteMedicalCon(value)
-                      .then(() => {
-                        toast.success('deleted successfully!', {
-                          key: value
+                  if (userRole == 1) {
+                    const confirm = await swal({
+                      title: 'Are you sure?',
+                      text: 'Are you sure that you want to delete this Medical Condition?',
+                      icon: 'warning',
+                      buttons: ['No, cancel it!', 'Yes, I am sure!'],
+                      dangerMode: true
+                    });
+                    if (confirm) {
+                      console.log(value);
+                      deleteMedicalCon(value)
+                        .then(() => {
+                          toast.success('deleted successfully!', {
+                            key: value
+                          });
+                          list();
+                        })
+                        .catch(() => {
+                          toast.error('something went wrong!', {
+                            key: value
+                          });
                         });
-                        list();
-                      })
-                      .catch(() => {
-                        toast.error('something went wrong!', {
-                          key: value
-                        });
-                      });
+                    }
+                  } else {
+                    toast.error(
+                      'Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.'
+                    );
                   }
                 }}
               />
@@ -160,28 +177,32 @@ const MedicalCondition = () => {
   ];
 
   const deleteMultiple = async (index) => {
-    const ids = index.data.map((index1) => datatableData.find((data, index2) => index2 === index1.dataIndex && data._id)._id);
-    const confirm = await swal({
-      title: 'Are you sure?',
-      text: 'Are you sure that you want to delete this medical conditions?',
-      icon: 'warning',
-      buttons: ['No, cancel it!', 'Yes, I am sure!'],
-      dangerMode: true
-    });
+    if (userRole == 1) {
+      const ids = index.data.map((index1) => datatableData.find((data, index2) => index2 === index1.dataIndex && data._id)._id);
+      const confirm = await swal({
+        title: 'Are you sure?',
+        text: 'Are you sure that you want to delete this medical conditions?',
+        icon: 'warning',
+        buttons: ['No, cancel it!', 'Yes, I am sure!'],
+        dangerMode: true
+      });
 
-    if (confirm) {
-      deleteMultMedicalCon(ids)
-        .then(() => {
-          list();
-          toast.success('Deleted successfully!', {
-            key: ids
+      if (confirm) {
+        deleteMultMedicalCon(ids)
+          .then(() => {
+            list();
+            toast.success('Deleted successfully!', {
+              key: ids
+            });
+          })
+          .catch(() => {
+            toast.error('Something went wrong!', {
+              key: ids
+            });
           });
-        })
-        .catch(() => {
-          toast.error('Something went wrong!', {
-            key: ids
-          });
-        });
+      }
+    } else {
+      toast.error('Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.');
     }
   };
 
@@ -219,7 +240,13 @@ const MedicalCondition = () => {
                 size="medium"
                 color="primary"
                 onClick={() => {
-                  navigate('/settings/medicalCondition/manage');
+                  if (userRole == 1) {
+                    navigate('/settings/medicalCondition/manage');
+                  } else {
+                    toast.error(
+                      'Sorry, you do not have permission to access this feature.Please contact your administrator for assistance.'
+                    );
+                  }
                 }}
               >
                 Add Medical Condition

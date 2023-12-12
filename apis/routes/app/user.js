@@ -11,6 +11,7 @@ const {
   updateUserProfile,
   updateProfilePic,
   RefreshToken,
+  getUserProfile,
 } = require("../../controllers/App/userController");
 
 router.post("/signup", signupUser);
@@ -26,5 +27,6 @@ router.post(
   singleFileUpload("public/images", ["image/png", "image/jpeg", "image/jpg"], 1024 * 1024, "image"),
   updateProfilePic
 );
+router.get("/getUserProfile/:id", verifyToken, getUserProfile);
 
 module.exports = router;

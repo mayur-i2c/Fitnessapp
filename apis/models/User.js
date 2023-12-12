@@ -36,7 +36,6 @@ const UserSchema = mongoose.Schema(
       type: Number,
       required: [true, "Date of Birth is required."],
     },
-
     otp: {
       type: String,
       maxlength: [6, "OTP should be maximum six characters long."],

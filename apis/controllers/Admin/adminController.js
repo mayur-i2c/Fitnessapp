@@ -13,11 +13,12 @@ const { sendMail } = require("../../helper/emailSender");
 //Admin Register
 const RegisterAdmin = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
     const newAdmin = await Admin.create({
       name,
       email,
       password,
+      role,
     });
     //save Admin and response
     createResponse(res, newAdmin);
@@ -44,6 +45,7 @@ const LoginAdmin = async (req, res, next) => {
     const tokens = {
       token: token,
       refresh_token: refresh_token,
+      admin: admin,
     };
     successResponse(res, tokens);
   } catch (err) {

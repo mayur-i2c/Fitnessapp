@@ -3,16 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import {
-  Avatar,
-  Box,
-  ButtonBase,
-  ClickAwayListener,
-  Paper,
-  Popper,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Avatar, Box, ButtonBase, ClickAwayListener, Paper, Popper, Stack, Typography } from '@mui/material';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -20,10 +11,9 @@ import Transitions from 'components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
 
 // assets
-import avatar1 from 'assets/images/users/avatar-1.png'; 
+import avatar1 from 'assets/images/users/avatar-1.png';
 
-
-import { adminDetails } from "../../../../../ApiServices";
+import { adminDetails } from '../../../../../ApiServices';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -40,33 +30,33 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired
 };
 
-
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 const Profile = () => {
-
-
   const theme = useTheme();
-  var [adminname, setadminname] = useState("");
+  var [adminname, setadminname] = useState('');
   var [profileImg, setProfileImg] = useState(avatar1);
 
   const handleLogout = async () => {
     // logout
   };
 
-  const admindata = async() => {
+  const admindata = async () => {
     await adminDetails()
       .then((response) => {
         setadminname(response.data.info.name);
+        console.log(response.data.info.image);
         setProfileImg(response.data.info.image);
       })
-      .catch((err) => {console.log(err)});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
     admindata();
   }, []);
-  
+
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
@@ -98,7 +88,7 @@ const Profile = () => {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar alt="profile user" src={`${process.env.REACT_APP_API_KEY_IMAGE_PATH}${profileImg}`} style={{ width: 32, height: 32}}  />
+          <Avatar alt="profile user" src={`${process.env.REACT_APP_API_KEY_IMAGE_PATH}${profileImg}`} style={{ width: 32, height: 32 }} />
           <Typography variant="subtitle1">{adminname}</Typography>
         </Stack>
       </ButtonBase>
@@ -136,7 +126,6 @@ const Profile = () => {
               >
                 <ClickAwayListener onClickAway={handleClose}>
                   <MainCard elevation={0} border={false} content={false}>
-                   
                     {open && (
                       <>
                         {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
