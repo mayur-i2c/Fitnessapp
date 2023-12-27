@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../../models/User");
 const CalData = require("../../models/CalData");
 const CalCronData = require("../../models/CalCronData");
+const { sendMail } = require("../../helper/emailSender");
 const {
   createResponse,
   queryErrorRelatedResponse,
@@ -55,7 +56,7 @@ const signupUser = async (req, res, next) => {
 //User Signin
 const signinUser = async (req, res, next) => {
   try {
-    const user = await User.findOne({ $or: [{ email: req.body.username }, { mo_no: req.body.username }] });
+    const user = await User.findOne({ email: req.body.username });
     if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid Username!");
 
     const validatePassword = await bcrypt.compare(req.body.password, user.password);
@@ -110,16 +111,26 @@ const RefreshToken = async (req, res, next) => {
   }
 };
 
-//Forgot Password - Check Mobile No
-const checkUserMo = async (req, res, next) => {
+//Forgot Password - Check Email Id
+const checkEmailId = async (req, res, next) => {
   try {
-    const user = await User.findOne({ mo_no: req.body.mo_no });
-    if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid Mobile Number!");
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid Email Id!");
 
     var otp = Math.floor(1000 + Math.random() * 9000);
     user.otp = otp;
     user.expireOtpTime = Date.now() + 300000; //Valid upto 5 min
     await user.save();
+
+    sendMail({
+      from: "admin@gmail.com",
+      to: req.body.email,
+      sub: "Fitness - Forgot Password",
+      htmlFile: "./emailTemplate/forgotPassApp.html",
+      extraData: {
+        OTP: otp,
+      },
+    });
 
     successResponse(res, user);
   } catch (err) {
@@ -130,7 +141,7 @@ const checkUserMo = async (req, res, next) => {
 //Forgot Password - Check OTP
 const checkUserOtp = async (req, res, next) => {
   try {
-    const user = await User.findOne({ otp: req.body.otp, mo_no: req.body.mo_no });
+    const user = await User.findOne({ otp: req.body.otp, email: req.body.email });
     if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid OTP!");
 
     if (new Date(user.expireOtpTime).toTimeString() <= new Date(Date.now()).toTimeString()) {
@@ -146,8 +157,8 @@ const checkUserOtp = async (req, res, next) => {
 //Forgot Password - Reset Password
 const resetPassword = async (req, res, next) => {
   try {
-    const user = await User.findOne({ mo_no: req.body.mo_no });
-    if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid Mobile Number!");
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return queryErrorRelatedResponse(req, res, 401, "Invalid Email Id!");
 
     if (req.body.new_pass !== req.body.confirm_pass) {
       return queryErrorRelatedResponse(req, res, 401, "Confirm Password does not match!");
@@ -312,7 +323,7 @@ module.exports = {
   signupUser,
   signinUser,
   RefreshToken,
-  checkUserMo,
+  checkEmailId,
   checkUserOtp,
   resetPassword,
   updateUserProfile,

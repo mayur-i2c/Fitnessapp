@@ -89,7 +89,7 @@ const CheckEmailId = async (req, res, next) => {
     await admin.save();
 
     sendMail({
-      from: "mitalkachhadiya019@gmail.com",
+      from: req.body.email,
       to: "mk.idea2code@gmail.com",
       cc: "mk.idea2code@gmail.com",
       sub: "Fitness - Forgot Password",
