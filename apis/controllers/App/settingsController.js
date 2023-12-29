@@ -1,6 +1,7 @@
 const MedicalConditions = require("../../models/MedicalConditions");
 const TC = require("../../models/Tc");
 const PrivacyPolicy = require("../../models/PrivacyPolicy");
+const Notification = require("../../models/Notification");
 const Faqs = require("../../models/Faqs");
 const HelpCenter = require("../../models/HelpCenter");
 const User = require("../../models/User");
@@ -87,10 +88,23 @@ const SendHelpMail = async (req, res, next) => {
     next(err);
   }
 };
+
+//Get All Notification
+const getAllNotification = async (req, res, next) => {
+  try {
+    const cat = await Notification.find({ status: true });
+    if (!cat) return queryErrorRelatedResponse(req, res, 404, "Notification not found.");
+    successResponse(res, cat);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getAllMedicalCon,
   getTC,
   getPrivacyPolicy,
   getAllFaqs,
   SendHelpMail,
+  getAllNotification,
 };

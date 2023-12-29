@@ -60,6 +60,8 @@ const WorkoutCollectionForm = Loadable(lazy(() => import('pages/workoutCollectio
 const ExerciseLibrary = Loadable(lazy(() => import('pages/exerciseLibrary')));
 const ExerciseLibraryForm = Loadable(lazy(() => import('pages/exerciseLibrary/ExerciseLibraryForm')));
 
+const Notifications = Loadable(lazy(() => import('pages/settings/Notifications')));
+const NotificationForm = Loadable(lazy(() => import('pages/settings/NotificationForm')));
 // ==============================|| ROUTING RENDER ||============================== //
 import { useUserState } from '../context/UserContext';
 
@@ -117,6 +119,9 @@ export default function ThemeRoutes() {
         <Route path="settings/recipeUnits" element={<RecipeUnits />} />
         <Route path="settings/recipeUnits/manage" element={<RecipeUnitsForm />} />
         <Route path="settings/helpcenter" element={<HelpCenter />} />
+
+        <Route path="settings/notifications" element={<Notifications />} />
+        <Route path="settings/notifications/manage" element={<NotificationForm />} />
       </Route>
     </Routes>
   );

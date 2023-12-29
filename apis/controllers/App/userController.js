@@ -33,6 +33,7 @@ const signupUser = async (req, res, next) => {
       email: req.body.email,
       password: req.body.password,
       mo_no: req.body.mo_no,
+      fcm_token: req.body.fcm_token,
       dob: dateOfBirthTimestamp,
       remember_token: accessToken,
     });
@@ -69,6 +70,7 @@ const signinUser = async (req, res, next) => {
       expiresIn: "1m",
     });
     user.remember_token = accessToken;
+    user.fcm_token = req.body.fcm_token;
 
     const refresh_token = jwt.sign({ email: user.email }, process.env.REFRESH_TOKEN_SECRET);
 

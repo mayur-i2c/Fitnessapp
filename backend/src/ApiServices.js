@@ -603,3 +603,47 @@ export const updateUserIssueStatus = (data, id) =>
   axios.put(`${mainUrl}/admin/user/updateUserIssueStatus/${id}`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+//Get All Notification
+export const getAllNotification = () =>
+  axios.get(`${mainUrl}/admin/notification/getAllNotification`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Add Notification
+export const addNotification = (data) =>
+  axios.post(`${mainUrl}/admin/notification/addNotification`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Notification
+export const updateNotification = (data, id) =>
+  axios.put(`${mainUrl}/admin/notification/updateNotification/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Notification
+export const deleteNotification = (id) =>
+  axios.delete(`${mainUrl}/admin/notification/deleteNotification/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Delete Multiple Notification
+export const deleteMultNotification = (data) => {
+  return axios.delete(`${mainUrl}/admin/notification/deleteMultNotification`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    data: { Ids: data }
+  });
+};
+
+//Add Notification
+export const sendNotification = (data) =>
+  axios.post(`${mainUrl}/admin/notification/sendNotification`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update Notification Status
+export const updateNotiStatus = (data, id) =>
+  axios.put(`${mainUrl}/admin/notification/updateNotiStatus/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });

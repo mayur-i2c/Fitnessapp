@@ -7,6 +7,8 @@ const {
   deleteNotification,
   deleteMultNotification,
   getAllNotification,
+  sendNotification,
+  updateNotiStatus,
 } = require("../../controllers/Admin/notificationController");
 const authenticAdmin = require("../../helper/verifyAdminToken");
 
@@ -15,5 +17,7 @@ router.put("/updateNotification/:id", authenticAdmin, updateNotification);
 router.delete("/deleteNotification/:id", authenticAdmin, deleteNotification);
 router.delete("/deleteMultNotification", authenticAdmin, deleteMultNotification);
 router.get("/getAllNotification", authenticAdmin, getAllNotification);
+router.post("/sendNotification", authenticAdmin, sendNotification);
+router.put("/updateNotiStatus/:id", authenticAdmin, updateNotiStatus);
 
 module.exports = router;

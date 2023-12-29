@@ -87,6 +87,10 @@ const UserSchema = mongoose.Schema(
     image: {
       type: String,
     },
+    fcm_token: {
+      type: String,
+      default: "",
+    },
     status: {
       type: Boolean,
       default: true,

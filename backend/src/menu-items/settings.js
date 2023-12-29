@@ -8,7 +8,8 @@ import {
   QuestionCircleOutlined,
   SettingOutlined,
   LockOutlined,
-  FileDoneOutlined
+  FileDoneOutlined,
+  BellOutlined
 } from '@ant-design/icons';
 import LocalDiningOutlinedIcon from '@mui/icons-material/LocalDiningOutlined';
 import FastfoodOutlinedIcon from '@mui/icons-material/FastfoodOutlined';
@@ -24,6 +25,7 @@ const icons = {
   LocalDiningOutlinedIcon,
   FastfoodOutlinedIcon,
   EmojiFoodBeverageOutlinedIcon,
+  BellOutlined,
   CollapseIcon: {
     collapsed: CaretRightOutlined, // Icon when collapsed
     expanded: CaretDownOutlined // Icon when expanded
@@ -74,6 +76,14 @@ const settings = {
       type: 'item',
       url: 'settings/mealSettings/manage',
       icon: icons.FastfoodOutlinedIcon,
+      breadcrumbs: false
+    },
+    {
+      id: 'notification',
+      title: 'Manage Notification',
+      type: 'item',
+      url: 'settings/notifications',
+      icon: icons.BellOutlined,
       breadcrumbs: false
     },
     {

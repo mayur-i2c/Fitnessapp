@@ -10,6 +10,10 @@ const NotificationSchema = mongoose.Schema(
       type: String,
       required: [true, "Description is required."],
     },
+    status: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

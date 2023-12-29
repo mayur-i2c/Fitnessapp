@@ -108,37 +108,6 @@ cron.schedule("0 12 * * *", async () => {
 //   console.log("Cron job executed every hour:", new Date().toLocaleString());
 // });
 
-const admin = require("firebase-admin");
-const serviceAccount = require("./config/feetnessapp-firebase-adminsdk-s0ius-87da469af4.json"); // Replace with your service account key
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // databaseURL: "https://your-firebase-project-id.firebaseio.com", // Replace with your Firebase project URL
-});
-
-app.post("/send-notification", (req, res) => {
-  console.log("asdasd");
-  // const { token, title, body } = req.body;
-
-  // const message = {
-  //   notification: {
-  //     title,
-  //     body,
-  //   },
-  //   token,
-  // };
-
-  // admin.messaging().send(message)
-  //   .then(response => {
-  //     console.log('Successfully sent message:', response);
-  //     res.json({ success: true });
-  //   })
-  //   .catch(error => {
-  //     console.error('Error sending message:', error);
-  //     res.status(500).json({ error: 'Failed to send notification' });
-  //   });
-});
-
 // var server = app.listen(5000);
 const port = process.env.PORT || 5055;
 http.listen(port, () => console.log(`http://localhost:${port}`));
