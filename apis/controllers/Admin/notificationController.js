@@ -108,7 +108,8 @@ const sendNotification = async (req, res, next) => {
     if (!noti) return queryErrorRelatedResponse(req, res, 404, "Notification not found.");
 
     // const users = await User.distinct({ status: true, fcm_token: { $exists: true, $ne: null } });
-    const uniqueTokens = await User.distinct("fcm_token", { status: true, fcm_token: { $ne: null } });
+    const uniqueTokens = await User.distinct("fcm_token", { status: true, fcm_token: { $ne: null, $ne: "" } });
+    if (!uniqueTokens) return queryErrorRelatedResponse(req, res, 404, "Users not found.");
 
     for (const token of uniqueTokens) {
       const message = {
