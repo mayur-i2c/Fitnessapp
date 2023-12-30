@@ -70,9 +70,8 @@ const SendHelpMail = async (req, res, next) => {
     const helpcenter = await newhelp.save();
 
     sendMail({
-      from: "mitalkachhadiya019@gmail.com",
-      to: "mk.idea2code@gmail.com",
-      cc: "jn.idea2code@gmail.com",
+      from: user.email,
+      to: process.env.EMAIL_USER,
       sub: "Fitness - Help Center - Issue Report",
       htmlFile: "./emailTemplate/helpcenter.html",
       extraData: {

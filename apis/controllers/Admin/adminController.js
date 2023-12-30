@@ -89,9 +89,8 @@ const CheckEmailId = async (req, res, next) => {
     await admin.save();
 
     sendMail({
-      from: req.body.email,
-      to: "mk.idea2code@gmail.com",
-      cc: "mk.idea2code@gmail.com",
+      from: process.env.EMAIL_USER,
+      to: req.body.email,
       sub: "Fitness - Forgot Password",
       htmlFile: "./emailTemplate/forgotPass.html",
       extraData: {
@@ -101,44 +100,6 @@ const CheckEmailId = async (req, res, next) => {
     });
 
     successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
-
-    // var transporter = nodemailer.createTransport({
-    //     service: 'gmail',
-    //     auth: {
-    //         user: 'mitalkachhadiya951@gmail.com',
-    //         pass: 'czxv bqed lzrj spsb'
-    //     }
-    // });
-
-    // fs.readFile('./emailTemplate/forgotPass.html', {encoding: 'utf-8'}, function (err, html) {
-    //     if (err) {
-    //       console.log(err);
-    //     } else {
-    //         var template = handlebars.compile(html);
-    //         var replacements = {
-    //             OTP:otp,
-    //             reset_link: process.env.BACKEND_URL+`/reset-password/${resetCode}/${admin._id}`
-    //         };
-    //         var htmlToSend = template(replacements);
-
-    //         var mailOptions = {
-    //             from: 'mitalkachhadiya019@gmail.com',
-    //             to: 'mk.idea2code@gmail.com',
-    //             subject: "Fitness - Forgot Password",
-    //             html: htmlToSend
-    //         };
-
-    //         transporter.sendMail(mailOptions, function(err,info) {
-    //             if(err){
-    //                 next(err)
-    //             }else{
-    //                 successResponse(res, "Check your mail. We have sent a password recover instructions to your email.");
-
-    //             }
-    //         });
-
-    //     }
-    // });
   } catch (err) {
     next(err);
   }
