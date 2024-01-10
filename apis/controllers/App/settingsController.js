@@ -1,6 +1,7 @@
 const MedicalConditions = require("../../models/MedicalConditions");
 const TC = require("../../models/Tc");
 const PrivacyPolicy = require("../../models/PrivacyPolicy");
+const GeneralSettings = require("../../models/GeneralSettings");
 const Notification = require("../../models/Notification");
 const Faqs = require("../../models/Faqs");
 const HelpCenter = require("../../models/HelpCenter");
@@ -99,6 +100,16 @@ const getAllNotification = async (req, res, next) => {
   }
 };
 
+//Get General Settings
+const getGeneralSettings = async (req, res, next) => {
+  try {
+    const cat = await GeneralSettings.find();
+    if (!cat) return queryErrorRelatedResponse(req, res, 404, "Data not found.");
+    successResponse(res, cat);
+  } catch (err) {
+    next(err);
+  }
+};
 module.exports = {
   getAllMedicalCon,
   getTC,
@@ -106,4 +117,5 @@ module.exports = {
   getAllFaqs,
   SendHelpMail,
   getAllNotification,
+  getGeneralSettings,
 };

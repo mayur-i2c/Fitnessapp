@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const {
+  updateGeneralSetting,
+  getGeneralSettings,
+  addGeneralSettings,
   addMedicalCon,
   getAllMedicalCon,
   updateMedicalCon,
@@ -66,5 +69,8 @@ router.put("/updateRecipeUnits/:id", authenticAdmin, updateRecipeUnits);
 router.delete("/deleteRecipeUnit/:id", authenticAdmin, deleteRecipeUnit);
 router.delete("/deleteMultRecipeUnit", authenticAdmin, deleteMultRecipeUnit);
 router.put("/updateRecipeUnitsStatus/:id", authenticAdmin, updateRecipeUnitsStatus);
+router.put("/updateGeneralSetting/:id", authenticAdmin, updateGeneralSetting);
+router.get("/getGeneralSettings", authenticAdmin, getGeneralSettings);
+router.post("/addGeneralSettings", authenticAdmin, addGeneralSettings);
 
 module.exports = router;

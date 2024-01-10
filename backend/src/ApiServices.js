@@ -647,3 +647,15 @@ export const updateNotiStatus = (data, id) =>
   axios.put(`${mainUrl}/admin/notification/updateNotiStatus/${id}`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
+
+//Get General Settings
+export const getGeneralSettings = () =>
+  axios.get(`${mainUrl}/admin/setting/getGeneralSettings`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });
+
+//Update General Settings
+export const updateGeneralSetting = (data, id) =>
+  axios.put(`${mainUrl}/admin/setting/updateGeneralSetting/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  });

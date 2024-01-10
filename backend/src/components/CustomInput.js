@@ -17,14 +17,17 @@ const CustomInput = ({
   defaultValue,
   readOnly,
   disabled,
+  type,
   onChange // Add onChange prop
 }) => {
+  console.log(type);
   return (
     <Grid item xs={xs} sm={sm} m={m}>
       <TextField
         InputLabelProps={{
           shrink: true
         }}
+        type={type ? type : 'text'}
         variant="outlined"
         margin="normal"
         fullWidth

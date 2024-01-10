@@ -31,6 +31,7 @@ const MedicalCondition = Loadable(lazy(() => import('pages/settings/MedicalCondi
 const MedicalConditionForm = Loadable(lazy(() => import('pages/settings/MedicalConditionForm')));
 const TCForm = Loadable(lazy(() => import('pages/settings/TCForm')));
 const PrivacyPolicyForm = Loadable(lazy(() => import('pages/settings/PrivacyPolicyForm')));
+const GeneralSettingForm = Loadable(lazy(() => import('pages/settings/GeneralSettingForm')));
 const Faq = Loadable(lazy(() => import('pages/settings/Faq')));
 const FaqForm = Loadable(lazy(() => import('pages/settings/FaqForm')));
 const NutritionSettingForm = Loadable(lazy(() => import('pages/settings/NutritionSettingForm')));
@@ -110,6 +111,7 @@ export default function ThemeRoutes() {
         <Route path="settings/medicalCondition/manage" element={<MedicalConditionForm />} />
         <Route path="settings/tc/manage" element={<TCForm />} />
         <Route path="settings/privacyPolicy/manage" element={<PrivacyPolicyForm />} />
+        <Route path="settings/generalSettings/manage" element={<GeneralSettingForm />} />
         <Route path="settings/faq" element={<Faq />} />
         <Route path="settings/faq/manage" element={<FaqForm />} />
         <Route path="workoutCollection" element={<WorkoutCollection />} />

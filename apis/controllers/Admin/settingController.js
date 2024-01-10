@@ -1,6 +1,7 @@
 const MedicalConditions = require("../../models/MedicalConditions");
 const TC = require("../../models/Tc");
 const PrivacyPolicy = require("../../models/PrivacyPolicy");
+const GeneralSettings = require("../../models/GeneralSettings");
 const Faqs = require("../../models/Faqs");
 const NutritionSettings = require("../../models/NutritionSettings");
 const MealSettings = require("../../models/MealSettings");
@@ -476,7 +477,64 @@ const deleteMultRecipeUnit = async (req, res, next) => {
   }
 };
 
+//Add General Settings
+const addGeneralSettings = async (req, res, next) => {
+  try {
+    const { fcm_token, email, password } = req.body;
+    const newpp = await GeneralSettings.create({
+      fcm_token,
+      email,
+      password,
+    });
+    const result = await newpp.save();
+    return createResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Update General Settings
+const updateGeneralSetting = async (req, res, next) => {
+  try {
+    const { fcm_token, email, password } = req.body;
+    const pp = await GeneralSettings.findById(req.params.id);
+    if (!pp) {
+      const settings = await GeneralSettings.create({
+        fcm_token,
+        email,
+        password,
+      });
+      let result = await settings.save();
+      return successResponse(res, result);
+    } else {
+      pp.fcm_token = fcm_token;
+      pp.email = email;
+      pp.password = password;
+      let result = await pp.save();
+      return successResponse(res, result);
+    }
+
+    return successResponse(res, result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//Get  General Settings
+const getGeneralSettings = async (req, res, next) => {
+  try {
+    const pp = await GeneralSettings.find();
+    if (!pp) return queryErrorRelatedResponse(req, res, 404, "Data not found.");
+    successResponse(res, pp);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
+  getGeneralSettings,
+  addGeneralSettings,
+  updateGeneralSetting,
   addMedicalCon,
   getAllMedicalCon,
   updateMedicalCon,
