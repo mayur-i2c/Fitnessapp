@@ -9,7 +9,7 @@ const {
 } = require("../../helper/sendResponse");
 const mongoose = require("mongoose");
 const admin = require("firebase-admin");
-const serviceAccount = require("../../config/firbase-adimin-config.json"); // Replace with your service account key
+const serviceAccount = require("../../config/rnfitness-app-firebase-admin.json"); // Replace with your service account key
 
 //Add Notification
 const addNotification = async (req, res, next) => {
