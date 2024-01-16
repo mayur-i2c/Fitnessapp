@@ -16,25 +16,13 @@ const UserSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      // minlength: [5, "Password should be at least five characters long."],
-      // maxlength: [16, "Password should be at maximum 16 characters long."],
-      required: [true, "Password is required."],
     },
     mo_no: {
       type: String,
-      required: [true, "Mobile no is required."],
-      unique: [true, "Mobile number is already exists."],
-      trim: true,
-      validate: {
-        validator: function (v) {
-          return /^\d{10}$/.test(v);
-        },
-        message: `Mobile number is not valid.`,
-      },
+      default: null,
     },
     dob: {
       type: Number,
-      required: [true, "Date of Birth is required."],
     },
     otp: {
       type: String,

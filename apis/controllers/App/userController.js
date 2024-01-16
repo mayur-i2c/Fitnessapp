@@ -54,6 +54,58 @@ const signupUser = async (req, res, next) => {
   }
 };
 
+//Facebook & Google Login
+
+const socialLogin = async (req, res, next) => {
+  try {
+    const accessToken = jwt.sign({ email: req.body.email }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1m",
+    });
+
+    const refresh_token = jwt.sign({ email: req.body.email }, process.env.REFRESH_TOKEN_SECRET);
+    const baseUrl = req.protocol + "://" + req.get("host") + process.env.BASE_URL_USER_PATH;
+
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      const newUser = await new User({
+        name: req.body.name,
+        email: req.body.email,
+        fcm_token: req.body.fcm_token,
+        remember_token: accessToken,
+        mo_no: null,
+      });
+      const addedUser = await newUser.save();
+
+      const userWithBaseUrl = {
+        ...newUser.toObject(),
+        baseUrl: baseUrl,
+        refresh_token: refresh_token,
+        loginStatus: 0,
+      };
+      createResponse(res, userWithBaseUrl);
+    } else {
+      user.remember_token = accessToken;
+      user.fcm_token = req.body.fcm_token;
+
+      await user.save();
+
+      const userWithBaseUrl = {
+        ...user.toObject(),
+        baseUrl: baseUrl,
+        refresh_token: refresh_token,
+        loginStatus: 1,
+      };
+
+      createResponse(res, userWithBaseUrl);
+    }
+
+    //save User and response
+  } catch (err) {
+    next(err);
+  }
+};
+
 //User Signin
 const signinUser = async (req, res, next) => {
   try {
@@ -332,4 +384,5 @@ module.exports = {
   updateProfilePic,
   RefreshToken,
   getUserProfile,
+  socialLogin,
 };

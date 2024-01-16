@@ -117,15 +117,15 @@ const settings = {
       url: 'settings/helpcenter',
       icon: icons.QuestionCircleOutlined,
       breadcrumbs: false
-    },
-    {
-      id: 'generalsettings',
-      title: 'General Settings',
-      type: 'item',
-      url: 'settings/generalSettings/manage',
-      icon: icons.SettingOutlined,
-      breadcrumbs: false
     }
+    // {
+    //   id: 'generalsettings',
+    //   title: 'General Settings',
+    //   type: 'item',
+    //   url: 'settings/generalSettings/manage',
+    //   icon: icons.SettingOutlined,
+    //   breadcrumbs: false
+    // }
   ]
 };
 

@@ -12,9 +12,11 @@ const {
   updateProfilePic,
   RefreshToken,
   getUserProfile,
+  socialLogin,
 } = require("../../controllers/App/userController");
 
 router.post("/signup", signupUser);
+router.post("/socialLogin", socialLogin);
 router.post("/signin", signinUser);
 router.post("/refreshToken", RefreshToken);
 router.post("/checkEmailId", checkEmailId);
